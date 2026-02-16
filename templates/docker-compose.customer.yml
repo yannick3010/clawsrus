@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  openclaw:
+    image: node:22-slim
+    container_name: clawsrus-${CUSTOMER_ID}
+    working_dir: /home/app
+    volumes:
+      - ./workspace:/home/app/workspace
+      - ./data:/home/app/.openclaw
+    environment:
+      - CUSTOMER_ID=${CUSTOMER_ID}
+      - PERSONA=${PERSONA}
+      - OPENCLAUTH_TOKEN=${OPENCLAUTH_TOKEN}
+    deploy:
+      resources:
+        limits:
+          cpus: '${CPU_LIMIT:-0.5}'
+          memory: ${MEMORY_LIMIT:-512M}
+    restart: unless-stopped
+    networks:
+      - clawsrus-network
+
+networks:
+  clawsrus-network:
+    driver: bridge
