@@ -95,12 +95,12 @@ Instead of installing a generic AI, users choose a pre-configured persona:
 
 ## Competitive Landscape
 
-| Competitor | Revenue | What They Do | Weakness |
-|------------|---------|--------------|----------|
-| SimpleClaw | $33K/mo | 1-click deploy | No personalization |
-| SetupClaw | $20K/mo | Manual setup | Not scalable |
-| ClawWrapper | $12K/mo | SaaS template | For builders, not users |
-| QuickClaw | $6K/mo | Mobile app | Generic, no persona |
+| Competitor | Revenue (verified) | What They Do | Weakness |
+|------------|-------------------|--------------|----------|
+| SimpleClaw | $29.9K total, **for sale** | 1-click deploy | No personalization, creator exiting |
+| SetupClaw | $14K total | White-glove enterprise ($2,450+/mo) | Not scalable, extremely expensive |
+| ClawWrapper | $10.3K total | White-label for builders | For builders, not end users |
+| QuickClaw | $3K total | Mobile app | Generic, low traction |
 
 **Our Edge:**  
 Nobody is doing **persona-based** AI assistants. We're not competing on deployment speed — we're competing on **outcome**.
