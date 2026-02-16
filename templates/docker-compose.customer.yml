@@ -1,26 +1,41 @@
 version: '3.8'
 
+# Template for per-customer Docker Compose
+# Variables are substituted by provision-user.sh at provisioning time
+
 services:
   openclaw:
     image: node:22-slim
     container_name: clawsrus-${CUSTOMER_ID}
     working_dir: /home/app
+    command: >
+      sh -c "npm install -g openclaw &&
+             openclaw start --telegram --workspace /home/app/workspace"
     volumes:
       - ./workspace:/home/app/workspace
       - ./data:/home/app/.openclaw
     environment:
       - CUSTOMER_ID=${CUSTOMER_ID}
       - PERSONA=${PERSONA}
-      - OPENCLAUTH_TOKEN=${OPENCLAUTH_TOKEN}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - AI_PROVIDER=${AI_PROVIDER}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY}
     deploy:
       resources:
         limits:
           cpus: '${CPU_LIMIT:-0.5}'
           memory: ${MEMORY_LIMIT:-512M}
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "openclaw"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
       - clawsrus-network
 
 networks:
   clawsrus-network:
-    driver: bridge
+    external: true
