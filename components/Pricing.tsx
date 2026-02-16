@@ -32,14 +32,14 @@ export default function Pricing() {
 
   return (
     <section id="pricing" className="bg-slate-950 py-24 text-white">
-      <div className="mx-auto max-w-5xl px-6">
+      <div className="mx-auto max-w-4xl px-6">
         <div className="text-center">
           <h2 className="text-3xl font-bold sm:text-4xl">
             Simple, Transparent Pricing
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-slate-400">
-            You bring your own AI API key (OpenAI or Gemini) — so you only pay
-            us for the persona, skills, and infrastructure.
+            One-time setup fee. You bring your own AI API key (OpenAI or
+            Gemini) — so there are no recurring costs from us.
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export default function Pricing() {
           </div>
         </div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+        <div className="mt-12 grid gap-8 md:grid-cols-2">
           {tiers.map((tier) => {
             const isPopular = "popular" in tier && tier.popular;
             return (
@@ -87,7 +87,9 @@ export default function Pricing() {
                 </p>
                 <div className="mt-6">
                   <span className="text-4xl font-bold">${tier.price}</span>
-                  <span className="text-slate-400">/mo</span>
+                  <span className="ml-2 text-sm text-slate-400">
+                    {tier.priceSuffix}
+                  </span>
                 </div>
                 <ul className="mt-8 space-y-3">
                   {tier.features.map((feature) => (

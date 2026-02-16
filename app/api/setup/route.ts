@@ -28,10 +28,12 @@ export async function POST(req: NextRequest) {
 
     // Look up the Stripe session to find the user
     const session = await stripe.checkout.sessions.retrieve(session_id);
-    const subscriptionId =
-      typeof session.subscription === "string" ? session.subscription : null;
+    const paymentIntentId =
+      typeof session.payment_intent === "string"
+        ? session.payment_intent
+        : null;
 
-    if (!subscriptionId) {
+    if (!paymentIntentId) {
       return NextResponse.json(
         { error: "Invalid session" },
         { status: 400 }
@@ -42,7 +44,7 @@ export async function POST(req: NextRequest) {
     const { data: user, error: findError } = await supabase
       .from("users")
       .select("id, status")
-      .eq("stripe_subscription_id", subscriptionId)
+      .eq("stripe_payment_intent_id", paymentIntentId)
       .maybeSingle();
 
     if (findError || !user) {

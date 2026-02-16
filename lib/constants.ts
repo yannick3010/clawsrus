@@ -31,58 +31,46 @@ export const PERSONAS = {
 export type PersonaId = keyof typeof PERSONAS;
 
 export const TIERS = {
-  starter: {
-    id: "starter",
-    name: "Starter",
-    price: 29,
-    priceLabel: "$29/mo",
-    description: "Perfect for getting started",
+  standard: {
+    id: "standard",
+    name: "Standard",
+    price: 199,
+    priceLabel: "$199",
+    priceSuffix: "one-time setup",
+    description: "Everything you need to get started",
     features: [
-      "1 AI persona",
+      "1 AI persona of your choice",
       "Telegram messaging",
-      "Core skills included",
+      "All skills included",
+      "Guided self-serve setup",
       "Email support",
     ],
-    limits: { cpu: "0.5", memory: "512M" },
-  },
-  pro: {
-    id: "pro",
-    name: "Pro",
-    price: 79,
-    priceLabel: "$79/mo",
-    description: "For power users",
-    features: [
-      "1 AI persona",
-      "Telegram messaging",
-      "All skills unlocked",
-      "Priority support",
-      "Custom instructions",
-    ],
     limits: { cpu: "1", memory: "1G" },
-    popular: true,
   },
-  agency: {
-    id: "agency",
-    name: "Agency",
-    price: 199,
-    priceLabel: "$199/mo",
-    description: "For teams and agencies",
+  concierge: {
+    id: "concierge",
+    name: "Concierge",
+    price: 599,
+    priceLabel: "$599",
+    priceSuffix: "one-time setup",
+    description: "White-glove setup with hands-on help",
     features: [
-      "1 AI persona (more on request)",
+      "1 AI persona of your choice",
       "Telegram messaging",
-      "All skills unlocked",
-      "Dedicated support",
-      "Custom instructions",
-      "Higher rate limits",
+      "All skills included",
+      "We set everything up for you",
+      "1-on-1 onboarding call",
+      "Custom persona tuning",
+      "Priority support",
     ],
     limits: { cpu: "2", memory: "2G" },
+    popular: true,
   },
 } as const;
 
 export type TierId = keyof typeof TIERS;
 
 export const STRIPE_PRICE_IDS: Record<TierId, string> = {
-  starter: process.env.STRIPE_PRICE_STARTER || "",
-  pro: process.env.STRIPE_PRICE_PRO || "",
-  agency: process.env.STRIPE_PRICE_AGENCY || "",
+  standard: process.env.STRIPE_PRICE_STANDARD || "",
+  concierge: process.env.STRIPE_PRICE_CONCIERGE || "",
 };

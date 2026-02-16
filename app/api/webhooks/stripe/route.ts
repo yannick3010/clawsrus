@@ -31,24 +31,29 @@ export async function POST(req: NextRequest) {
       const email = session.customer_details?.email;
       const customerId =
         typeof session.customer === "string" ? session.customer : null;
-      const subscriptionId =
-        typeof session.subscription === "string" ? session.subscription : null;
+      const paymentIntentId =
+        typeof session.payment_intent === "string"
+          ? session.payment_intent
+          : null;
 
       if (!email || !tier || !persona) {
         console.error("Missing session data:", { email, tier, persona });
         break;
       }
 
-      // Idempotent: check if user already exists for this subscription
-      if (subscriptionId) {
+      // Idempotent: check if user already exists for this payment
+      if (paymentIntentId) {
         const { data: existing } = await supabase
           .from("users")
           .select("id")
-          .eq("stripe_subscription_id", subscriptionId)
+          .eq("stripe_payment_intent_id", paymentIntentId)
           .maybeSingle();
 
         if (existing) {
-          console.log("User already exists for subscription:", subscriptionId);
+          console.log(
+            "User already exists for payment:",
+            paymentIntentId
+          );
           break;
         }
       }
@@ -61,26 +66,13 @@ export async function POST(req: NextRequest) {
         tier,
         status: "awaiting_setup",
         stripe_customer_id: customerId,
-        stripe_subscription_id: subscriptionId,
+        stripe_payment_intent_id: paymentIntentId,
       });
 
       if (error) {
         console.error("Failed to create user:", error);
       } else {
         console.log("Created user:", userId);
-      }
-      break;
-    }
-
-    case "customer.subscription.deleted": {
-      const subscription = event.data.object as Stripe.Subscription;
-      const { error } = await supabase
-        .from("users")
-        .update({ status: "cancelled", updated_at: new Date().toISOString() })
-        .eq("stripe_subscription_id", subscription.id);
-
-      if (error) {
-        console.error("Failed to cancel user:", error);
       }
       break;
     }
