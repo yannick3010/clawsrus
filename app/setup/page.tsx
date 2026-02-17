@@ -19,8 +19,8 @@ export default function SetupPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
+        <div className="flex min-h-screen items-center justify-center bg-white">
+          <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
         </div>
       }
     >
@@ -138,13 +138,15 @@ function SetupWizard() {
 
   if (!sessionId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-red-400" />
-          <h1 className="mt-4 text-xl font-bold">Invalid Setup Link</h1>
-          <p className="mt-2 text-slate-400">
+          <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
+          <h1 className="mt-4 font-display text-xl text-navy-800">
+            Invalid Setup Link
+          </h1>
+          <p className="mt-2 text-navy-400">
             This page requires a valid checkout session. Please start from the{" "}
-            <a href="/" className="text-blue-400 underline">
+            <a href="/" className="text-brand-500 underline">
               homepage
             </a>
             .
@@ -156,23 +158,24 @@ function SetupWizard() {
 
   if (done) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="mx-auto max-w-md text-center">
-          <CheckCircle2 className="mx-auto h-16 w-16 text-green-400" />
-          <h1 className="mt-6 text-2xl font-bold">
+          <CheckCircle2 className="mx-auto h-16 w-16 text-emerald-500" />
+          <h1 className="mt-6 font-display text-2xl text-navy-800">
             Your AI Assistant is Being Set Up!
           </h1>
-          <p className="mt-4 text-slate-400">
-            We&apos;re configuring your {aiProvider === "openai" ? "OpenAI" : "Gemini"}-powered
-            assistant right now. You&apos;ll receive an email within a few minutes
-            with a link to start chatting on Telegram.
+          <p className="mt-4 text-navy-400">
+            We&apos;re configuring your{" "}
+            {aiProvider === "openai" ? "OpenAI" : "Gemini"}-powered assistant
+            right now. You&apos;ll receive an email within a few minutes with a
+            link to start chatting on Telegram.
           </p>
           {botUsername && (
-            <p className="mt-4 text-slate-300">
+            <p className="mt-4 text-navy-500">
               Your bot:{" "}
               <a
                 href={`https://t.me/${botUsername}`}
-                className="font-semibold text-blue-400"
+                className="font-semibold text-brand-500"
                 target="_blank"
               >
                 @{botUsername}
@@ -180,8 +183,8 @@ function SetupWizard() {
             </p>
           )}
           <div className="mt-8">
-            <Loader2 className="mx-auto h-6 w-6 animate-spin text-blue-400" />
-            <p className="mt-2 text-sm text-slate-500">
+            <Loader2 className="mx-auto h-6 w-6 animate-spin text-brand-500" />
+            <p className="mt-2 text-sm text-navy-300">
               Provisioning... check your email shortly.
             </p>
           </div>
@@ -191,10 +194,19 @@ function SetupWizard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-white">
       <div className="mx-auto max-w-2xl px-6 py-16">
-        <h1 className="text-3xl font-bold">Set Up Your AI Assistant</h1>
-        <p className="mt-2 text-slate-400">
+        <a
+          href="/"
+          className="font-display text-2xl tracking-tight text-navy-800"
+        >
+          ClawsRUs
+        </a>
+
+        <h1 className="mt-10 font-display text-3xl tracking-tight text-navy-800">
+          Set Up Your AI Assistant
+        </h1>
+        <p className="mt-2 text-navy-400">
           Two quick steps to connect your Telegram bot and AI provider.
         </p>
 
@@ -203,15 +215,15 @@ function SetupWizard() {
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`h-1.5 flex-1 rounded-full ${
-                s <= step ? "bg-blue-600" : "bg-slate-800"
+              className={`h-1.5 flex-1 rounded-full transition-colors ${
+                s <= step ? "bg-brand-500" : "bg-navy-100"
               }`}
             />
           ))}
         </div>
 
         {error && (
-          <div className="mt-6 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
             {error}
           </div>
         )}
@@ -220,37 +232,48 @@ function SetupWizard() {
         {step === 1 && (
           <div className="mt-10">
             <div className="flex items-center gap-3">
-              <Bot className="h-6 w-6 text-blue-400" />
-              <h2 className="text-xl font-semibold">
+              <Bot className="h-6 w-6 text-brand-500" />
+              <h2 className="text-xl font-semibold text-navy-800">
                 Step 1: Create Your Telegram Bot
               </h2>
             </div>
-            <div className="mt-6 space-y-4 rounded-lg border border-slate-800 bg-slate-900/50 p-6">
-              <p className="text-sm text-slate-300">
+            <div className="mt-6 space-y-4 rounded-xl border border-navy-100 bg-navy-50 p-6">
+              <p className="text-sm text-navy-500">
                 Follow these steps to create your own Telegram bot:
               </p>
-              <ol className="ml-4 list-decimal space-y-3 text-sm text-slate-400">
+              <ol className="ml-4 list-decimal space-y-3 text-sm text-navy-400">
                 <li>
                   Open Telegram and search for{" "}
                   <a
                     href="https://t.me/BotFather"
                     target="_blank"
-                    className="inline-flex items-center gap-1 text-blue-400 underline"
+                    className="inline-flex items-center gap-1 text-brand-500 underline"
                   >
                     @BotFather
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 </li>
                 <li>
-                  Send <code className="rounded bg-slate-800 px-1.5 py-0.5">/newbot</code>
+                  Send{" "}
+                  <code className="rounded-md bg-navy-100 px-1.5 py-0.5 text-navy-600">
+                    /newbot
+                  </code>
                 </li>
-                <li>Choose a display name for your bot (e.g., &quot;My AI Assistant&quot;)</li>
-                <li>Choose a username ending in &quot;bot&quot; (e.g., &quot;myai_assistant_bot&quot;)</li>
-                <li>BotFather will give you a token — copy it and paste below</li>
+                <li>
+                  Choose a display name for your bot (e.g., &quot;My AI
+                  Assistant&quot;)
+                </li>
+                <li>
+                  Choose a username ending in &quot;bot&quot; (e.g.,
+                  &quot;myai_assistant_bot&quot;)
+                </li>
+                <li>
+                  BotFather will give you a token — copy it and paste below
+                </li>
               </ol>
             </div>
             <div className="mt-6">
-              <label className="block text-sm font-medium text-slate-300">
+              <label className="block text-sm font-medium text-navy-600">
                 Bot Token
               </label>
               <div className="mt-2 flex gap-3">
@@ -262,12 +285,12 @@ function SetupWizard() {
                     setTokenVerified(false);
                   }}
                   placeholder="123456789:ABCdefGHIjklMNOpqrSTUvwxYZ"
-                  className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="flex-1 rounded-xl border border-navy-200 bg-white px-4 py-2.5 text-sm text-navy-800 placeholder-navy-300 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 />
                 <button
                   onClick={verifyToken}
                   disabled={!telegramToken.trim() || tokenVerifying}
-                  className="rounded-lg bg-slate-700 px-4 py-2.5 text-sm font-medium transition hover:bg-slate-600 disabled:opacity-50"
+                  className="rounded-xl bg-navy-100 px-4 py-2.5 text-sm font-medium text-navy-600 transition hover:bg-navy-200 disabled:opacity-50"
                 >
                   {tokenVerifying ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -277,7 +300,7 @@ function SetupWizard() {
                 </button>
               </div>
               {tokenVerified && (
-                <p className="mt-2 flex items-center gap-2 text-sm text-green-400">
+                <p className="mt-2 flex items-center gap-2 text-sm text-emerald-600">
                   <CheckCircle2 className="h-4 w-4" />
                   Verified — your bot is @{botUsername}
                 </p>
@@ -286,7 +309,7 @@ function SetupWizard() {
             <button
               onClick={() => setStep(2)}
               disabled={!tokenVerified}
-              className="mt-8 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold transition hover:bg-blue-500 disabled:opacity-50"
+              className="mt-8 rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-400 disabled:opacity-50"
             >
               Continue
             </button>
@@ -297,8 +320,8 @@ function SetupWizard() {
         {step === 2 && (
           <div className="mt-10">
             <div className="flex items-center gap-3">
-              <Key className="h-6 w-6 text-blue-400" />
-              <h2 className="text-xl font-semibold">
+              <Key className="h-6 w-6 text-brand-500" />
+              <h2 className="text-xl font-semibold text-navy-800">
                 Step 2: Connect Your AI Provider
               </h2>
             </div>
@@ -306,68 +329,74 @@ function SetupWizard() {
             <div className="mt-6 flex gap-3">
               <button
                 onClick={() => setAiProvider("openai")}
-                className={`flex-1 rounded-lg border p-4 text-left transition ${
+                className={`flex-1 rounded-xl border p-4 text-left transition ${
                   aiProvider === "openai"
-                    ? "border-blue-500 bg-blue-500/10"
-                    : "border-slate-700 bg-slate-900/50 hover:border-slate-600"
+                    ? "border-brand-500 bg-brand-50"
+                    : "border-navy-200 bg-white hover:border-navy-300"
                 }`}
               >
-                <div className="font-semibold">OpenAI</div>
-                <div className="mt-1 text-xs text-slate-400">
+                <div className="font-semibold text-navy-800">OpenAI</div>
+                <div className="mt-1 text-xs text-navy-400">
                   GPT-4o, GPT-4o mini
                 </div>
               </button>
               <button
                 onClick={() => setAiProvider("gemini")}
-                className={`flex-1 rounded-lg border p-4 text-left transition ${
+                className={`flex-1 rounded-xl border p-4 text-left transition ${
                   aiProvider === "gemini"
-                    ? "border-blue-500 bg-blue-500/10"
-                    : "border-slate-700 bg-slate-900/50 hover:border-slate-600"
+                    ? "border-brand-500 bg-brand-50"
+                    : "border-navy-200 bg-white hover:border-navy-300"
                 }`}
               >
-                <div className="font-semibold">Google Gemini</div>
-                <div className="mt-1 text-xs text-slate-400">
+                <div className="font-semibold text-navy-800">Google Gemini</div>
+                <div className="mt-1 text-xs text-navy-400">
                   Gemini Pro, Gemini Flash
                 </div>
               </button>
             </div>
 
-            <div className="mt-6 rounded-lg border border-slate-800 bg-slate-900/50 p-6">
+            <div className="mt-6 rounded-xl border border-navy-100 bg-navy-50 p-6">
               {aiProvider === "openai" ? (
-                <div className="space-y-2 text-sm text-slate-400">
+                <div className="space-y-2 text-sm text-navy-400">
                   <p>
                     Get your OpenAI API key from{" "}
                     <a
                       href="https://platform.openai.com/api-keys"
                       target="_blank"
-                      className="inline-flex items-center gap-1 text-blue-400 underline"
+                      className="inline-flex items-center gap-1 text-brand-500 underline"
                     >
                       platform.openai.com/api-keys
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   </p>
-                  <p>Click &quot;Create new secret key&quot;, give it a name, and copy the key.</p>
+                  <p>
+                    Click &quot;Create new secret key&quot;, give it a name, and
+                    copy the key.
+                  </p>
                 </div>
               ) : (
-                <div className="space-y-2 text-sm text-slate-400">
+                <div className="space-y-2 text-sm text-navy-400">
                   <p>
                     Get your Gemini API key from{" "}
                     <a
                       href="https://aistudio.google.com/apikey"
                       target="_blank"
-                      className="inline-flex items-center gap-1 text-blue-400 underline"
+                      className="inline-flex items-center gap-1 text-brand-500 underline"
                     >
                       aistudio.google.com/apikey
                       <ExternalLink className="h-3 w-3" />
                     </a>
                   </p>
-                  <p>Click &quot;Create API key&quot;, select a project, and copy the key.</p>
+                  <p>
+                    Click &quot;Create API key&quot;, select a project, and copy
+                    the key.
+                  </p>
                 </div>
               )}
             </div>
 
             <div className="mt-6">
-              <label className="block text-sm font-medium text-slate-300">
+              <label className="block text-sm font-medium text-navy-600">
                 API Key
               </label>
               <div className="mt-2 flex gap-3">
@@ -381,12 +410,12 @@ function SetupWizard() {
                   placeholder={
                     aiProvider === "openai" ? "sk-..." : "AIzaSy..."
                   }
-                  className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="flex-1 rounded-xl border border-navy-200 bg-white px-4 py-2.5 text-sm text-navy-800 placeholder-navy-300 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 />
                 <button
                   onClick={verifyAiKey}
                   disabled={!aiApiKey.trim() || keyVerifying}
-                  className="rounded-lg bg-slate-700 px-4 py-2.5 text-sm font-medium transition hover:bg-slate-600 disabled:opacity-50"
+                  className="rounded-xl bg-navy-100 px-4 py-2.5 text-sm font-medium text-navy-600 transition hover:bg-navy-200 disabled:opacity-50"
                 >
                   {keyVerifying ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -396,7 +425,7 @@ function SetupWizard() {
                 </button>
               </div>
               {keyVerified && (
-                <p className="mt-2 flex items-center gap-2 text-sm text-green-400">
+                <p className="mt-2 flex items-center gap-2 text-sm text-emerald-600">
                   <CheckCircle2 className="h-4 w-4" />
                   API key verified
                 </p>
@@ -406,14 +435,14 @@ function SetupWizard() {
             <div className="mt-8 flex gap-3">
               <button
                 onClick={() => setStep(1)}
-                className="rounded-lg border border-slate-700 px-6 py-3 text-sm font-semibold transition hover:border-slate-500"
+                className="rounded-full border border-navy-200 px-6 py-3 text-sm font-semibold text-navy-600 transition hover:border-navy-300"
               >
                 Back
               </button>
               <button
                 onClick={() => setStep(3)}
                 disabled={!keyVerified}
-                className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold transition hover:bg-blue-500 disabled:opacity-50"
+                className="rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-400 disabled:opacity-50"
               >
                 Continue
               </button>
@@ -425,26 +454,28 @@ function SetupWizard() {
         {step === 3 && (
           <div className="mt-10">
             <div className="flex items-center gap-3">
-              <Rocket className="h-6 w-6 text-blue-400" />
-              <h2 className="text-xl font-semibold">
+              <Rocket className="h-6 w-6 text-brand-500" />
+              <h2 className="text-xl font-semibold text-navy-800">
                 Step 3: Confirm & Launch
               </h2>
             </div>
 
-            <div className="mt-6 space-y-4 rounded-lg border border-slate-800 bg-slate-900/50 p-6">
-              <div className="flex justify-between border-b border-slate-800 pb-3">
-                <span className="text-sm text-slate-400">Telegram Bot</span>
-                <span className="text-sm font-medium">@{botUsername}</span>
+            <div className="mt-6 space-y-4 rounded-xl border border-navy-100 bg-navy-50 p-6">
+              <div className="flex justify-between border-b border-navy-100 pb-3">
+                <span className="text-sm text-navy-400">Telegram Bot</span>
+                <span className="text-sm font-medium text-navy-800">
+                  @{botUsername}
+                </span>
               </div>
-              <div className="flex justify-between border-b border-slate-800 pb-3">
-                <span className="text-sm text-slate-400">AI Provider</span>
-                <span className="text-sm font-medium">
+              <div className="flex justify-between border-b border-navy-100 pb-3">
+                <span className="text-sm text-navy-400">AI Provider</span>
+                <span className="text-sm font-medium text-navy-800">
                   {aiProvider === "openai" ? "OpenAI" : "Google Gemini"}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-slate-400">API Key</span>
-                <span className="text-sm font-medium text-slate-400">
+                <span className="text-sm text-navy-400">API Key</span>
+                <span className="text-sm font-medium text-navy-400">
                   {aiApiKey.slice(0, 8)}...{aiApiKey.slice(-4)}
                 </span>
               </div>
@@ -453,14 +484,14 @@ function SetupWizard() {
             <div className="mt-8 flex gap-3">
               <button
                 onClick={() => setStep(2)}
-                className="rounded-lg border border-slate-700 px-6 py-3 text-sm font-semibold transition hover:border-slate-500"
+                className="rounded-full border border-navy-200 px-6 py-3 text-sm font-semibold text-navy-600 transition hover:border-navy-300"
               >
                 Back
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-3 text-sm font-semibold transition hover:bg-blue-500 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full bg-brand-500 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-400 disabled:opacity-50"
               >
                 {submitting ? (
                   <>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 import { TIERS, PERSONAS } from "@/lib/constants";
 import type { TierId, PersonaId } from "@/lib/constants";
+import { FadeIn } from "./FadeIn";
 
 export default function Pricing() {
   const [loading, setLoading] = useState<string | null>(null);
@@ -31,95 +32,110 @@ export default function Pricing() {
   }
 
   return (
-    <section id="pricing" className="bg-slate-950 py-24 text-white">
+    <section id="pricing" className="bg-navy-50 py-24 sm:py-32">
       <div className="mx-auto max-w-4xl px-6">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-400">
-            One-time setup fee. You bring your own AI API key (OpenAI or
-            Gemini) — so there are no recurring costs from us.
-          </p>
-        </div>
-
-        <div className="mx-auto mt-10 flex max-w-md flex-col items-center gap-3">
-          <label className="text-sm font-medium text-slate-400">
-            Select your persona:
-          </label>
-          <div className="flex gap-2">
-            {personas.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setSelectedPersona(p.id as PersonaId)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                  selectedPersona === p.id
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-800 text-slate-400 hover:text-white"
-                }`}
-              >
-                {p.name}
-              </button>
-            ))}
+        <FadeIn>
+          <div className="text-center">
+            <h2 className="font-display text-3xl tracking-tight text-navy-800 sm:text-4xl lg:text-5xl">
+              Simple, honest pricing.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-navy-400">
+              One-time setup fee. You bring your own AI API key — so there are
+              no recurring costs from us.
+            </p>
           </div>
-        </div>
+        </FadeIn>
+
+        <FadeIn delay={100}>
+          <div className="mx-auto mt-10 flex flex-col items-center gap-3">
+            <label className="text-sm font-medium text-navy-400">
+              Select your persona:
+            </label>
+            <div className="flex flex-wrap justify-center gap-2">
+              {personas.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => setSelectedPersona(p.id as PersonaId)}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                    selectedPersona === p.id
+                      ? "bg-navy-800 text-white shadow-md"
+                      : "border border-navy-200 bg-white text-navy-400 hover:border-navy-300 hover:text-navy-600"
+                  }`}
+                >
+                  {p.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2">
-          {tiers.map((tier) => {
+          {tiers.map((tier, i) => {
             const isPopular = "popular" in tier && tier.popular;
             return (
-              <div
-                key={tier.id}
-                className={`relative rounded-xl border p-8 ${
-                  isPopular
-                    ? "border-blue-500 bg-slate-900"
-                    : "border-slate-800 bg-slate-900/50"
-                }`}
-              >
-                {isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold">
-                    Most Popular
-                  </div>
-                )}
-                <h3 className="text-lg font-semibold">{tier.name}</h3>
-                <p className="mt-1 text-sm text-slate-400">
-                  {tier.description}
-                </p>
-                <div className="mt-6">
-                  <span className="text-4xl font-bold">${tier.price}</span>
-                  <span className="ml-2 text-sm text-slate-400">
-                    {tier.priceSuffix}
-                  </span>
-                </div>
-                <ul className="mt-8 space-y-3">
-                  {tier.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex items-start gap-3 text-sm text-slate-300"
-                    >
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={() => handleCheckout(tier.id as TierId)}
-                  disabled={loading !== null}
-                  className={`mt-8 w-full rounded-lg py-3 text-sm font-semibold transition ${
+              <FadeIn key={tier.id} delay={200 + i * 150}>
+                <div
+                  className={`relative rounded-2xl border p-8 transition-all ${
                     isPopular
-                      ? "bg-blue-600 text-white hover:bg-blue-500"
-                      : "bg-slate-800 text-white hover:bg-slate-700"
-                  } disabled:opacity-50`}
+                      ? "border-brand-300 bg-white shadow-xl shadow-brand-100/50"
+                      : "border-navy-200 bg-white hover:shadow-lg"
+                  }`}
                 >
-                  {loading === tier.id ? "Redirecting..." : "Get Started"}
-                </button>
-              </div>
+                  {isPopular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-4 py-1 text-xs font-semibold text-white">
+                      Most Popular
+                    </div>
+                  )}
+                  <h3 className="text-lg font-semibold text-navy-800">
+                    {tier.name}
+                  </h3>
+                  <p className="mt-1 text-sm text-navy-400">
+                    {tier.description}
+                  </p>
+                  <div className="mt-6">
+                    <span className="text-4xl font-bold text-navy-800">
+                      ${tier.price}
+                    </span>
+                    <span className="ml-2 text-sm text-navy-300">
+                      {tier.priceSuffix}
+                    </span>
+                  </div>
+                  <ul className="mt-8 space-y-3">
+                    {tier.features.map((feature) => (
+                      <li
+                        key={feature}
+                        className="flex items-start gap-3 text-sm text-navy-500"
+                      >
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={() => handleCheckout(tier.id as TierId)}
+                    disabled={loading !== null}
+                    className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
+                      isPopular
+                        ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400 hover:shadow-xl"
+                        : "bg-navy-800 text-white hover:bg-navy-700"
+                    } disabled:opacity-50`}
+                  >
+                    {loading === tier.id ? (
+                      "Redirecting..."
+                    ) : (
+                      <>
+                        Get Started
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </FadeIn>
             );
           })}
         </div>
-        <p className="mt-8 text-center text-sm text-slate-500">
-          + your own AI API costs (typically $5-20/mo depending on usage)
-        </p>
+
+
       </div>
     </section>
   );
