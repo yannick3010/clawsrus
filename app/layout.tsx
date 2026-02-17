@@ -1,13 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "ClawsRUs — Your Personal AI Team, Ready in Minutes",
+  title: "ClawsRUs — Your Personal AI Assistant, Ready in Minutes",
   description:
-    "Pick a persona, connect your Telegram, and get an AI assistant that actually gets things done. Chief of Staff, Sales Expert, or Personal Assistant — powered by OpenClaw.",
+    "No setup headaches. No prompt engineering. Just a ready-to-go assistant on Telegram that handles your life admin.",
 };
 
 export default function RootLayout({
@@ -16,8 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={inter.className}>{children}</body>
+    <html
+      lang="en"
+      className={`scroll-smooth ${instrumentSerif.variable} ${plusJakarta.variable}`}
+    >
+      <body className="font-body text-navy-800 antialiased">{children}</body>
     </html>
   );
 }

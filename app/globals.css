@@ -1,3 +1,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  ::selection {
+    background-color: #e0e0ff;
+    color: #0a2540;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-spin-slow-20 {
+    animation: spin-slow 20s linear infinite;
+  }
+
+  .animate-spin-slow-25 {
+    animation: spin-slow 25s linear infinite;
+  }
+
+  .animate-spin-reverse-30 {
+    animation: spin-slow 30s linear infinite reverse;
+  }
+
+  .animate-spin-reverse-35 {
+    animation: spin-slow 35s linear infinite reverse;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

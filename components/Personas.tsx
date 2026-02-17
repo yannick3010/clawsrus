@@ -1,32 +1,24 @@
-"use client";
-
 import { Shield, TrendingUp, User } from "lucide-react";
 import { PERSONAS } from "@/lib/constants";
+import { FadeIn } from "./FadeIn";
 
-const iconMap = {
-  Shield,
-  TrendingUp,
-  User,
-} as const;
+const iconMap = { Shield, TrendingUp, User } as const;
 
 const colorMap = {
   blue: {
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/20",
-    icon: "text-blue-400",
-    tag: "bg-blue-500/10 text-blue-400",
+    border: "border-blue-200",
+    iconBg: "bg-blue-100",
+    icon: "text-blue-600",
   },
   green: {
-    bg: "bg-emerald-500/10",
-    border: "border-emerald-500/20",
-    icon: "text-emerald-400",
-    tag: "bg-emerald-500/10 text-emerald-400",
+    border: "border-emerald-200",
+    iconBg: "bg-emerald-100",
+    icon: "text-emerald-600",
   },
   purple: {
-    bg: "bg-purple-500/10",
-    border: "border-purple-500/20",
-    icon: "text-purple-400",
-    tag: "bg-purple-500/10 text-purple-400",
+    border: "border-violet-200",
+    iconBg: "bg-violet-100",
+    icon: "text-violet-600",
   },
 } as const;
 
@@ -34,51 +26,57 @@ export default function Personas() {
   const personas = Object.values(PERSONAS);
 
   return (
-    <section id="personas" className="bg-slate-950 py-24 text-white">
+    <section id="personas" className="bg-navy-50 py-24 sm:py-32">
       <div className="mx-auto max-w-5xl px-6">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">
-            Choose Your AI Persona
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-slate-400">
-            Each persona is pre-configured with the skills, tone, and knowledge
-            to excel at its role. Pick one and start getting results immediately.
-          </p>
-        </div>
+        <FadeIn>
+          <div className="text-center">
+            <h2 className="font-display text-3xl tracking-tight text-navy-800 sm:text-4xl lg:text-5xl">
+              Choose your AI persona.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-navy-400">
+              Each persona is pre-configured with the skills, tone, and
+              knowledge to excel at its role.
+            </p>
+          </div>
+        </FadeIn>
+
         <div className="mt-16 grid gap-8 md:grid-cols-3">
-          {personas.map((persona) => {
+          {personas.map((persona, i) => {
             const Icon = iconMap[persona.icon as keyof typeof iconMap];
             const colors = colorMap[persona.color as keyof typeof colorMap];
             const isComingSoon = persona.comingSoon;
             return (
-              <div
-                key={persona.id}
-                className={`relative rounded-xl border p-8 transition ${
-                  isComingSoon
-                    ? "border-slate-800 bg-slate-900/30 opacity-60"
-                    : `${colors.border} ${colors.bg} hover:scale-[1.02]`
-                }`}
-              >
-                {isComingSoon && (
-                  <div className="absolute right-4 top-4 rounded-full bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-400">
-                    Coming Soon
-                  </div>
-                )}
+              <FadeIn key={persona.id} delay={i * 150}>
                 <div
-                  className={`inline-flex rounded-lg p-3 ${
-                    isComingSoon ? "bg-slate-800 text-slate-500" : colors.tag
+                  className={`rounded-2xl border ${colors.border} bg-white p-8 transition-all ${
+                    isComingSoon
+                      ? "opacity-60"
+                      : "hover:shadow-lg"
                   }`}
                 >
-                  <Icon className="h-6 w-6" />
+                  <div className="flex items-start justify-between">
+                    <div
+                      className={`inline-flex rounded-xl ${colors.iconBg} p-3`}
+                    >
+                      <Icon className={`h-6 w-6 ${colors.icon}`} />
+                    </div>
+                    {isComingSoon && (
+                      <span className="rounded-full bg-navy-100 px-3 py-1 text-xs font-medium text-navy-400">
+                        Coming Soon
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="mt-5 text-xl font-semibold text-navy-800">
+                    {persona.name}
+                  </h3>
+                  <p className="mt-1 text-sm font-medium text-navy-400">
+                    {persona.tagline}
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-navy-500">
+                    {persona.description}
+                  </p>
                 </div>
-                <h3 className="mt-4 text-xl font-semibold">{persona.name}</h3>
-                <p className="mt-1 text-sm font-medium text-slate-400">
-                  {persona.tagline}
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-slate-300">
-                  {persona.description}
-                </p>
-              </div>
+              </FadeIn>
             );
           })}
         </div>
