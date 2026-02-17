@@ -85,16 +85,26 @@ export default function Pricing() {
         <div className="mt-12 grid gap-8 md:grid-cols-2">
           {tiers.map((tier, i) => {
             const isPopular = "popular" in tier && tier.popular;
+            const isConcierge = tier.id === "concierge";
+            const isSoldOut = isConcierge; // Concierge sold out for February
+
             return (
               <FadeIn key={tier.id} delay={200 + i * 150}>
                 <div
                   className={`relative rounded-2xl border p-8 transition-all ${
-                    isPopular
-                      ? "border-brand-300 bg-white shadow-xl shadow-brand-100/50"
-                      : "border-navy-200 bg-white hover:shadow-lg"
+                    isSoldOut
+                      ? "border-navy-100 bg-navy-50/50 opacity-60"
+                      : isPopular
+                        ? "border-brand-300 bg-white shadow-xl shadow-brand-100/50"
+                        : "border-navy-200 bg-white hover:shadow-lg"
                   }`}
                 >
-                  {isPopular && (
+                  {isSoldOut && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-navy-300 px-4 py-1 text-xs font-semibold text-white">
+                      February Slots Full
+                    </div>
+                  )}
+                  {isPopular && !isSoldOut && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-4 py-1 text-xs font-semibold text-white">
                       Most Popular
                     </div>
@@ -124,24 +134,30 @@ export default function Pricing() {
                       </li>
                     ))}
                   </ul>
-                  <button
-                    onClick={() => handleCheckout(tier.id as TierId)}
-                    disabled={loading !== null}
-                    className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
-                      isPopular
-                        ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400 hover:shadow-xl"
-                        : "bg-navy-800 text-white hover:bg-navy-700"
-                    } disabled:opacity-50`}
-                  >
-                    {loading === tier.id ? (
-                      "Redirecting..."
-                    ) : (
-                      <>
-                        Get Started
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
+                  {isSoldOut ? (
+                    <div className="mt-8 rounded-lg bg-navy-100 px-4 py-3 text-center text-sm text-navy-400">
+                      All February slots booked. Check back in March!
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleCheckout(tier.id as TierId)}
+                      disabled={loading !== null}
+                      className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
+                        isPopular
+                          ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400 hover:shadow-xl"
+                          : "bg-navy-800 text-white hover:bg-navy-700"
+                      } disabled:opacity-50`}
+                    >
+                      {loading === tier.id ? (
+                        "Redirecting..."
+                      ) : (
+                        <>
+                          Get Started
+                          <ArrowRight className="h-4 w-4" />
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               </FadeIn>
             );
