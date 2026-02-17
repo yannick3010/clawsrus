@@ -259,23 +259,28 @@ This makes the bot feel magical immediately — it *did something*, not just ask
 
 **Problem:** No secondary revenue stream. Users need discoverable add-ons.
 
-**Solution:** In-dashboard marketplace for purchasing/activating skills.
+**Solution:** In-dashboard marketplace for browsing and activating skills.
 
 **Features:**
 - Browse skills by category
-- View skill details (description, reviews, price)
-- Purchase (triggers payment)
+- View skill details (description, use cases, price)
 - Activate/deactivate
-- Developer upload (for skill creators)
+- All skills developed by ClawsRus (no third-party creators)
 
-**Revenue model:**
-- Platform takes 20% on skill sales
-- Rest goes to skill creator
+**Pricing model:**
+
+| User Type | Price |
+|-----------|-------|
+| Member (subscriber) | Free |
+| Standard user | $9–$99 per skill |
+
+**Key insight:** Skills are our first-party product. We keep 100% of direct sales. Subscription is the primary revenue; skills are bonus value for members + upsell for non-members.
 
 **Scope:**
 - Skill listing API
-- Purchase flow (Stripe)
-- Creator dashboard (upload, analytics, payout)
+- Free/paid entitlement check
+- Payment flow for non-members (Stripe)
+- Member flag (unlocks all skills)
 
 **Priority:** MEDIUM (for MVP)  
 **Effort:** Medium-High
