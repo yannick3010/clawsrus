@@ -45,23 +45,38 @@ Instead of installing a generic AI, users choose a pre-configured persona:
 
 ## Revenue Model
 
-### Membership Tiers
+### Current: One-Time Pricing (MVP)
 
-| Tier | Price | What's Included |
-|------|-------|-----------------|
+| Product | Price | Description |
+|---------|-------|-------------|
+| **Standard** | $199 (one-time) | Personal Assistant, self-serve setup, Telegram |
+| **Concierge** | $599 (one-time) | White-glove setup, 1-on-1 onboarding, custom tuning, priority support |
+
+### Future: Subscription Tiers (Phase 2)
+
+Coming next — subscription model for recurring revenue:
+
+| Tier | Target Price | What's Included |
+|------|-------------|-----------------|
 | **Starter** | $29/mo | 1 persona, core skills, Telegram |
 | **Pro** | $79/mo | 1 persona + 2 skill packs, priority support |
 | **Agency** | $199/mo | 3 personas, unlimited skill packs, API access |
 
-### One-Time Purchases
+### Add-Ons (One-Time)
 
 | Product | Price | Description |
 |---------|-------|-------------|
-| Setup Fee | $149-499 | White-glove onboarding (one-time) |
-| Skill Packs | $29-99 | Email Mastery, Research Pro, etc. (one-time) |
+| Skill Packs | $29-99 | Email Mastery, Research Pro, etc. |
 | Custom Persona | $500+ | Build a persona for your specific needs |
 
-### Revenue Math
+### Revenue Math (One-Time Model)
+
+- **Target:** 100 customers × $300 avg = **$30K** in 6 months
+- **Long-term:** 500 customers × $350 avg = **$175K** total
+
+*Note: Once subscription model launches, add recurring revenue component.*
+
+### Revenue Math (Subscription Model — Future)
 
 - **Target:** 100 customers × $50 avg = **$5K MRR** in 6 months
 - **Long-term:** 500 customers × $80 avg = **$40K MRR**
@@ -70,17 +85,17 @@ Instead of installing a generic AI, users choose a pre-configured persona:
 
 ## Product Roadmap
 
-### Phase 1: MVP (Weeks 1-4) — **TODAY**
+### Phase 1: MVP (Weeks 1-4) — **LIVE** 🎉
 - [x] Domain purchased (clawsrus.com)
 - [x] Repo created
-- [ ] Landing page with pricing
-- [ ] Sign-up form (manual provisioning)
-- [ ] 3 personas: Chief of Staff, Sales Expert, Personal Assistant
-- [ ] 5 skill packs
-- [ ] Manual payment (Stripe later)
+- [x] Landing page live
+- [x] Stripe checkout integration
+- [x] 3 personas: Chief of Staff, Sales Expert, Personal Assistant
+- [ ] Manual provisioning (in progress)
+- [ ] Skill packs (in progress)
 
-### Phase 2: Automation (Weeks 5-8)
-- [ ] Stripe integration
+### Phase 2: Subscription + Automation (Weeks 5-8)
+- [ ] Add subscription pricing tiers ($29/mo, $79/mo, $199/mo)
 - [ ] Auto-provisioning (webhook → script)
 - [ ] User dashboard
 - [ ] Usage tracking
