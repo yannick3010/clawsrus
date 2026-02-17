@@ -49,13 +49,25 @@ export default function Personas() {
           {personas.map((persona) => {
             const Icon = iconMap[persona.icon as keyof typeof iconMap];
             const colors = colorMap[persona.color as keyof typeof colorMap];
+            const isComingSoon = persona.comingSoon;
             return (
               <div
                 key={persona.id}
-                className={`rounded-xl border ${colors.border} ${colors.bg} p-8 transition hover:scale-[1.02]`}
+                className={`relative rounded-xl border p-8 transition ${
+                  isComingSoon
+                    ? "border-slate-800 bg-slate-900/30 opacity-60"
+                    : `${colors.border} ${colors.bg} hover:scale-[1.02]`
+                }`}
               >
+                {isComingSoon && (
+                  <div className="absolute right-4 top-4 rounded-full bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-400">
+                    Coming Soon
+                  </div>
+                )}
                 <div
-                  className={`inline-flex rounded-lg ${colors.tag} p-3`}
+                  className={`inline-flex rounded-lg p-3 ${
+                    isComingSoon ? "bg-slate-800 text-slate-500" : colors.tag
+                  }`}
                 >
                   <Icon className="h-6 w-6" />
                 </div>

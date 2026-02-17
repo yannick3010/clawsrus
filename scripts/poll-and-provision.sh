@@ -68,8 +68,6 @@ provision_user() {
     local PERSONA=$(echo "$ROW" | jq -r '.persona')
     local TIER=$(echo "$ROW" | jq -r '.tier')
     local TG_TOKEN=$(echo "$ROW" | jq -r '.telegram_bot_token')
-    local AI_PROVIDER=$(echo "$ROW" | jq -r '.ai_provider')
-    local AI_KEY=$(echo "$ROW" | jq -r '.ai_api_key')
     local BOT_USERNAME=$(echo "$ROW" | jq -r '.telegram_bot_username')
 
     # Pretty name for persona
@@ -88,7 +86,7 @@ provision_user() {
     update_user_status "$USER_ID" "provisioning"
 
     # Run provision script
-    if "$SCRIPT_DIR/provision-user.sh" "$USER_ID" "$EMAIL" "$PERSONA" "$TIER" "$TG_TOKEN" "$AI_PROVIDER" "$AI_KEY" 2>&1 | tee -a "$LOG_FILE"; then
+    if "$SCRIPT_DIR/provision-user.sh" "$USER_ID" "$EMAIL" "$PERSONA" "$TIER" "$TG_TOKEN" 2>&1 | tee -a "$LOG_FILE"; then
         local CONTAINER_NAME="clawsrus-${USER_ID}"
         update_user_status "$USER_ID" "active" "$CONTAINER_NAME"
         log_to_supabase "$USER_ID" "provisioning_complete" "{\"container\": \"$CONTAINER_NAME\"}"

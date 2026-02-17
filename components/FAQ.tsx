@@ -9,16 +9,8 @@ const faqs = [
     a: "OpenClaw is a popular open-source AI agent framework with 180K+ stars on GitHub. It handles memory, skills, multi-provider AI support, and Telegram integration out of the box. We configure it with specialized personas so you don't have to.",
   },
   {
-    q: "Why do I need my own AI API key?",
-    a: "This gives you full control over your AI costs and lets you choose your preferred provider (OpenAI or Google Gemini). Most users spend $5-20/month on API calls depending on usage. You're never locked into our pricing for AI compute.",
-  },
-  {
     q: "How do I create a Telegram bot?",
     a: "It takes about 2 minutes. After checkout, our setup page walks you through it step-by-step: open Telegram, message @BotFather, send /newbot, pick a name, and copy the token. That's it.",
-  },
-  {
-    q: "What happens if I cancel?",
-    a: "Email us at support@clawsrus.com and we'll cancel your subscription. Your AI assistant will stop at the end of your billing period. We're working on self-serve cancellation.",
   },
   {
     q: "Can I switch personas later?",
@@ -26,7 +18,7 @@ const faqs = [
   },
   {
     q: "Is my data private?",
-    a: "Yes. Each customer gets an isolated Docker container. Your conversations go through your own Telegram bot and your own AI API key. We don't have access to your chat content.",
+    a: "Yes. Each customer gets an isolated Docker container. Your conversations go through your own Telegram bot. We don't have access to your chat content.",
   },
 ];
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 # ClawsRUs — User Provisioning Script
-# Usage: ./provision-user.sh <customer-id> <email> <persona> <tier> <telegram-token> <ai-provider> <ai-api-key>
+# Usage: ./provision-user.sh <customer-id> <email> <persona> <tier> <telegram-token>
+# Note: OPENAI_API_KEY is read from the environment (set in /opt/clawsrus/.env)
 
 set -e
 
@@ -9,12 +10,15 @@ CUSTOMER_EMAIL=$2
 PERSONA=$3
 TIER=$4
 TELEGRAM_BOT_TOKEN=$5
-AI_PROVIDER=$6
-AI_API_KEY=$7
 
-if [ -z "$CUSTOMER_ID" ] || [ -z "$CUSTOMER_EMAIL" ] || [ -z "$PERSONA" ] || [ -z "$TIER" ] || [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$AI_PROVIDER" ] || [ -z "$AI_API_KEY" ]; then
-    echo "Usage: ./provision-user.sh <customer-id> <email> <persona> <tier> <telegram-token> <ai-provider> <ai-api-key>"
-    echo "Example: ./provision-user.sh user-123 john@example.com chief-of-staff pro 123:ABC openai sk-xxx"
+if [ -z "$CUSTOMER_ID" ] || [ -z "$CUSTOMER_EMAIL" ] || [ -z "$PERSONA" ] || [ -z "$TIER" ] || [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+    echo "Usage: ./provision-user.sh <customer-id> <email> <persona> <tier> <telegram-token>"
+    echo "Example: ./provision-user.sh user-123 john@example.com personal-assistant standard 123:ABC"
+    exit 1
+fi
+
+if [ -z "$OPENAI_API_KEY" ]; then
+    echo "Error: OPENAI_API_KEY environment variable is not set"
     exit 1
 fi
 
@@ -43,21 +47,17 @@ fi
 
 # Set resource limits based on tier
 case "$TIER" in
-    starter)
-        CPU_LIMIT="0.5"
-        MEMORY_LIMIT="512M"
-        ;;
-    pro)
+    standard)
         CPU_LIMIT="1"
         MEMORY_LIMIT="1G"
         ;;
-    agency)
+    concierge)
         CPU_LIMIT="2"
         MEMORY_LIMIT="2G"
         ;;
     *)
-        CPU_LIMIT="0.5"
-        MEMORY_LIMIT="512M"
+        CPU_LIMIT="1"
+        MEMORY_LIMIT="1G"
         ;;
 esac
 
@@ -68,7 +68,6 @@ cat > "$BASE_DIR/$CUSTOMER_ID/config.json" <<EOF
   "email": "$CUSTOMER_EMAIL",
   "persona": "$PERSONA",
   "tier": "$TIER",
-  "ai_provider": "$AI_PROVIDER",
   "messaging": ["telegram"],
   "created_at": "$(date -Iseconds)"
 }
@@ -93,9 +92,7 @@ services:
       - CUSTOMER_ID=${CUSTOMER_ID}
       - PERSONA=${PERSONA}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - AI_PROVIDER=${AI_PROVIDER}
-      - OPENAI_API_KEY=$([ "$AI_PROVIDER" = "openai" ] && echo "$AI_API_KEY" || echo "")
-      - GOOGLE_AI_API_KEY=$([ "$AI_PROVIDER" = "gemini" ] && echo "$AI_API_KEY" || echo "")
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     deploy:
       resources:
         limits:

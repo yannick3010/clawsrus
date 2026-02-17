@@ -1,4 +1,14 @@
 export const PERSONAS = {
+  "personal-assistant": {
+    id: "personal-assistant",
+    name: "Personal Assistant",
+    tagline: "Your everyday AI sidekick",
+    description:
+      "Manages reminders, researches anything, drafts messages, and keeps your life organized. Like having a reliable assistant who never forgets.",
+    icon: "User",
+    color: "purple",
+    comingSoon: false,
+  },
   "chief-of-staff": {
     id: "chief-of-staff",
     name: "Chief of Staff",
@@ -7,6 +17,7 @@ export const PERSONAS = {
       "Manages priorities, prepares briefings, drafts communications, and keeps everything on track. Like having a seasoned executive assistant who thinks three steps ahead.",
     icon: "Shield",
     color: "blue",
+    comingSoon: true,
   },
   "sales-expert": {
     id: "sales-expert",
@@ -16,15 +27,7 @@ export const PERSONAS = {
       "Crafts outreach sequences, handles objections, tracks follow-ups, and coaches you on technique. Like having a top-performing sales rep in your pocket.",
     icon: "TrendingUp",
     color: "green",
-  },
-  "personal-assistant": {
-    id: "personal-assistant",
-    name: "Personal Assistant",
-    tagline: "Your everyday AI sidekick",
-    description:
-      "Manages reminders, researches anything, drafts messages, and keeps your life organized. Like having a reliable assistant who never forgets.",
-    icon: "User",
-    color: "purple",
+    comingSoon: true,
   },
 } as const;
 
@@ -39,7 +42,7 @@ export const TIERS = {
     priceSuffix: "one-time setup",
     description: "Everything you need to get started",
     features: [
-      "1 AI persona of your choice",
+      "Personal Assistant persona",
       "Telegram messaging",
       "All skills included",
       "Guided self-serve setup",
@@ -55,7 +58,7 @@ export const TIERS = {
     priceSuffix: "one-time setup",
     description: "White-glove setup with hands-on help",
     features: [
-      "1 AI persona of your choice",
+      "Personal Assistant persona",
       "Telegram messaging",
       "All skills included",
       "We set everything up for you",

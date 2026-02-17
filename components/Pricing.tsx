@@ -38,8 +38,8 @@ export default function Pricing() {
             Simple, Transparent Pricing
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-slate-400">
-            One-time setup fee. You bring your own AI API key (OpenAI or
-            Gemini) — so there are no recurring costs from us.
+            One-time setup fee. No subscriptions, no hidden costs. Pay once
+            and your AI assistant is yours.
           </p>
         </div>
 
@@ -48,19 +48,32 @@ export default function Pricing() {
             Select your persona:
           </label>
           <div className="flex gap-2">
-            {personas.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setSelectedPersona(p.id as PersonaId)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                  selectedPersona === p.id
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-800 text-slate-400 hover:text-white"
-                }`}
-              >
-                {p.name}
-              </button>
-            ))}
+            {personas.map((p) => {
+              const isComingSoon = p.comingSoon;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() =>
+                    !isComingSoon && setSelectedPersona(p.id as PersonaId)
+                  }
+                  disabled={isComingSoon}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+                    isComingSoon
+                      ? "cursor-not-allowed bg-slate-800/50 text-slate-600"
+                      : selectedPersona === p.id
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-800 text-slate-400 hover:text-white"
+                  }`}
+                >
+                  {p.name}
+                  {isComingSoon && (
+                    <span className="ml-1 text-xs text-slate-600">
+                      (soon)
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -118,7 +131,7 @@ export default function Pricing() {
           })}
         </div>
         <p className="mt-8 text-center text-sm text-slate-500">
-          + your own AI API costs (typically $5-20/mo depending on usage)
+          AI powered by OpenAI (GPT-4o). Hosting included.
         </p>
       </div>
     </section>
