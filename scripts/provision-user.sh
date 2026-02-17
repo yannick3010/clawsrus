@@ -27,22 +27,22 @@ TEMPLATE_DIR="/opt/clawsrus/templates"
 
 echo "Provisioning $CUSTOMER_ID ($PERSONA, $TIER)..."
 
-# Create customer directory
+# Create customer directory structure
 mkdir -p "$BASE_DIR/$CUSTOMER_ID"
-mkdir -p "$BASE_DIR/$CUSTOMER_ID/data"
+mkdir -p "$BASE_DIR/$CUSTOMER_ID/openclaw/workspace"
 
-# Copy persona template
+# Copy persona template into workspace
 if [ -d "$TEMPLATE_DIR/$PERSONA" ]; then
-    cp -r "$TEMPLATE_DIR/$PERSONA" "$BASE_DIR/$CUSTOMER_ID/workspace"
+    cp -r "$TEMPLATE_DIR/$PERSONA"/* "$BASE_DIR/$CUSTOMER_ID/openclaw/workspace/"
 else
     echo "Error: Persona template '$PERSONA' not found"
     exit 1
 fi
 
 # Update USER.md with customer info
-if [ -f "$BASE_DIR/$CUSTOMER_ID/workspace/USER.md" ]; then
-    sed -i "s/{{CUSTOMER_NAME}}/$CUSTOMER_EMAIL/g" "$BASE_DIR/$CUSTOMER_ID/workspace/USER.md"
-    sed -i "s/{{CUSTOMER_EMAIL}}/$CUSTOMER_EMAIL/g" "$BASE_DIR/$CUSTOMER_ID/workspace/USER.md"
+if [ -f "$BASE_DIR/$CUSTOMER_ID/openclaw/workspace/USER.md" ]; then
+    sed -i "s/{{CUSTOMER_NAME}}/$CUSTOMER_EMAIL/g" "$BASE_DIR/$CUSTOMER_ID/openclaw/workspace/USER.md"
+    sed -i "s/{{CUSTOMER_EMAIL}}/$CUSTOMER_EMAIL/g" "$BASE_DIR/$CUSTOMER_ID/openclaw/workspace/USER.md"
 fi
 
 # Set resource limits based on tier
@@ -61,7 +61,58 @@ case "$TIER" in
         ;;
 esac
 
-# Generate config
+# Resolve persona display name
+case "$PERSONA" in
+    personal-assistant) PERSONA_NAME="Personal Assistant" ;;
+    chief-of-staff)     PERSONA_NAME="Chief of Staff" ;;
+    sales-expert)       PERSONA_NAME="Sales Expert" ;;
+    *)                  PERSONA_NAME="AI Assistant" ;;
+esac
+
+# Generate OpenClaw config (current schema)
+cat > "$BASE_DIR/$CUSTOMER_ID/openclaw/openclaw.json" <<OCEOF
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai/gpt-4o"
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "identity": {
+          "name": "$PERSONA_NAME",
+          "theme": "helpful $PERSONA_NAME"
+        }
+      }
+    ]
+  },
+  "env": {
+    "OPENAI_API_KEY": "$OPENAI_API_KEY"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "bind": "loopback"
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "$TELEGRAM_BOT_TOKEN",
+      "allowFrom": ["*"]
+    }
+  },
+  "logging": {
+    "level": "info"
+  }
+}
+OCEOF
+
+# Generate customer metadata
 cat > "$BASE_DIR/$CUSTOMER_ID/config.json" <<EOF
 {
   "customer_id": "$CUSTOMER_ID",
@@ -75,24 +126,19 @@ EOF
 
 # Generate docker-compose for this customer
 cat > "$BASE_DIR/$CUSTOMER_ID/docker-compose.yml" <<EOF
-version: '3.8'
-
 services:
   openclaw:
-    image: node:22-slim
+    image: node:22-bookworm
     container_name: clawsrus-${CUSTOMER_ID}
-    working_dir: /home/app
+    working_dir: /home/node
     command: >
       sh -c "npm install -g openclaw &&
-             openclaw start --telegram --workspace /home/app/workspace"
+             openclaw gateway run --allow-unconfigured"
     volumes:
-      - ./workspace:/home/app/workspace
-      - ./data:/home/app/.openclaw
+      - ./openclaw:/home/node/.openclaw
     environment:
-      - CUSTOMER_ID=${CUSTOMER_ID}
-      - PERSONA=${PERSONA}
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NODE_ENV=production
+      - HOME=/home/node
     deploy:
       resources:
         limits:
@@ -112,6 +158,6 @@ cd "$BASE_DIR/$CUSTOMER_ID"
 docker compose up -d
 
 echo "Provisioned $CUSTOMER_ID with persona $PERSONA"
-echo "  Workspace: $BASE_DIR/$CUSTOMER_ID/workspace"
+echo "  Workspace: $BASE_DIR/$CUSTOMER_ID/openclaw/workspace"
 echo "  Config: $BASE_DIR/$CUSTOMER_ID/config.json"
 echo "  Container: clawsrus-${CUSTOMER_ID}"
