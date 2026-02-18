@@ -27,6 +27,44 @@ const proxy = httpProxy.createProxyServer({
   secure: false,
 });
 
+function withSelfFrameAncestors(csp: string) {
+  const directives = csp
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  let found = false;
+  const rewritten = directives.map((directive) => {
+    if (directive.toLowerCase().startsWith("frame-ancestors")) {
+      found = true;
+      return "frame-ancestors 'self'";
+    }
+    return directive;
+  });
+
+  if (!found) {
+    rewritten.push("frame-ancestors 'self'");
+  }
+
+  return rewritten.join("; ");
+}
+
+proxy.on("proxyRes", (proxyRes) => {
+  // OpenClaw UI sends DENY/'none' by default, which breaks same-origin dashboard iframe embedding.
+  proxyRes.headers["x-frame-options"] = "SAMEORIGIN";
+
+  const cspHeader = proxyRes.headers["content-security-policy"];
+  if (typeof cspHeader === "string" && cspHeader.trim().length > 0) {
+    proxyRes.headers["content-security-policy"] = withSelfFrameAncestors(cspHeader);
+  } else if (Array.isArray(cspHeader) && cspHeader.length > 0) {
+    proxyRes.headers["content-security-policy"] = withSelfFrameAncestors(
+      cspHeader.join("; ")
+    );
+  } else {
+    proxyRes.headers["content-security-policy"] = "frame-ancestors 'self'";
+  }
+});
+
 proxy.on("error", (err, req, res) => {
   console.error("Gateway proxy error:", {
     message: err.message,
