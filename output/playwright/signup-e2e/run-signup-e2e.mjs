@@ -16,6 +16,13 @@ function log(msg) {
   fs.appendFileSync(logPath, `${line}\n`);
 }
 
+const RETRYABLE_PROXY_REASONS = new Set([
+  'container_missing',
+  'container_not_running',
+  'container_unreachable',
+  'gateway_token_missing',
+]);
+
 async function waitForToggleEnabledState(toggle, expected, timeoutMs = 90000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
@@ -27,6 +34,52 @@ async function waitForToggleEnabledState(toggle, expected, timeoutMs = 90000) {
   }
   const actual = await toggle.getAttribute('data-enabled').catch(() => null);
   throw new Error(`Timed out waiting for skills toggle state=${expected}, actual=${actual}`);
+}
+
+async function fetchProxyTokenStatus(page) {
+  return page.evaluate(async () => {
+    const res = await fetch('/api/agent/proxy-token', { cache: 'no-store' });
+    const text = await res.text();
+    let json = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      json = null;
+    }
+    return { status: res.status, text, json };
+  });
+}
+
+async function waitForProxyTokenReady(page, opts = {}) {
+  const timeoutMs = Number(opts.timeoutMs || 8 * 60 * 1000);
+  const pollMs = Number(opts.pollMs || 5000);
+  const startedAt = Date.now();
+  let attempt = 0;
+  let last = null;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    attempt += 1;
+    const status = await fetchProxyTokenStatus(page);
+    last = status;
+
+    const reason = typeof status?.json?.reason === 'string' ? status.json.reason : null;
+    const retryable = status.status === 409 && reason && RETRYABLE_PROXY_REASONS.has(reason);
+    log(`Proxy-token attempt ${attempt}: status=${status.status}${reason ? ` reason=${reason}` : ''}`);
+
+    if (status.status === 200) {
+      return status;
+    }
+
+    if (!retryable) {
+      throw new Error(`Proxy-token failed: ${status.status} ${status.text}`);
+    }
+
+    await page.waitForTimeout(pollMs);
+  }
+
+  throw new Error(
+    `Proxy-token did not become ready within ${timeoutMs}ms. Last status=${last?.status} body=${last?.text}`
+  );
 }
 
 async function fillVisibleWizardFields(page, email) {
@@ -397,23 +450,16 @@ try {
 
   log('Validate dashboard chat');
   await page.getByRole('heading', { name: /Agent Chat/i }).waitFor({ timeout: 90000 });
+  await page.locator('[data-testid="native-chat-panel"]').waitFor({ state: 'visible', timeout: 90000 });
 
-  const runtimeError = page.locator('text=/Assistant runtime unavailable|Gateway unavailable|Unable to connect chat|Failed to initialize chat/i').first();
+  await waitForProxyTokenReady(page, { timeoutMs: 8 * 60 * 1000, pollMs: 5000 });
+
+  const runtimeError = page
+    .locator('text=/Assistant runtime unavailable|Gateway unavailable|Unable to connect chat|Failed to initialize chat/i')
+    .first();
   const hasRuntimeError = await runtimeError.isVisible().catch(() => false);
   if (hasRuntimeError) {
     throw new Error(`Chat panel error visible: ${await runtimeError.textContent()}`);
-  }
-
-  await page.locator('[data-testid="native-chat-panel"]').waitFor({ state: 'visible', timeout: 90000 });
-
-  const proxyStatus = await page.evaluate(async () => {
-    const res = await fetch('/api/agent/proxy-token', { cache: 'no-store' });
-    const text = await res.text();
-    return { status: res.status, text };
-  });
-  log(`Proxy-token API status: ${proxyStatus.status}`);
-  if (proxyStatus.status !== 200) {
-    throw new Error(`Proxy-token failed: ${proxyStatus.status} ${proxyStatus.text}`);
   }
 
   const chatInput = page.locator('[data-testid="chat-input"]').first();
