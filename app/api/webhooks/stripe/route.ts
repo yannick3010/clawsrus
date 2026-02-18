@@ -55,6 +55,14 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      const metadata = session.metadata || {};
+      let helpTopics: string[] = [];
+      try {
+        helpTopics = JSON.parse(metadata.help_topics || "[]");
+      } catch {
+        helpTopics = [];
+      }
+
       const userId = `user-${nanoid(12)}`;
       const { error } = await supabase.from("users").insert({
         id: userId,
@@ -64,8 +72,12 @@ export async function POST(req: NextRequest) {
         status: "awaiting_setup",
         stripe_customer_id: customerId,
         stripe_payment_intent_id: paymentIntentId,
-        preferred_name: null,
+        preferred_name: metadata.name || null,
         timezone: "UTC",
+        role: metadata.role || null,
+        help_topics: helpTopics,
+        communication_style: metadata.communication_style || null,
+        top_priorities: metadata.top_priority ? [metadata.top_priority] : [],
       });
 
       if (error) {

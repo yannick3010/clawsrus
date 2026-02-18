@@ -48,7 +48,7 @@ export default function Hero() {
           style={{ animationDelay: "0.5s" }}
         >
           <a
-            href="#pricing"
+            href="/signup?tier=standard&persona=personal-assistant"
             className="inline-flex items-center gap-2 rounded-full bg-brand-500 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand-500/25 transition-all hover:bg-brand-400 hover:shadow-xl hover:shadow-brand-500/30"
           >
             Get Started — From $199

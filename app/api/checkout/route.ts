@@ -3,18 +3,30 @@ import { stripe } from "@/lib/stripe";
 import { STRIPE_PRICE_IDS, TIERS, PERSONAS } from "@/lib/constants";
 import type { TierId, PersonaId } from "@/lib/constants";
 
+interface CheckoutBody {
+  tier: string;
+  persona: string;
+  name?: string;
+  email?: string;
+  role?: string | null;
+  helpTopics?: string[];
+  communicationStyle?: string;
+  topPriority?: string;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { tier, persona } = (await req.json()) as {
-      tier: string;
-      persona: string;
-    };
+    const body = (await req.json()) as CheckoutBody;
+    const { tier, persona, name, email, role, helpTopics, communicationStyle, topPriority } = body;
 
     if (!TIERS[tier as TierId]) {
       return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
     }
     if (!PERSONAS[persona as PersonaId]) {
       return NextResponse.json({ error: "Invalid persona" }, { status: 400 });
+    }
+    if (!name || !email) {
+      return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
     }
 
     const priceId = STRIPE_PRICE_IDS[tier as TierId];
@@ -31,7 +43,16 @@ export async function POST(req: NextRequest) {
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
-      metadata: { tier, persona },
+      customer_email: email,
+      metadata: {
+        tier,
+        persona,
+        name,
+        role: role || "",
+        help_topics: JSON.stringify(helpTopics || []),
+        communication_style: communicationStyle || "",
+        top_priority: topPriority || "",
+      },
       success_url: `${appUrl}/setup?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/#pricing`,
     });
