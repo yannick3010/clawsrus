@@ -16,6 +16,19 @@ function log(msg) {
   fs.appendFileSync(logPath, `${line}\n`);
 }
 
+async function waitForToggleEnabledState(toggle, expected, timeoutMs = 90000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const value = await toggle.getAttribute('data-enabled').catch(() => null);
+    if (value === expected) {
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  }
+  const actual = await toggle.getAttribute('data-enabled').catch(() => null);
+  throw new Error(`Timed out waiting for skills toggle state=${expected}, actual=${actual}`);
+}
+
 async function fillVisibleWizardFields(page, email) {
   const fields = page.locator('input, textarea, select');
   const count = await fields.count();
@@ -245,6 +258,7 @@ async function fillInAnyFrame(page, selector, value) {
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 2200 } });
 const page = await context.newPage();
+const e2eSkillsId = (process.env.E2E_SKILLS_ID || '').trim();
 
 let wsSeen = false;
 let wsUrl = '';
@@ -417,6 +431,33 @@ try {
     initialAssistantCount,
     { timeout: 180000 }
   );
+
+  if (e2eSkillsId) {
+    log(`Validate native skills panel for skill=${e2eSkillsId}`);
+    await page.locator('[data-testid="native-skills-panel"]').waitFor({ state: 'visible', timeout: 90000 });
+
+    const row = page.getByTestId(`skills-row-${e2eSkillsId}`).first();
+    const toggle = page.getByTestId(`skills-toggle-${e2eSkillsId}`).first();
+    await row.waitFor({ state: 'visible', timeout: 90000 });
+    await toggle.waitFor({ state: 'visible', timeout: 90000 });
+
+    const before = await toggle.getAttribute('data-enabled');
+    if (before !== 'true' && before !== 'false') {
+      throw new Error(`Unexpected skills toggle state before click: ${before}`);
+    }
+    const expected = before === 'true' ? 'false' : 'true';
+
+    await toggle.click({ timeout: 20000 });
+    await waitForToggleEnabledState(toggle, expected, 120000);
+
+    log('Refresh dashboard and re-check skills toggle persistence');
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 120000 });
+    await page.locator('[data-testid="native-skills-panel"]').waitFor({ state: 'visible', timeout: 90000 });
+
+    const toggleAfterReload = page.getByTestId(`skills-toggle-${e2eSkillsId}`).first();
+    await toggleAfterReload.waitFor({ state: 'visible', timeout: 90000 });
+    await waitForToggleEnabledState(toggleAfterReload, expected, 120000);
+  }
 
   for (let i = 0; i < 50 && !wsSeen; i += 1) {
     await page.waitForTimeout(500);

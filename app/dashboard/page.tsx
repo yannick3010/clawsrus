@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import ChatPanel from "@/components/dashboard/ChatPanel";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
 import ChannelsPanel from "@/components/dashboard/ChannelsPanel";
+import SkillsPanel from "@/components/dashboard/SkillsPanel";
 import SignOutButton from "@/components/dashboard/SignOutButton";
 import { getAuthenticatedAppUser } from "@/lib/dashboard-auth";
 
@@ -34,6 +35,7 @@ export default async function DashboardPage() {
         <aside className="space-y-6">
           <ProfileSettings />
           <ChannelsPanel />
+          <SkillsPanel />
         </aside>
       </div>
     </main>

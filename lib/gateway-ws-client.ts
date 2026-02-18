@@ -68,6 +68,43 @@ export type GatewayChatSendParams = {
   }>;
 };
 
+export type GatewaySkillRowRaw = {
+  id?: string;
+  skillId?: string;
+  skillKey?: string;
+  key?: string;
+  name?: string;
+  title?: string;
+  description?: string;
+  summary?: string;
+  enabled?: boolean;
+  disabled?: boolean;
+  isEnabled?: boolean;
+  active?: boolean;
+  mutable?: boolean;
+  canToggle?: boolean;
+  readonly?: boolean;
+  locked?: boolean;
+  always?: boolean;
+  [key: string]: unknown;
+};
+
+export type GatewaySkillsListResult = {
+  skills?: GatewaySkillRowRaw[];
+  items?: GatewaySkillRowRaw[];
+  list?: GatewaySkillRowRaw[];
+  rows?: GatewaySkillRowRaw[];
+  [key: string]: unknown;
+};
+
+export type GatewaySkillSetEnabledResult = {
+  ok?: boolean;
+  id?: string;
+  skillId?: string;
+  enabled?: boolean;
+  [key: string]: unknown;
+};
+
 type PendingRequest = {
   resolve: (value: unknown) => void;
   reject: (error: unknown) => void;
@@ -105,6 +142,14 @@ function parseAuthTokenFromWsUrl(wsUrl: string): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+function isUnknownMethodError(error: unknown, method: string): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  const expected = `unknown method: ${method}`.toLowerCase();
+  return error.message.toLowerCase().includes(expected);
 }
 
 export class GatewayWsClient {
@@ -178,6 +223,54 @@ export class GatewayWsClient {
       sessionKey,
       ...(runId ? { runId } : {}),
     });
+  }
+
+  async listSkills() {
+    try {
+      return await this.request<GatewaySkillsListResult>("skills.list");
+    } catch (error) {
+      if (!isUnknownMethodError(error, "skills.list")) {
+        throw error;
+      }
+      return this.request<GatewaySkillsListResult>("skills.status", {});
+    }
+  }
+
+  async setSkillEnabled(params: { skillId: string; enabled: boolean }) {
+    const skillId = params.skillId.trim();
+    if (!skillId) {
+      throw new Error("Skill id is required");
+    }
+
+    try {
+      return await this.request<GatewaySkillSetEnabledResult>("skills.setEnabled", {
+        skillId,
+        enabled: params.enabled,
+      });
+    } catch (primaryError) {
+      try {
+        return await this.request<GatewaySkillSetEnabledResult>("skills.setEnabled", {
+          id: skillId,
+          enabled: params.enabled,
+        });
+      } catch (secondError) {
+        try {
+          return await this.request<GatewaySkillSetEnabledResult>("skills.update", {
+            skillKey: skillId,
+            enabled: params.enabled,
+          });
+        } catch (thirdError) {
+          const primary =
+          primaryError instanceof Error ? primaryError.message : String(primaryError);
+          const second = secondError instanceof Error ? secondError.message : String(secondError);
+          const third = thirdError instanceof Error ? thirdError.message : String(thirdError);
+          throw new Error(
+            "skills enable update failed using skills.setEnabled(skillId), " +
+              `skills.setEnabled(id), and skills.update(skillKey): ${primary}; ${second}; ${third}`
+          );
+        }
+      }
+    }
   }
 
   request<T = unknown>(
