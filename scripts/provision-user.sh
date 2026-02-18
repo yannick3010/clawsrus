@@ -24,23 +24,64 @@ fi
 BASE_DIR="/opt/clawsrus/customers"
 TEMPLATE_DIR="/opt/clawsrus/templates"
 APP_ORIGIN="${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
-OPENCLAW_IMAGE="${OPENCLAW_IMAGE:-clawsrus/openclaw-runtime:2026.02.18}"
+OPENCLAW_IMAGE="${OPENCLAW_IMAGE:-clawsrus/openclaw-runtime:2026.2.17-r1}"
+OPENCLAW_DOCKER_NETWORK="${OPENCLAW_DOCKER_NETWORK:-clawsrus-network}"
 OPENCLAW_GATEWAY_PORT="${OPENCLAW_GATEWAY_PORT:-18789}"
 OPENCLAW_READY_TIMEOUT_SECONDS="${OPENCLAW_READY_TIMEOUT_SECONDS:-90}"
 
-TRUSTED_PROXY_IPS="${OPENCLAW_TRUSTED_PROXIES:-127.0.0.1,172.17.0.1}"
-IFS=',' read -ra IPS <<< "$TRUSTED_PROXY_IPS"
-TRUSTED_PROXIES_JSON=""
-for raw_ip in "${IPS[@]}"; do
-    ip=$(echo "$raw_ip" | xargs)
-    if [ -n "$ip" ]; then
-        if [ -n "$TRUSTED_PROXIES_JSON" ]; then
-            TRUSTED_PROXIES_JSON+=" ,"
-        fi
-        TRUSTED_PROXIES_JSON+="\"$ip\""
+generate_gateway_token() {
+    if command -v openssl >/dev/null 2>&1; then
+        openssl rand -hex 32
+        return
     fi
-done
-TRUSTED_PROXIES_JSON="[$TRUSTED_PROXIES_JSON]"
+
+    if [ -r /dev/urandom ]; then
+        od -An -N32 -tx1 /dev/urandom | tr -d ' \n'
+        return
+    fi
+
+    date +%s%N
+}
+
+persist_gateway_token() {
+    local token=$1
+
+    if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_SERVICE_KEY:-}" ]; then
+        echo "Skipping gateway token sync (SUPABASE_URL/SUPABASE_SERVICE_KEY not set)"
+        return 0
+    fi
+
+    local response_file
+    response_file=$(mktemp)
+    local payload
+    payload=$(jq -nc --arg gateway_token "$token" --arg updated_at "$(date -Iseconds)" \
+      '{gateway_token: $gateway_token, updated_at: $updated_at}')
+
+    local status_code
+    status_code=$(curl -sS -o "$response_file" -w "%{http_code}" \
+      -X PATCH "$SUPABASE_URL/rest/v1/users?id=eq.${CUSTOMER_ID}" \
+      -H "apikey: $SUPABASE_SERVICE_KEY" \
+      -H "Authorization: Bearer $SUPABASE_SERVICE_KEY" \
+      -H "Content-Type: application/json" \
+      -d "$payload")
+
+    if [[ "$status_code" =~ ^2 ]]; then
+        echo "Synced gateway token to Supabase for $CUSTOMER_ID"
+        rm -f "$response_file"
+        return 0
+    fi
+
+    if grep -Eq '"code":"42703"|"code":"PGRST204"|gateway_token' "$response_file"; then
+        echo "Skipping gateway token sync (users.gateway_token column not present yet)"
+        rm -f "$response_file"
+        return 0
+    fi
+
+    echo "WARNING: Failed to sync gateway token for $CUSTOMER_ID (HTTP $status_code)"
+    cat "$response_file" || true
+    rm -f "$response_file"
+    return 0
+}
 
 wait_for_gateway() {
     local container_name=$1
@@ -119,6 +160,8 @@ case "$PERSONA" in
     *)                  PERSONA_NAME="AI Assistant" ;;
 esac
 
+GATEWAY_TOKEN=$(generate_gateway_token)
+
 # Generate OpenClaw config
 cat > "$BASE_DIR/$CUSTOMER_ID/openclaw/openclaw.json" <<OCEOF
 {
@@ -148,18 +191,14 @@ cat > "$BASE_DIR/$CUSTOMER_ID/openclaw/openclaw.json" <<OCEOF
     "mode": "local",
     "port": 18789,
     "bind": "lan",
-    "trustedProxies": $TRUSTED_PROXIES_JSON,
     "auth": {
-      "mode": "trusted-proxy",
-      "trustedProxy": {
-        "userHeader": "x-forwarded-user",
-        "requiredHeaders": ["x-forwarded-proto", "x-forwarded-host"],
-        "allowUsers": ["$CUSTOMER_EMAIL"]
-      }
+      "mode": "token",
+      "token": "$GATEWAY_TOKEN"
     },
     "controlUi": {
       "enabled": true,
       "basePath": "/openclaw",
+      "dangerouslyDisableDeviceAuth": true,
       "allowedOrigins": ["$APP_ORIGIN"]
     }
   },
@@ -186,6 +225,8 @@ cat > "$BASE_DIR/$CUSTOMER_ID/config.json" <<EOF_META
 }
 EOF_META
 
+persist_gateway_token "$GATEWAY_TOKEN"
+
 # Generate docker-compose for this customer
 cat > "$BASE_DIR/$CUSTOMER_ID/docker-compose.yml" <<EOF_COMPOSE
 services:
@@ -202,12 +243,18 @@ services:
       - NODE_OPTIONS=--max-old-space-size=${NODE_HEAP_MB}
     cpus: '${CPU_LIMIT}'
     mem_limit: ${MEMORY_LIMIT}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:${OPENCLAW_GATEWAY_PORT}/openclaw/"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     restart: unless-stopped
     networks:
-      - clawsrus-network
+      - $OPENCLAW_DOCKER_NETWORK
 
 networks:
-  clawsrus-network:
+  $OPENCLAW_DOCKER_NETWORK:
     external: true
 EOF_COMPOSE
 

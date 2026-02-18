@@ -11,7 +11,8 @@ type ProxyTokenResponse = {
 type ProxyTokenErrorReason =
   | "container_missing"
   | "container_not_running"
-  | "container_unreachable";
+  | "container_unreachable"
+  | "gateway_token_missing";
 
 export default function ChatPanel() {
   const [iframeUrl, setIframeUrl] = useState("");
@@ -40,6 +41,8 @@ export default function ChatPanel() {
             setError("Assistant is still starting. Try refresh in a few seconds.");
           } else if (data.reason === "container_unreachable") {
             setError("Assistant is starting, but chat gateway is not reachable yet.");
+          } else if (data.reason === "gateway_token_missing") {
+            setError("Assistant setup is incomplete. Please contact support to finish provisioning.");
           } else {
             setError(data.error || "Assistant runtime unavailable");
           }

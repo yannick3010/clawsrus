@@ -11,7 +11,44 @@ export type AppUser = {
   auth_user_id: string | null;
   preferred_name: string | null;
   timezone: string | null;
+  gateway_token: string | null;
 };
+
+const APP_USER_SELECT_WITH_GATEWAY_TOKEN =
+  "id,email,persona,tier,status,container_id,auth_user_id,preferred_name,timezone,gateway_token";
+const APP_USER_SELECT_LEGACY =
+  "id,email,persona,tier,status,container_id,auth_user_id,preferred_name,timezone";
+
+function isMissingGatewayTokenColumn(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+  const code = "code" in error ? String((error as { code?: unknown }).code || "") : "";
+  const message =
+    "message" in error ? String((error as { message?: unknown }).message || "") : "";
+  return (
+    code === "42703" ||
+    code === "PGRST204" ||
+    message.toLowerCase().includes("gateway_token")
+  );
+}
+
+async function fetchAppUserByAuthId(authUserId: string, includeGatewayToken: boolean) {
+  return supabase
+    .from("users")
+    .select(includeGatewayToken ? APP_USER_SELECT_WITH_GATEWAY_TOKEN : APP_USER_SELECT_LEGACY)
+    .eq("auth_user_id", authUserId)
+    .maybeSingle();
+}
+
+async function fetchAppUserByEmail(email: string, includeGatewayToken: boolean) {
+  return supabase
+    .from("users")
+    .select(includeGatewayToken ? APP_USER_SELECT_WITH_GATEWAY_TOKEN : APP_USER_SELECT_LEGACY)
+    .eq("email", email)
+    .limit(1)
+    .maybeSingle();
+}
 
 export async function getAuthenticatedAppUser(): Promise<{
   authUserId: string;
@@ -27,13 +64,19 @@ export async function getAuthenticatedAppUser(): Promise<{
     return null;
   }
 
-  const { data: byAuthId, error: byAuthIdError } = await supabase
-    .from("users")
-    .select(
-      "id,email,persona,tier,status,container_id,auth_user_id,preferred_name,timezone"
-    )
-    .eq("auth_user_id", user.id)
-    .maybeSingle();
+  let includeGatewayToken = true;
+  let { data: byAuthId, error: byAuthIdError } = await fetchAppUserByAuthId(
+    user.id,
+    includeGatewayToken
+  );
+
+  if (byAuthIdError && isMissingGatewayTokenColumn(byAuthIdError)) {
+    includeGatewayToken = false;
+    ({ data: byAuthId, error: byAuthIdError } = await fetchAppUserByAuthId(
+      user.id,
+      includeGatewayToken
+    ));
+  }
 
   if (byAuthIdError) {
     return null;
@@ -41,19 +84,31 @@ export async function getAuthenticatedAppUser(): Promise<{
 
   let appUser = byAuthId as AppUser | null;
   if (!appUser) {
-    const { data: byEmail, error: byEmailError } = await supabase
-      .from("users")
-      .select(
-        "id,email,persona,tier,status,container_id,auth_user_id,preferred_name,timezone"
-      )
-      .eq("email", user.email)
-      .limit(1)
-      .maybeSingle();
+    let { data: byEmail, error: byEmailError } = await fetchAppUserByEmail(
+      user.email,
+      includeGatewayToken
+    );
+
+    if (byEmailError && includeGatewayToken && isMissingGatewayTokenColumn(byEmailError)) {
+      includeGatewayToken = false;
+      ({ data: byEmail, error: byEmailError } = await fetchAppUserByEmail(
+        user.email,
+        includeGatewayToken
+      ));
+    }
 
     if (byEmailError || !byEmail) {
       return null;
     }
-    appUser = byEmail as AppUser;
+    appUser = {
+      ...(byEmail as unknown as Omit<AppUser, "gateway_token">),
+      gateway_token: null,
+    };
+  } else if (!includeGatewayToken) {
+    appUser = {
+      ...(appUser as unknown as Omit<AppUser, "gateway_token">),
+      gateway_token: null,
+    };
   }
 
   if (!appUser.auth_user_id) {

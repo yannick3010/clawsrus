@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedAppUser } from "@/lib/dashboard-auth";
 import { supabase } from "@/lib/supabase";
-import { applyTelegramRuntimeConfig } from "@/lib/runtime-channels";
+import {
+  applyTelegramRuntimeConfig,
+  removeTelegramRuntimeConfig,
+} from "@/lib/runtime-channels";
 
 export async function POST(req: NextRequest) {
   const auth = await getAuthenticatedAppUser();
@@ -80,4 +83,49 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
+}
+
+export async function DELETE() {
+  const auth = await getAuthenticatedAppUser();
+  if (!auth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const now = new Date().toISOString();
+  const [{ error: userUpdateError }, { error: channelUpdateError }] = await Promise.all([
+    supabase
+      .from("users")
+      .update({
+        telegram_bot_token: null,
+        telegram_bot_username: null,
+        updated_at: now,
+      })
+      .eq("id", auth.appUser.id),
+    supabase.from("user_channels").upsert(
+      {
+        user_id: auth.appUser.id,
+        channel: "telegram",
+        status: "disconnected",
+        meta: {},
+        updated_at: now,
+      },
+      { onConflict: "user_id,channel" }
+    ),
+  ]);
+
+  if (userUpdateError) {
+    return NextResponse.json({ error: userUpdateError.message }, { status: 500 });
+  }
+
+  if (channelUpdateError && channelUpdateError.code !== "42P01") {
+    return NextResponse.json({ error: channelUpdateError.message }, { status: 500 });
+  }
+
+  const runtimeResult = await removeTelegramRuntimeConfig(auth.appUser.id);
+
+  return NextResponse.json({
+    disconnected: true,
+    runtime_updated: runtimeResult.updated,
+    runtime_reason: "reason" in runtimeResult ? runtimeResult.reason : undefined,
+  });
 }
