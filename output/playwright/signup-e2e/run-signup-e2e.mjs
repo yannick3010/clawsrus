@@ -390,7 +390,7 @@ try {
     throw new Error(`Chat panel error visible: ${await runtimeError.textContent()}`);
   }
 
-  await page.locator('iframe[title="OpenClaw Chat"]').waitFor({ state: 'visible', timeout: 90000 });
+  await page.locator('[data-testid="native-chat-panel"]').waitFor({ state: 'visible', timeout: 90000 });
 
   const proxyStatus = await page.evaluate(async () => {
     const res = await fetch('/api/agent/proxy-token', { cache: 'no-store' });
@@ -401,6 +401,22 @@ try {
   if (proxyStatus.status !== 200) {
     throw new Error(`Proxy-token failed: ${proxyStatus.status} ${proxyStatus.text}`);
   }
+
+  const chatInput = page.locator('[data-testid="chat-input"]').first();
+  const chatSend = page.locator('[data-testid="chat-send"]').first();
+  await chatInput.waitFor({ state: 'visible', timeout: 90000 });
+  await chatSend.waitFor({ state: 'visible', timeout: 90000 });
+
+  const initialAssistantCount = await page.locator('[data-testid="chat-message"][data-role="assistant"]').count();
+  await chatInput.fill(`Playwright ping ${Date.now()}`);
+  await chatSend.click({ timeout: 20000 });
+
+  await page.waitForFunction(
+    (count) =>
+      document.querySelectorAll('[data-testid="chat-message"][data-role="assistant"]').length > count,
+    initialAssistantCount,
+    { timeout: 180000 }
+  );
 
   for (let i = 0; i < 50 && !wsSeen; i += 1) {
     await page.waitForTimeout(500);
