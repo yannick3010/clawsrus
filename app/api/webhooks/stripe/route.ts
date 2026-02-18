@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
 import { nanoid } from "nanoid";
 import Stripe from "stripe";
+import { ensureDefaultChannels } from "@/lib/channel-utils";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -41,7 +42,6 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      // Idempotent: check if user already exists for this payment
       if (paymentIntentId) {
         const { data: existing } = await supabase
           .from("users")
@@ -50,10 +50,7 @@ export async function POST(req: NextRequest) {
           .maybeSingle();
 
         if (existing) {
-          console.log(
-            "User already exists for payment:",
-            paymentIntentId
-          );
+          console.log("User already exists for payment:", paymentIntentId);
           break;
         }
       }
@@ -67,11 +64,18 @@ export async function POST(req: NextRequest) {
         status: "awaiting_setup",
         stripe_customer_id: customerId,
         stripe_payment_intent_id: paymentIntentId,
+        preferred_name: null,
+        timezone: "UTC",
       });
 
       if (error) {
         console.error("Failed to create user:", error);
       } else {
+        try {
+          await ensureDefaultChannels(userId);
+        } catch (channelError) {
+          console.error("Failed seeding default channels:", channelError);
+        }
         console.log("Created user:", userId);
       }
       break;

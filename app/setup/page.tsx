@@ -1,15 +1,21 @@
 "use client";
 
-import { Suspense, useState, useCallback } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  Bot,
-  Rocket,
+  AlertCircle,
   CheckCircle2,
   Loader2,
-  ExternalLink,
-  AlertCircle,
+  Rocket,
+  RefreshCw,
 } from "lucide-react";
+
+type SetupStatus =
+  | "awaiting_setup"
+  | "pending_provision"
+  | "provisioning"
+  | "active"
+  | "provision_failed";
 
 export default function SetupPage() {
   return (
@@ -20,305 +26,223 @@ export default function SetupPage() {
         </div>
       }
     >
-      <SetupWizard />
+      <SetupStatusPage />
     </Suspense>
   );
 }
 
-function SetupWizard() {
+function SetupStatusPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
-
-  const [step, setStep] = useState<1 | 2>(1);
-  const [telegramToken, setTelegramToken] = useState("");
-  const [botUsername, setBotUsername] = useState("");
-  const [tokenVerified, setTokenVerified] = useState(false);
-  const [tokenVerifying, setTokenVerifying] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
+  const [status, setStatus] = useState<SetupStatus | null>(null);
   const [error, setError] = useState("");
+  const [redirecting, setRedirecting] = useState(false);
+  const [bootstrapped, setBootstrapped] = useState(false);
+  const initializedRef = useRef(false);
 
-  const verifyToken = useCallback(async () => {
-    if (!telegramToken.trim()) return;
-    setTokenVerifying(true);
-    setError("");
-    try {
-      const res = await fetch(
-        `https://api.telegram.org/bot${telegramToken.trim()}/getMe`
-      );
-      const data = await res.json();
-      if (data.ok) {
-        setBotUsername(data.result.username);
-        setTokenVerified(true);
-      } else {
-        setError("Invalid bot token. Please check and try again.");
-        setTokenVerified(false);
-      }
-    } catch {
-      setError("Could not verify token. Check your connection.");
-      setTokenVerified(false);
-    } finally {
-      setTokenVerifying(false);
+  const statusLabel = useMemo(() => {
+    switch (status) {
+      case "awaiting_setup":
+        return "Preparing your setup...";
+      case "pending_provision":
+        return "Queued for provisioning";
+      case "provisioning":
+        return "Provisioning your OpenClaw instance";
+      case "active":
+        return "Ready";
+      case "provision_failed":
+        return "Provisioning failed";
+      default:
+        return "Initializing...";
     }
-  }, [telegramToken]);
+  }, [status]);
 
-  async function handleSubmit() {
-    setSubmitting(true);
+  const triggerSetup = useCallback(async () => {
+    if (!sessionId) {
+      return;
+    }
+
     setError("");
+    const res = await fetch("/api/setup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId }),
+    });
+
+    const data = (await res.json()) as { error?: string };
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to start setup");
+    }
+  }, [sessionId]);
+
+  const checkStatus = useCallback(async () => {
+    if (!sessionId) {
+      return;
+    }
+
+    const res = await fetch(`/api/setup/status?session_id=${encodeURIComponent(sessionId)}`, {
+      cache: "no-store",
+    });
+    const data = (await res.json()) as { status?: SetupStatus; error?: string };
+
+    if (!res.ok || !data.status) {
+      throw new Error(data.error || "Failed to fetch setup status");
+    }
+
+    setStatus(data.status);
+    return data.status;
+  }, [sessionId]);
+
+  const bootstrapAndRedirect = useCallback(async () => {
+    if (!sessionId || bootstrapped) {
+      return;
+    }
+
+    setBootstrapped(true);
+    setRedirecting(true);
+
     try {
-      const res = await fetch("/api/setup", {
+      const res = await fetch("/api/auth/bootstrap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          session_id: sessionId,
-          telegram_bot_token: telegramToken.trim(),
-        }),
+        body: JSON.stringify({ session_id: sessionId }),
       });
-      const data = await res.json();
-      if (data.success) {
-        setDone(true);
-      } else {
-        setError(data.error || "Something went wrong.");
+
+      const data = (await res.json()) as { redirect_url?: string; error?: string };
+      if (!res.ok || !data.redirect_url) {
+        throw new Error(data.error || "Could not sign you in");
       }
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setSubmitting(false);
+
+      window.location.href = data.redirect_url;
+    } catch (err) {
+      setRedirecting(false);
+      setError(err instanceof Error ? err.message : "Could not redirect");
+      setBootstrapped(false);
     }
-  }
+  }, [bootstrapped, sessionId]);
+
+  useEffect(() => {
+    if (!sessionId || initializedRef.current) {
+      return;
+    }
+
+    initializedRef.current = true;
+
+    async function start() {
+      try {
+        await triggerSetup();
+        const current = await checkStatus();
+        if (current === "active") {
+          await bootstrapAndRedirect();
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Setup failed");
+      }
+    }
+
+    void start();
+  }, [sessionId, triggerSetup, checkStatus, bootstrapAndRedirect]);
+
+  useEffect(() => {
+    if (!sessionId || redirecting) {
+      return;
+    }
+
+    if (!status || ["pending_provision", "provisioning", "awaiting_setup"].includes(status)) {
+      const timer = window.setInterval(async () => {
+        try {
+          const current = await checkStatus();
+          if (current === "active") {
+            await bootstrapAndRedirect();
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Status check failed");
+        }
+      }, 4000);
+
+      return () => window.clearInterval(timer);
+    }
+  }, [sessionId, status, redirecting, checkStatus, bootstrapAndRedirect]);
 
   if (!sessionId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <div className="text-center">
+      <div className="flex min-h-screen items-center justify-center bg-white px-6">
+        <div className="max-w-md text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
-          <h1 className="mt-4 font-display text-xl text-navy-800">
-            Invalid Setup Link
-          </h1>
-          <p className="mt-2 text-navy-400">
-            This page requires a valid checkout session. Please start from the{" "}
-            <a href="/" className="text-brand-500 underline">
-              homepage
-            </a>
-            .
+          <h1 className="mt-4 font-display text-2xl text-navy-800">Invalid setup link</h1>
+          <p className="mt-2 text-sm text-navy-400">
+            This page requires a valid checkout session. Please restart from the homepage.
           </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (done) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <div className="mx-auto max-w-md text-center">
-          <CheckCircle2 className="mx-auto h-16 w-16 text-emerald-500" />
-          <h1 className="mt-6 font-display text-2xl text-navy-800">
-            Your AI Assistant is Being Set Up!
-          </h1>
-          <p className="mt-4 text-navy-400">
-            We&apos;re configuring your assistant right now. You&apos;ll receive
-            an email within a few minutes with a link to start chatting on
-            Telegram.
-          </p>
-          {botUsername && (
-            <p className="mt-4 text-navy-500">
-              Your bot:{" "}
-              <a
-                href={`https://t.me/${botUsername}`}
-                className="font-semibold text-brand-500"
-                target="_blank"
-              >
-                @{botUsername}
-              </a>
-            </p>
-          )}
-          <div className="mt-8">
-            <Loader2 className="mx-auto h-6 w-6 animate-spin text-brand-500" />
-            <p className="mt-2 text-sm text-navy-300">
-              Provisioning... check your email shortly.
-            </p>
-          </div>
+          <a
+            href="/"
+            className="mt-5 inline-flex rounded-full bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white"
+          >
+            Back to home
+          </a>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto max-w-2xl px-6 py-16">
-        <a
-          href="/"
-          className="font-display text-2xl tracking-tight text-navy-800"
-        >
-          ClawsRUs
-        </a>
-
-        <h1 className="mt-10 font-display text-3xl tracking-tight text-navy-800">
-          Set Up Your AI Assistant
-        </h1>
-        <p className="mt-2 text-navy-400">
-          Just one step — create a Telegram bot and you&apos;re live.
-        </p>
-
-        {/* Progress */}
-        <div className="mt-8 flex gap-2">
-          {[1, 2].map((s) => (
-            <div
-              key={s}
-              className={`h-1.5 flex-1 rounded-full transition-colors ${
-                s <= step ? "bg-brand-500" : "bg-navy-100"
-              }`}
-            />
-          ))}
+    <main className="flex min-h-screen items-center justify-center bg-navy-50 px-6 py-16">
+      <div className="w-full max-w-xl rounded-2xl border border-navy-100 bg-white p-8 shadow-sm">
+        <div className="flex items-center gap-3">
+          {status === "active" ? (
+            <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+          ) : status === "provision_failed" ? (
+            <AlertCircle className="h-8 w-8 text-red-500" />
+          ) : (
+            <Rocket className="h-8 w-8 text-brand-500" />
+          )}
+          <div>
+            <h1 className="font-display text-3xl tracking-tight text-navy-800">
+              Setting up your assistant
+            </h1>
+            <p className="mt-1 text-sm text-navy-400">{statusLabel}</p>
+          </div>
         </div>
 
+        <div className="mt-6 rounded-xl border border-navy-100 bg-navy-50 px-4 py-3 text-sm text-navy-500">
+          We&apos;re provisioning your dedicated OpenClaw instance. You&apos;ll be redirected
+          automatically to your dashboard once it is ready.
+        </div>
+
+        {redirecting && (
+          <div className="mt-6 flex items-center gap-2 text-sm text-brand-600">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Signing you in and opening dashboard...
+          </div>
+        )}
+
+        {status === "provision_failed" && (
+          <button
+            onClick={() => {
+              setError("");
+              setStatus("awaiting_setup");
+              void (async () => {
+                try {
+                  await triggerSetup();
+                } catch (err) {
+                  setError(
+                    err instanceof Error ? err.message : "Retry provisioning failed"
+                  );
+                }
+              })();
+            }}
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-navy-200 px-4 py-2 text-sm font-semibold text-navy-600 hover:border-navy-300"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Retry provisioning
+          </button>
+        )}
+
         {error && (
-          <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </div>
         )}
-
-        {/* Step 1: Telegram */}
-        {step === 1 && (
-          <div className="mt-10">
-            <div className="flex items-center gap-3">
-              <Bot className="h-6 w-6 text-brand-500" />
-              <h2 className="text-xl font-semibold text-navy-800">
-                Step 1: Create Your Telegram Bot
-              </h2>
-            </div>
-            <div className="mt-6 space-y-4 rounded-xl border border-navy-100 bg-navy-50 p-6">
-              <p className="text-sm text-navy-500">
-                Follow these steps to create your own Telegram bot:
-              </p>
-              <ol className="ml-4 list-decimal space-y-3 text-sm text-navy-400">
-                <li>
-                  Open Telegram and search for{" "}
-                  <a
-                    href="https://t.me/BotFather"
-                    target="_blank"
-                    className="inline-flex items-center gap-1 text-brand-500 underline"
-                  >
-                    @BotFather
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                </li>
-                <li>
-                  Send{" "}
-                  <code className="rounded-md bg-navy-100 px-1.5 py-0.5 text-navy-600">
-                    /newbot
-                  </code>
-                </li>
-                <li>
-                  Choose a display name for your bot (e.g., &quot;My AI
-                  Assistant&quot;)
-                </li>
-                <li>
-                  Choose a username ending in &quot;bot&quot; (e.g.,
-                  &quot;myai_assistant_bot&quot;)
-                </li>
-                <li>
-                  BotFather will give you a token — copy it and paste below
-                </li>
-              </ol>
-            </div>
-            <div className="mt-6">
-              <label className="block text-sm font-medium text-navy-600">
-                Bot Token
-              </label>
-              <div className="mt-2 flex gap-3">
-                <input
-                  type="text"
-                  value={telegramToken}
-                  onChange={(e) => {
-                    setTelegramToken(e.target.value);
-                    setTokenVerified(false);
-                  }}
-                  placeholder="123456789:ABCdefGHIjklMNOpqrSTUvwxYZ"
-                  className="flex-1 rounded-xl border border-navy-200 bg-white px-4 py-2.5 text-sm text-navy-800 placeholder-navy-300 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-                />
-                <button
-                  onClick={verifyToken}
-                  disabled={!telegramToken.trim() || tokenVerifying}
-                  className="rounded-xl bg-navy-100 px-4 py-2.5 text-sm font-medium text-navy-600 transition hover:bg-navy-200 disabled:opacity-50"
-                >
-                  {tokenVerifying ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    "Verify"
-                  )}
-                </button>
-              </div>
-              {tokenVerified && (
-                <p className="mt-2 flex items-center gap-2 text-sm text-emerald-600">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Verified — your bot is @{botUsername}
-                </p>
-              )}
-            </div>
-            <button
-              onClick={() => setStep(2)}
-              disabled={!tokenVerified}
-              className="mt-8 rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-400 disabled:opacity-50"
-            >
-              Continue
-            </button>
-          </div>
-        )}
-
-        {/* Step 2: Confirm & Launch */}
-        {step === 2 && (
-          <div className="mt-10">
-            <div className="flex items-center gap-3">
-              <Rocket className="h-6 w-6 text-brand-500" />
-              <h2 className="text-xl font-semibold text-navy-800">
-                Step 2: Confirm & Launch
-              </h2>
-            </div>
-
-            <div className="mt-6 space-y-4 rounded-xl border border-navy-100 bg-navy-50 p-6">
-              <div className="flex justify-between border-b border-navy-100 pb-3">
-                <span className="text-sm text-navy-400">Telegram Bot</span>
-                <span className="text-sm font-medium text-navy-800">
-                  @{botUsername}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-navy-400">AI Model</span>
-                <span className="text-sm font-medium text-navy-800">
-                  OpenAI (GPT-4o)
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-8 flex gap-3">
-              <button
-                onClick={() => setStep(1)}
-                className="rounded-full border border-navy-200 px-6 py-3 text-sm font-semibold text-navy-600 transition hover:border-navy-300"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="inline-flex items-center gap-2 rounded-full bg-brand-500 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-400 disabled:opacity-50"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Launching...
-                  </>
-                ) : (
-                  <>
-                    <Rocket className="h-4 w-4" />
-                    Launch My Assistant
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
       </div>
-    </div>
+    </main>
   );
 }

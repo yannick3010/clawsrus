@@ -3,20 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "tsx server/index.ts",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production tsx server/index.ts",
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.49.1",
+    "@types/http-proxy": "^1.17.17",
+    "cookie": "^1.1.1",
+    "http-proxy": "^1.18.1",
     "lucide-react": "^0.469.0",
     "nanoid": "^5.0.9",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^4.1.2",
-    "stripe": "^17.5.0"
+    "stripe": "^17.5.0",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

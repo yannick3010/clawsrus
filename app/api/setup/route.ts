@@ -1,39 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
+import { ensureDefaultChannels } from "@/lib/channel-utils";
+import { isDashboardOnboardingEnabled } from "@/lib/feature-flags";
+
+const MUTABLE_STATUSES = new Set(["awaiting_setup", "provision_failed"]);
+const ACCEPTED_STATUSES = new Set([
+  "pending_provision",
+  "provisioning",
+  "active",
+]);
 
 export async function POST(req: NextRequest) {
+  if (!isDashboardOnboardingEnabled()) {
+    return NextResponse.json({ error: "Feature not enabled" }, { status: 404 });
+  }
+
   try {
-    const { session_id, telegram_bot_token } = (await req.json()) as {
-      session_id: string;
-      telegram_bot_token: string;
+    const { session_id } = (await req.json()) as {
+      session_id?: string;
     };
 
-    if (!session_id || !telegram_bot_token) {
-      return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
-      );
+    if (!session_id) {
+      return NextResponse.json({ error: "session_id is required" }, { status: 400 });
     }
 
-    // Look up the Stripe session to find the user
     const session = await stripe.checkout.sessions.retrieve(session_id);
     const paymentIntentId =
-      typeof session.payment_intent === "string"
-        ? session.payment_intent
-        : null;
+      typeof session.payment_intent === "string" ? session.payment_intent : null;
 
     if (!paymentIntentId) {
-      return NextResponse.json(
-        { error: "Invalid session" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid session" }, { status: 400 });
     }
 
-    // Find user in Supabase
     const { data: user, error: findError } = await supabase
       .from("users")
-      .select("id, status")
+      .select("id,status")
       .eq("stripe_payment_intent_id", paymentIntentId)
       .maybeSingle();
 
@@ -41,64 +43,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    if (user.status !== "awaiting_setup") {
-      return NextResponse.json(
-        { error: "Setup already completed" },
-        { status: 400 }
-      );
-    }
+    if (MUTABLE_STATUSES.has(user.status)) {
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({
+          status: "pending_provision",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
 
-    // Validate Telegram bot token
-    let botUsername: string;
-    try {
-      const tgRes = await fetch(
-        `https://api.telegram.org/bot${telegram_bot_token}/getMe`
-      );
-      const tgData = await tgRes.json();
-      if (!tgData.ok) {
+      if (updateError) {
+        console.error("Failed to update setup status:", updateError);
         return NextResponse.json(
-          { error: "Invalid Telegram bot token" },
-          { status: 400 }
+          { error: "Failed to save setup" },
+          { status: 500 }
         );
       }
-      botUsername = tgData.result.username;
-    } catch {
+    } else if (!ACCEPTED_STATUSES.has(user.status)) {
       return NextResponse.json(
-        { error: "Could not verify Telegram bot token" },
+        { error: `Unexpected user status: ${user.status}` },
         { status: 400 }
       );
     }
 
-    // Update user with token and set status to pending_provision
-    // AI provider is always openai — we supply the key server-side
-    const { error: updateError } = await supabase
-      .from("users")
-      .update({
-        telegram_bot_token,
-        telegram_bot_username: botUsername,
-        ai_provider: "openai",
-        status: "pending_provision",
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.id);
+    await ensureDefaultChannels(user.id);
 
-    if (updateError) {
-      console.error("Failed to update user:", updateError);
-      return NextResponse.json(
-        { error: "Failed to save setup" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      bot_username: botUsername,
-    });
+    return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Setup error:", err);
-    return NextResponse.json(
-      { error: "Setup failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Setup failed" }, { status: 500 });
   }
 }

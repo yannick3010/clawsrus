@@ -8,6 +8,7 @@ set -e
 SUPABASE_URL="${SUPABASE_URL}"
 SUPABASE_SERVICE_KEY="${SUPABASE_SERVICE_KEY}"
 RESEND_API_KEY="${RESEND_API_KEY}"
+NEXT_PUBLIC_APP_URL="${NEXT_PUBLIC_APP_URL:-https://clawsrus.com}"
 SCRIPT_DIR="/opt/clawsrus/scripts"
 LOG_FILE="/var/log/clawsrus/poller.log"
 
@@ -18,7 +19,6 @@ log() {
 send_welcome_email() {
     local EMAIL=$1
     local PERSONA_NAME=$2
-    local BOT_USERNAME=$3
 
     curl -s -X POST "https://api.resend.com/emails" \
         -H "Authorization: Bearer $RESEND_API_KEY" \
@@ -27,7 +27,7 @@ send_welcome_email() {
             \"from\": \"ClawsRUs <hello@clawsrus.com>\",
             \"to\": \"$EMAIL\",
             \"subject\": \"Your $PERSONA_NAME AI is ready!\",
-            \"html\": \"<h1>Your $PERSONA_NAME is live!</h1><p>Open Telegram and message <a href='https://t.me/$BOT_USERNAME'>@$BOT_USERNAME</a> to start chatting.</p><p>Tips: Say hello, ask for help with a real task, and give context — it gets better over time.</p><p>Questions? Reply to this email.</p>\"
+            \"html\": \"<h1>Your $PERSONA_NAME is live!</h1><p>Your dedicated assistant has been provisioned successfully.</p><p>Return to your setup flow and you will be redirected into your dashboard automatically.</p><p>Dashboard: <a href='$NEXT_PUBLIC_APP_URL/login'>$NEXT_PUBLIC_APP_URL/login</a></p>\"
         }"
 }
 
@@ -67,10 +67,7 @@ provision_user() {
     local EMAIL=$(echo "$ROW" | jq -r '.email')
     local PERSONA=$(echo "$ROW" | jq -r '.persona')
     local TIER=$(echo "$ROW" | jq -r '.tier')
-    local TG_TOKEN=$(echo "$ROW" | jq -r '.telegram_bot_token')
-    local BOT_USERNAME=$(echo "$ROW" | jq -r '.telegram_bot_username')
 
-    # Pretty name for persona
     local PERSONA_NAME
     case "$PERSONA" in
         chief-of-staff) PERSONA_NAME="Chief of Staff" ;;
@@ -82,24 +79,20 @@ provision_user() {
     log "Provisioning $USER_ID ($EMAIL, $PERSONA, $TIER)..."
     log_to_supabase "$USER_ID" "provisioning_started" "{\"persona\": \"$PERSONA\", \"tier\": \"$TIER\"}"
 
-    # Mark as provisioning
     update_user_status "$USER_ID" "provisioning"
 
-    # Run provision script
-    if "$SCRIPT_DIR/provision-user.sh" "$USER_ID" "$EMAIL" "$PERSONA" "$TIER" "$TG_TOKEN" 2>&1 | tee -a "$LOG_FILE"; then
+    if "$SCRIPT_DIR/provision-user.sh" "$USER_ID" "$EMAIL" "$PERSONA" "$TIER" 2>&1 | tee -a "$LOG_FILE"; then
         local CONTAINER_NAME="clawsrus-${USER_ID}"
         update_user_status "$USER_ID" "active" "$CONTAINER_NAME"
         log_to_supabase "$USER_ID" "provisioning_complete" "{\"container\": \"$CONTAINER_NAME\"}"
 
-        # Send welcome email
-        send_welcome_email "$EMAIL" "$PERSONA_NAME" "$BOT_USERNAME"
+        send_welcome_email "$EMAIL" "$PERSONA_NAME"
         log "Provisioned $USER_ID and sent welcome email"
     else
         update_user_status "$USER_ID" "provision_failed"
         log_to_supabase "$USER_ID" "provisioning_failed" "{\"error\": \"provision script exited non-zero\"}"
         log "ERROR: Failed to provision $USER_ID"
 
-        # Alert admin
         curl -s -X POST "https://api.resend.com/emails" \
             -H "Authorization: Bearer $RESEND_API_KEY" \
             -H "Content-Type: application/json" \
@@ -112,16 +105,13 @@ provision_user() {
     fi
 }
 
-# Main loop
 log "ClawsRUs poller started"
 
 while true; do
-    # Query Supabase for pending users
     RESPONSE=$(curl -s "$SUPABASE_URL/rest/v1/users?status=eq.pending_provision&select=*" \
         -H "apikey: $SUPABASE_SERVICE_KEY" \
         -H "Authorization: Bearer $SUPABASE_SERVICE_KEY")
 
-    # Count results
     COUNT=$(echo "$RESPONSE" | jq '. | length')
 
     if [ "$COUNT" -gt 0 ]; then
