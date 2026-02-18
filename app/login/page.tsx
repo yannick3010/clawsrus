@@ -37,8 +37,7 @@ function LoginForm() {
     try {
       const supabase = createSupabaseBrowserClient();
       const next = searchParams.get("next") || "/dashboard";
-      const appUrl =
-        process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const appUrl = window.location.origin;
 
       const { error: signInError } = await supabase.auth.signInWithOtp({
         email,

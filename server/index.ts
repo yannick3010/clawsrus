@@ -7,10 +7,12 @@ import type { Duplex } from "node:stream";
 import httpProxy from "http-proxy";
 import { parse as parseCookie, serialize as serializeCookie } from "cookie";
 import {
-  getGatewayHttpTargetForUser,
-  getGatewayWsTargetForUser,
   verifyProxyToken,
 } from "../lib/proxy-token";
+import {
+  isRuntimeUnavailableError,
+  resolveGatewayTargetForUser,
+} from "../lib/docker-gateway-resolver";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOST || "0.0.0.0";
@@ -26,7 +28,10 @@ const proxy = httpProxy.createProxyServer({
 });
 
 proxy.on("error", (err, req, res) => {
-  console.error("Gateway proxy error:", err);
+  console.error("Gateway proxy error:", {
+    message: err.message,
+    requestPath: req.url,
+  });
   if (res && "writeHead" in res) {
     const serverRes = res as ServerResponse;
     if (!serverRes.headersSent) {
@@ -62,7 +67,7 @@ function setProxySessionCookie(res: ServerResponse, token: string, secure: boole
 function resolveIdentityFromRequest(
   req: IncomingMessage,
   res?: ServerResponse
-): { userId: string; email: string } | null {
+): { userId: string; email: string; containerName?: string } | null {
   const origin = `http://${req.headers.host || "localhost"}`;
   const parsed = new URL(req.url || "/", origin);
   const queryToken = parsed.searchParams.get("proxy_token");
@@ -85,7 +90,11 @@ function resolveIdentityFromRequest(
     setProxySessionCookie(res, token, secure);
   }
 
-  return { userId: payload.user_id, email: payload.email };
+  return {
+    userId: payload.user_id,
+    email: payload.email,
+    containerName: payload.container_name,
+  };
 }
 
 function requestProtocol(req: IncomingMessage) {
@@ -106,7 +115,7 @@ function removeProxyTokenFromUrl(rawUrl: string) {
   return `${parsed.pathname}${parsed.search}`;
 }
 
-function handleAgentUi(req: IncomingMessage, res: ServerResponse) {
+async function handleAgentUi(req: IncomingMessage, res: ServerResponse) {
   const identity = resolveIdentityFromRequest(req, res);
   if (!identity) {
     res.statusCode = 401;
@@ -115,24 +124,49 @@ function handleAgentUi(req: IncomingMessage, res: ServerResponse) {
     return;
   }
 
-  const target = getGatewayHttpTargetForUser(identity.userId);
-  const rawUrl = req.url || "/agent-ui";
-  const parsed = new URL(rawUrl, "http://localhost");
-  const strippedPath = stripPrefix(parsed.pathname, "/agent-ui");
-  const normalized = `${strippedPath}${parsed.search}`;
-  req.url = removeProxyTokenFromUrl(normalized);
+  try {
+    const target = await resolveGatewayTargetForUser(identity.userId, {
+      expectedContainerName: identity.containerName,
+    });
+    const rawUrl = req.url || "/agent-ui";
+    const parsed = new URL(rawUrl, "http://localhost");
+    const strippedPath = stripPrefix(parsed.pathname, "/agent-ui");
+    const normalized = `${strippedPath}${parsed.search}`;
+    req.url = removeProxyTokenFromUrl(normalized);
 
-  proxy.web(req, res, {
-    target,
-    headers: {
-      "x-forwarded-user": identity.email,
-      "x-forwarded-proto": requestProtocol(req),
-      "x-forwarded-host": requestHost(req),
-    },
-  });
+    proxy.web(req, res, {
+      target: target.httpTarget,
+      headers: {
+        "x-forwarded-user": identity.email,
+        "x-forwarded-proto": requestProtocol(req),
+        "x-forwarded-host": requestHost(req),
+      },
+    });
+  } catch (error) {
+    if (isRuntimeUnavailableError(error)) {
+      console.error("Gateway runtime unavailable", {
+        userId: error.userId,
+        containerName: error.containerName,
+        reason: error.reason,
+        requestPath: req.url,
+      });
+      res.statusCode = 502;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ error: "Gateway unavailable" }));
+      return;
+    }
+
+    console.error("Unexpected gateway resolution error", {
+      requestPath: req.url,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    res.statusCode = 502;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ error: "Gateway unavailable" }));
+  }
 }
 
-function handleAgentWs(req: IncomingMessage, socket: Duplex, head: Buffer) {
+async function handleAgentWs(req: IncomingMessage, socket: Duplex, head: Buffer) {
   const identity = resolveIdentityFromRequest(req);
   if (!identity) {
     socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
@@ -140,19 +174,42 @@ function handleAgentWs(req: IncomingMessage, socket: Duplex, head: Buffer) {
     return;
   }
 
-  const target = getGatewayWsTargetForUser(identity.userId);
-  const parsed = new URL(req.url || "/agent-ws", "http://localhost");
-  parsed.searchParams.delete("proxy_token");
-  req.url = parsed.pathname + parsed.search;
+  try {
+    const target = await resolveGatewayTargetForUser(identity.userId, {
+      expectedContainerName: identity.containerName,
+    });
+    const parsed = new URL(req.url || "/agent-ws", "http://localhost");
+    parsed.searchParams.delete("proxy_token");
+    req.url = parsed.pathname + parsed.search;
 
-  proxy.ws(req, socket, head, {
-    target,
-    headers: {
-      "x-forwarded-user": identity.email,
-      "x-forwarded-proto": requestProtocol(req),
-      "x-forwarded-host": requestHost(req),
-    },
-  });
+    proxy.ws(req, socket, head, {
+      target: target.wsTarget,
+      headers: {
+        "x-forwarded-user": identity.email,
+        "x-forwarded-proto": requestProtocol(req),
+        "x-forwarded-host": requestHost(req),
+      },
+    });
+  } catch (error) {
+    if (isRuntimeUnavailableError(error)) {
+      console.error("Gateway runtime unavailable", {
+        userId: error.userId,
+        containerName: error.containerName,
+        reason: error.reason,
+        requestPath: req.url,
+      });
+      socket.write("HTTP/1.1 502 Bad Gateway\r\n\r\n");
+      socket.destroy();
+      return;
+    }
+
+    console.error("Unexpected WS gateway resolution error", {
+      requestPath: req.url,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    socket.write("HTTP/1.1 502 Bad Gateway\r\n\r\n");
+    socket.destroy();
+  }
 }
 
 app.prepare().then(() => {
@@ -160,7 +217,7 @@ app.prepare().then(() => {
     const path = (req.url || "").split("?")[0];
 
     if (path.startsWith("/agent-ui")) {
-      handleAgentUi(req, res);
+      void handleAgentUi(req, res);
       return;
     }
 
@@ -171,7 +228,7 @@ app.prepare().then(() => {
   server.on("upgrade", (req, socket, head) => {
     const path = (req.url || "").split("?")[0];
     if (path.startsWith("/agent-ws")) {
-      handleAgentWs(req, socket, head);
+      void handleAgentWs(req, socket, head);
       return;
     }
     socket.destroy();

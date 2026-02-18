@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
 import { isDashboardOnboardingEnabled } from "@/lib/feature-flags";
+import { isMissingCheckoutSession } from "@/lib/stripe-errors";
 
 export async function GET(req: NextRequest) {
   if (!isDashboardOnboardingEnabled()) {
@@ -34,6 +35,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ status: user.status });
   } catch (err) {
+    if (isMissingCheckoutSession(err)) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+    }
     console.error("Setup status error:", err);
     return NextResponse.json({ error: "Failed to fetch status" }, { status: 500 });
   }

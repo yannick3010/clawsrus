@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { ensureDefaultChannels } from "@/lib/channel-utils";
 import { sendDashboardMagicLinkEmail } from "@/lib/email";
 import { isDashboardOnboardingEnabled } from "@/lib/feature-flags";
+import { isMissingCheckoutSession } from "@/lib/stripe-errors";
 
 async function findAuthUserIdByEmail(email: string): Promise<string | null> {
   const perPage = 200;
@@ -143,6 +144,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ redirect_url: linkData.properties.action_link });
   } catch (err) {
+    if (isMissingCheckoutSession(err)) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+    }
     console.error("Auth bootstrap error:", err);
     return NextResponse.json(
       { error: "Failed to bootstrap authentication" },

@@ -3,7 +3,7 @@
 # Checks Supabase for users with status=pending_provision every 30s
 # Runs as a systemd service on the VPS
 
-set -e
+set -euo pipefail
 
 SUPABASE_URL="${SUPABASE_URL}"
 SUPABASE_SERVICE_KEY="${SUPABASE_SERVICE_KEY}"
@@ -83,11 +83,17 @@ provision_user() {
 
     if "$SCRIPT_DIR/provision-user.sh" "$USER_ID" "$EMAIL" "$PERSONA" "$TIER" 2>&1 | tee -a "$LOG_FILE"; then
         local CONTAINER_NAME="clawsrus-${USER_ID}"
-        update_user_status "$USER_ID" "active" "$CONTAINER_NAME"
-        log_to_supabase "$USER_ID" "provisioning_complete" "{\"container\": \"$CONTAINER_NAME\"}"
+        if docker ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
+            update_user_status "$USER_ID" "active" "$CONTAINER_NAME"
+            log_to_supabase "$USER_ID" "provisioning_complete" "{\"container\": \"$CONTAINER_NAME\"}"
 
-        send_welcome_email "$EMAIL" "$PERSONA_NAME"
-        log "Provisioned $USER_ID and sent welcome email"
+            send_welcome_email "$EMAIL" "$PERSONA_NAME"
+            log "Provisioned $USER_ID and sent welcome email"
+        else
+            update_user_status "$USER_ID" "provision_failed"
+            log_to_supabase "$USER_ID" "provisioning_failed" "{\"error\": \"container not running after provision\"}"
+            log "ERROR: Provision script returned success but container not running for $USER_ID"
+        fi
     else
         update_user_status "$USER_ID" "provision_failed"
         log_to_supabase "$USER_ID" "provisioning_failed" "{\"error\": \"provision script exited non-zero\"}"

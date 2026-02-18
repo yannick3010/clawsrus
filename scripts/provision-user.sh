@@ -3,7 +3,7 @@
 # Usage: ./provision-user.sh <customer-id> <email> <persona> <tier>
 # Note: OPENAI_API_KEY is read from the environment (set in /opt/clawsrus/.env)
 
-set -e
+set -euo pipefail
 
 CUSTOMER_ID=$1
 CUSTOMER_EMAIL=$2
@@ -24,8 +24,9 @@ fi
 BASE_DIR="/opt/clawsrus/customers"
 TEMPLATE_DIR="/opt/clawsrus/templates"
 APP_ORIGIN="${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
-OPENCLAW_IMAGE="${OPENCLAW_IMAGE:-node:22-bookworm}"
-OPENCLAW_NPM_PACKAGE="${OPENCLAW_NPM_PACKAGE:-openclaw}"
+OPENCLAW_IMAGE="${OPENCLAW_IMAGE:-clawsrus/openclaw-runtime:2026.02.18}"
+OPENCLAW_GATEWAY_PORT="${OPENCLAW_GATEWAY_PORT:-18789}"
+OPENCLAW_READY_TIMEOUT_SECONDS="${OPENCLAW_READY_TIMEOUT_SECONDS:-90}"
 
 TRUSTED_PROXY_IPS="${OPENCLAW_TRUSTED_PROXIES:-127.0.0.1,172.17.0.1}"
 IFS=',' read -ra IPS <<< "$TRUSTED_PROXY_IPS"
@@ -40,6 +41,36 @@ for raw_ip in "${IPS[@]}"; do
     fi
 done
 TRUSTED_PROXIES_JSON="[$TRUSTED_PROXIES_JSON]"
+
+wait_for_gateway() {
+    local container_name=$1
+    local deadline=$(( $(date +%s) + OPENCLAW_READY_TIMEOUT_SECONDS ))
+
+    while [ "$(date +%s)" -lt "$deadline" ]; do
+        if ! docker ps --format '{{.Names}}' | grep -qx "$container_name"; then
+            sleep 2
+            continue
+        fi
+
+        local container_ip
+        container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{if .IPAddress}}{{.IPAddress}}{{end}}{{end}}' "$container_name" | awk '{print $1}')
+        if [ -z "$container_ip" ]; then
+            sleep 2
+            continue
+        fi
+
+        local status_code
+        status_code=$(curl -s -o /dev/null --max-time 2 -w "%{http_code}" "http://${container_ip}:${OPENCLAW_GATEWAY_PORT}/openclaw/" || true)
+        if [ "$status_code" != "000" ]; then
+            echo "Gateway reachable at ${container_ip}:${OPENCLAW_GATEWAY_PORT} (HTTP ${status_code})"
+            return 0
+        fi
+
+        sleep 2
+    done
+
+    return 1
+}
 
 echo "Provisioning $CUSTOMER_ID ($PERSONA, $TIER)..."
 
@@ -66,14 +97,17 @@ case "$TIER" in
     standard)
         CPU_LIMIT="1"
         MEMORY_LIMIT="1G"
+        NODE_HEAP_MB="768"
         ;;
     concierge)
         CPU_LIMIT="2"
         MEMORY_LIMIT="2G"
+        NODE_HEAP_MB="1536"
         ;;
     *)
         CPU_LIMIT="1"
         MEMORY_LIMIT="1G"
+        NODE_HEAP_MB="768"
         ;;
 esac
 
@@ -159,19 +193,15 @@ services:
     image: $OPENCLAW_IMAGE
     container_name: clawsrus-${CUSTOMER_ID}
     working_dir: /home/node
-    command: >
-      sh -c "npm install -g ${OPENCLAW_NPM_PACKAGE} &&
-             openclaw gateway run --allow-unconfigured"
+    command: ["gateway", "run", "--allow-unconfigured"]
     volumes:
       - ./openclaw:/home/node/.openclaw
     environment:
       - NODE_ENV=production
       - HOME=/home/node
-    deploy:
-      resources:
-        limits:
-          cpus: '${CPU_LIMIT}'
-          memory: ${MEMORY_LIMIT}
+      - NODE_OPTIONS=--max-old-space-size=${NODE_HEAP_MB}
+    cpus: '${CPU_LIMIT}'
+    mem_limit: ${MEMORY_LIMIT}
     restart: unless-stopped
     networks:
       - clawsrus-network
@@ -185,7 +215,14 @@ EOF_COMPOSE
 cd "$BASE_DIR/$CUSTOMER_ID"
 docker compose up -d
 
+CONTAINER_NAME="clawsrus-${CUSTOMER_ID}"
+if ! wait_for_gateway "$CONTAINER_NAME"; then
+    echo "ERROR: Gateway did not become reachable within ${OPENCLAW_READY_TIMEOUT_SECONDS}s"
+    docker logs --tail 120 "$CONTAINER_NAME" || true
+    exit 1
+fi
+
 echo "Provisioned $CUSTOMER_ID with persona $PERSONA"
 echo "  Workspace: $BASE_DIR/$CUSTOMER_ID/openclaw/workspace"
 echo "  Config: $BASE_DIR/$CUSTOMER_ID/config.json"
-echo "  Container: clawsrus-${CUSTOMER_ID}"
+echo "  Container: ${CONTAINER_NAME}"

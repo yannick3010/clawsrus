@@ -13,18 +13,19 @@ This project depends on a forked OpenClaw Control UI for embedded chat-first mod
 
 ## Pinning
 
-Set and document the exact commit/image used for production:
+Current pinned runtime inputs:
 
-- Fork repository: `github.com/yannick3010/openclaw` (or chosen org fork)
-- Commit SHA: `TODO`
-- Runtime image tag: `TODO`
+- Repository: `https://github.com/openclaw/openclaw`
+- Commit SHA: `4134875c311fbb7f677fb9181a883431444cf3e9`
+- Package version: `openclaw@2026.2.17`
+- Runtime image tag: `clawsrus/openclaw-runtime:2026.2.17-r1`
 
 ## Build
 
-Run upstream control UI build in forked repo:
+Build the pinned runtime image from this repo:
 
 ```bash
-pnpm ui:build
+./scripts/build-openclaw-runtime-image.sh clawsrus/openclaw-runtime:2026.2.17-r1
 ```
 
-Then publish runtime image and update provisioning script image/tag accordingly.
+The image is consumed by provisioning via `OPENCLAW_IMAGE`.

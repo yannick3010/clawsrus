@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedAppUser } from "@/lib/dashboard-auth";
 import { createProxyToken } from "@/lib/proxy-token";
 import { isDashboardOnboardingEnabled } from "@/lib/feature-flags";
+import {
+  isRuntimeUnavailableError,
+  resolveGatewayTargetForUser,
+} from "@/lib/docker-gateway-resolver";
+
+export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   if (!isDashboardOnboardingEnabled()) {
@@ -20,9 +26,36 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  try {
+    await resolveGatewayTargetForUser(auth.appUser.id, {
+      expectedContainerName: auth.appUser.container_id || undefined,
+      requireReachable: true,
+    });
+  } catch (error) {
+    if (isRuntimeUnavailableError(error)) {
+      return NextResponse.json(
+        {
+          error: "Assistant runtime unavailable",
+          reason: error.reason,
+        },
+        { status: 409 }
+      );
+    }
+
+    console.error("Failed to resolve assistant runtime", {
+      userId: auth.appUser.id,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return NextResponse.json(
+      { error: "Failed to verify assistant runtime" },
+      { status: 500 }
+    );
+  }
+
   const token = createProxyToken({
     userId: auth.appUser.id,
     email: auth.authEmail,
+    containerName: auth.appUser.container_id,
     ttlSeconds: 10 * 60,
   });
 

@@ -7,6 +7,7 @@ export type AppUser = {
   persona: string;
   tier: string;
   status: string;
+  container_id: string | null;
   auth_user_id: string | null;
   preferred_name: string | null;
   timezone: string | null;
@@ -29,7 +30,7 @@ export async function getAuthenticatedAppUser(): Promise<{
   const { data: byAuthId, error: byAuthIdError } = await supabase
     .from("users")
     .select(
-      "id,email,persona,tier,status,auth_user_id,preferred_name,timezone"
+      "id,email,persona,tier,status,container_id,auth_user_id,preferred_name,timezone"
     )
     .eq("auth_user_id", user.id)
     .maybeSingle();
@@ -43,7 +44,7 @@ export async function getAuthenticatedAppUser(): Promise<{
     const { data: byEmail, error: byEmailError } = await supabase
       .from("users")
       .select(
-        "id,email,persona,tier,status,auth_user_id,preferred_name,timezone"
+        "id,email,persona,tier,status,container_id,auth_user_id,preferred_name,timezone"
       )
       .eq("email", user.email)
       .limit(1)

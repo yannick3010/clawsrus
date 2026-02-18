@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
 import { ensureDefaultChannels } from "@/lib/channel-utils";
 import { isDashboardOnboardingEnabled } from "@/lib/feature-flags";
+import { isMissingCheckoutSession } from "@/lib/stripe-errors";
 
 const MUTABLE_STATUSES = new Set(["awaiting_setup", "provision_failed"]);
 const ACCEPTED_STATUSES = new Set([
@@ -70,6 +71,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
+    if (isMissingCheckoutSession(err)) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+    }
     console.error("Setup error:", err);
     return NextResponse.json({ error: "Setup failed" }, { status: 500 });
   }

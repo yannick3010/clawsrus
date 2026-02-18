@@ -8,6 +8,11 @@ type ProxyTokenResponse = {
   expires_at: string;
 };
 
+type ProxyTokenErrorReason =
+  | "container_missing"
+  | "container_not_running"
+  | "container_unreachable";
+
 export default function ChatPanel() {
   const [iframeUrl, setIframeUrl] = useState("");
   const [loading, setLoading] = useState(true);
@@ -23,9 +28,24 @@ export default function ChatPanel() {
         cache: "no-store",
       });
 
-      const data = (await res.json()) as ProxyTokenResponse & { error?: string };
+      const data = (await res.json()) as ProxyTokenResponse & {
+        error?: string;
+        reason?: ProxyTokenErrorReason;
+      };
       if (!res.ok) {
-        setError(data.error || "Failed to initialize chat");
+        if (res.status === 409 && data.reason) {
+          if (data.reason === "container_missing") {
+            setError("Assistant runtime not found. Please retry setup from your setup link.");
+          } else if (data.reason === "container_not_running") {
+            setError("Assistant is still starting. Try refresh in a few seconds.");
+          } else if (data.reason === "container_unreachable") {
+            setError("Assistant is starting, but chat gateway is not reachable yet.");
+          } else {
+            setError(data.error || "Assistant runtime unavailable");
+          }
+        } else {
+          setError(data.error || "Failed to initialize chat");
+        }
         setLoading(false);
         return;
       }

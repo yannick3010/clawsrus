@@ -6,7 +6,8 @@
     "dev": "tsx server/index.ts",
     "build": "next build",
     "start": "NODE_ENV=production tsx server/index.ts",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:openclaw-runtime": "./scripts/build-openclaw-runtime-image.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",

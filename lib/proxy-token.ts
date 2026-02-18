@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 export type ProxyTokenPayload = {
   user_id: string;
   email: string;
+  container_name?: string;
   exp: number;
 };
 
@@ -30,12 +31,14 @@ function getSecret() {
 export function createProxyToken(payload: {
   userId: string;
   email: string;
+  containerName?: string | null;
   ttlSeconds?: number;
 }) {
   const exp = Math.floor(Date.now() / 1000) + (payload.ttlSeconds || DEFAULT_TTL_SECONDS);
   const body: ProxyTokenPayload = {
     user_id: payload.userId,
     email: payload.email,
+    ...(payload.containerName ? { container_name: payload.containerName } : {}),
     exp,
   };
   const encodedPayload = encodeBase64Url(JSON.stringify(body));
@@ -84,18 +87,4 @@ export function verifyProxyToken(token: string): ProxyTokenPayload | null {
   }
 
   return payload;
-}
-
-export function getGatewayHttpTargetForUser(userId: string): string {
-  const template =
-    process.env.OPENCLAW_GATEWAY_HTTP_TARGET_TEMPLATE ||
-    "http://clawsrus-{user_id}:18789";
-  return template.replaceAll("{user_id}", userId);
-}
-
-export function getGatewayWsTargetForUser(userId: string): string {
-  const template =
-    process.env.OPENCLAW_GATEWAY_WS_TARGET_TEMPLATE ||
-    "ws://clawsrus-{user_id}:18789";
-  return template.replaceAll("{user_id}", userId);
 }
