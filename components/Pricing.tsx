@@ -3,33 +3,15 @@
 import { useState } from "react";
 import { Check, ArrowRight } from "lucide-react";
 import { TIERS, PERSONAS } from "@/lib/constants";
-import type { TierId, PersonaId } from "@/lib/constants";
+import type { PersonaId } from "@/lib/constants";
 import { FadeIn } from "./FadeIn";
 
 export default function Pricing() {
-  const [loading, setLoading] = useState<string | null>(null);
   const [selectedPersona, setSelectedPersona] =
     useState<PersonaId>("personal-assistant");
 
   const tiers = Object.values(TIERS);
   const personas = Object.values(PERSONAS);
-
-  async function handleCheckout(tierId: TierId) {
-    setLoading(tierId);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier: tierId, persona: selectedPersona }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } finally {
-      setLoading(null);
-    }
-  }
 
   return (
     <section id="pricing" className="bg-navy-50 py-24 sm:py-32">
@@ -139,24 +121,17 @@ export default function Pricing() {
                       All February slots booked. Check back in March!
                     </div>
                   ) : (
-                    <button
-                      onClick={() => handleCheckout(tier.id as TierId)}
-                      disabled={loading !== null}
+                    <a
+                      href={`/signup?tier=${tier.id}&persona=${selectedPersona}`}
                       className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
                         isPopular
                           ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400 hover:shadow-xl"
                           : "bg-navy-800 text-white hover:bg-navy-700"
-                      } disabled:opacity-50`}
+                      }`}
                     >
-                      {loading === tier.id ? (
-                        "Redirecting..."
-                      ) : (
-                        <>
-                          Get Started
-                          <ArrowRight className="h-4 w-4" />
-                        </>
-                      )}
-                    </button>
+                      Get Started
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
                   )}
                 </div>
               </FadeIn>

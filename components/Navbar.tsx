@@ -49,7 +49,7 @@ export default function Navbar() {
         </nav>
 
         <a
-          href="#pricing"
+          href="/signup?tier=standard&persona=personal-assistant"
           className="hidden rounded-full bg-navy-800 px-5 py-2 text-sm font-medium text-white transition-all hover:bg-navy-700 hover:shadow-md md:inline-flex"
         >
           Get Your AI Assistant
@@ -82,7 +82,7 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              href="#pricing"
+              href="/signup?tier=standard&persona=personal-assistant"
               onClick={() => setMobileOpen(false)}
               className="mt-2 rounded-full bg-navy-800 px-5 py-2.5 text-center text-sm font-medium text-white"
             >

@@ -27,7 +27,7 @@ export default function FinalCTA() {
         <FadeIn delay={200}>
           <div className="mt-10">
             <a
-              href="#pricing"
+              href="/signup?tier=standard&persona=personal-assistant"
               className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-base font-semibold text-navy-800 shadow-xl transition-all hover:bg-navy-50 hover:shadow-2xl"
             >
               Get Your AI Assistant
