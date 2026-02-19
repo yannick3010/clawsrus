@@ -48,34 +48,39 @@ export default function ChatComposer({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-surface-200 bg-white px-3 pb-3 pt-2 sm:px-4">
-      <div className="flex items-end gap-2 rounded-xl border border-surface-200 bg-surface-100 p-2">
-        <textarea
-          ref={textareaRef}
-          data-testid="chat-input"
-          value={draft}
-          onChange={(event) => onDraftChange(event.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder="Message your assistant..."
-          rows={1}
-          className="focus-ring min-h-[44px] max-h-[160px] flex-1 resize-none rounded-xl border border-transparent bg-transparent px-3 py-2 text-sm text-ink-700 placeholder:text-ink-400"
-        />
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-3 pb-3 sm:px-5 sm:pb-4">
+      <form
+        onSubmit={handleSubmit}
+        className="pointer-events-auto rounded-2xl border border-surface-200 bg-white shadow-surface-2"
+      >
+        <div className="flex items-end gap-2 px-3 pt-3 pb-2">
+          <textarea
+            ref={textareaRef}
+            data-testid="chat-input"
+            value={draft}
+            onChange={(event) => onDraftChange(event.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder="Reply..."
+            rows={1}
+            className="focus-ring min-h-[44px] max-h-[160px] flex-1 resize-none rounded-lg border-none bg-transparent px-1 py-2 text-sm text-ink-700 placeholder:text-ink-400 focus:ring-0 focus:ring-offset-0"
+          />
+        </div>
 
-        <button
-          data-testid="chat-send"
-          type="submit"
-          disabled={disabled}
-          className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-full bg-ink-800 text-white transition hover:bg-ink-700 disabled:cursor-not-allowed disabled:bg-ink-300"
-          aria-label="Send message"
-        >
-          <ArrowUp className="h-4 w-4" />
-        </button>
-      </div>
-
-      <div className="mt-2 flex items-center justify-between px-1 text-[11px] text-ink-400">
-        <p>Press Enter to send. Shift + Enter for newline.</p>
-        {!connected ? <p>Waiting for connection...</p> : busy ? <p>Assistant is responding...</p> : null}
-      </div>
-    </form>
+        <div className="flex items-center justify-between border-t border-surface-100 px-3 py-2">
+          <div className="flex items-center gap-1 text-[11px] text-ink-400">
+            {!connected ? <span>Waiting for connection...</span> : busy ? <span>Responding...</span> : <span>Enter to send</span>}
+          </div>
+          <button
+            data-testid="chat-send"
+            type="submit"
+            disabled={disabled}
+            className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-lg bg-ink-800 text-white transition hover:bg-ink-700 disabled:cursor-not-allowed disabled:bg-ink-300"
+            aria-label="Send message"
+          >
+            <ArrowUp className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

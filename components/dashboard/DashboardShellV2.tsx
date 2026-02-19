@@ -131,7 +131,7 @@ export default function DashboardShellV2({ preferredName }: DashboardShellV2Prop
             />
           </div>
 
-          <div className="animate-fade-in-up animate-stagger-2 min-h-0 flex-1">
+          <div className="animate-fade-in-up animate-stagger-2 flex min-h-0 flex-1 flex-col">
             <ChatPanel onSummaryChange={setChatSummary} />
           </div>
         </div>
