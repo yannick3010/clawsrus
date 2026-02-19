@@ -177,6 +177,7 @@ During provisioning, these get replaced:
 - `{{CUSTOMER_EMAIL}}` → User's email
 - `{{CUSTOMER_ORG}}` → User's company (if provided)
 - `{{CUSTOMER_TZ}}` → User's timezone
+- Signup context from onboarding (`role`, `help_topics`, `communication_style`, `top_priorities`) is auto-injected into `USER.md` at container creation.
 
 ---
 
