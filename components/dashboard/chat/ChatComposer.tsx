@@ -10,6 +10,7 @@ type ChatComposerProps = {
   disabled: boolean;
   connected: boolean;
   busy: boolean;
+  phaseLabel?: string;
 };
 
 export default function ChatComposer({
@@ -19,6 +20,7 @@ export default function ChatComposer({
   disabled,
   connected,
   busy,
+  phaseLabel,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -48,10 +50,13 @@ export default function ChatComposer({
   }
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-3 pb-3 sm:px-5 sm:pb-4">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
+      {/* Gradient fade so text doesn't cut off abruptly */}
+      <div className="h-16 bg-gradient-to-t from-white to-transparent" />
+
       <form
         onSubmit={handleSubmit}
-        className="pointer-events-auto rounded-2xl border border-surface-200 bg-white shadow-surface-2"
+        className="pointer-events-auto mx-3 mb-3 rounded-2xl border border-surface-200 bg-white shadow-surface-2 sm:mx-5 sm:mb-4"
       >
         <div className="flex items-end gap-2 px-3 pt-3 pb-2">
           <textarea
@@ -68,7 +73,13 @@ export default function ChatComposer({
 
         <div className="flex items-center justify-between border-t border-surface-100 px-3 py-2">
           <div className="flex items-center gap-1 text-[11px] text-ink-400">
-            {!connected ? <span>Waiting for connection...</span> : busy ? <span>Responding...</span> : <span>Enter to send</span>}
+            {!connected ? (
+              <span>Waiting for connection...</span>
+            ) : phaseLabel && phaseLabel !== "Ready" ? (
+              <span>{phaseLabel}</span>
+            ) : (
+              <span>Enter to send</span>
+            )}
           </div>
           <button
             data-testid="chat-send"

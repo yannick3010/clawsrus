@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { isNativeChatEnabled } from "@/lib/feature-flags";
 import { useGatewayChat } from "@/components/dashboard/useGatewayChat";
 import ChatThread from "@/components/dashboard/chat/ChatThread";
@@ -86,21 +86,6 @@ export default function ChatPanel({ onSummaryChange }: ChatPanelProps) {
 
   return (
     <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
-      <header className="flex items-center justify-between gap-3 border-b border-surface-200 px-3 py-3 sm:px-4">
-        <div>
-          <h2 className="text-sm font-semibold text-ink-800">Agent Chat</h2>
-          <p className="text-xs text-ink-400">{phaseLabel}</p>
-        </div>
-
-        <button
-          onClick={() => void refresh()}
-          className="focus-ring inline-flex items-center gap-2 rounded-full border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-ink-500 hover:border-ink-200 hover:text-ink-700 transition"
-        >
-          <RefreshCw className="h-3.5 w-3.5" />
-          Refresh
-        </button>
-      </header>
-
       <div className="relative flex min-h-0 flex-1 flex-col" data-testid="native-chat-panel">
         {!isConnected ? (
           <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-status-warn">
@@ -130,6 +115,7 @@ export default function ChatPanel({ onSummaryChange }: ChatPanelProps) {
           disabled={!isConnected || isBusy || !draft.trim()}
           connected={isConnected}
           busy={isBusy}
+          phaseLabel={phaseLabel}
         />
 
         {connectionStatus === "connecting" && messages.length === 0 && !error ? (
