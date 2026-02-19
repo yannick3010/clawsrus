@@ -76,8 +76,8 @@ export default function ChatPanel({ onSummaryChange }: ChatPanelProps) {
 
   if (!nativeChatEnabled) {
     return (
-      <section className="flex min-h-[560px] overflow-hidden rounded-xl border border-surface-200 bg-white">
-        <div className="flex w-full items-center justify-center px-6 text-center text-sm text-red-600">
+      <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
+        <div className="flex w-full flex-1 items-center justify-center px-6 text-center text-sm text-red-600">
           Native chat is currently disabled. Set `NATIVE_CHAT_V1=true` to re-enable it.
         </div>
       </section>
@@ -85,7 +85,7 @@ export default function ChatPanel({ onSummaryChange }: ChatPanelProps) {
   }
 
   return (
-    <section className="flex h-full min-h-[560px] min-w-0 flex-col overflow-hidden rounded-xl border border-surface-200 bg-white">
+    <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
       <header className="flex items-center justify-between gap-3 border-b border-surface-200 px-3 py-3 sm:px-4">
         <div>
           <h2 className="text-sm font-semibold text-ink-800">Agent Chat</h2>

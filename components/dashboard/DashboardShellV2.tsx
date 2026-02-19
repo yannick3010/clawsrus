@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Menu } from "lucide-react";
-import SignOutButton from "@/components/dashboard/SignOutButton";
 import ChatPanel from "@/components/dashboard/ChatPanel";
 import DashboardDrawer from "@/components/dashboard/DashboardDrawer";
 import DashboardStatusStrip from "@/components/dashboard/DashboardStatusStrip";
+import SettingsSheet from "@/components/dashboard/SettingsSheet";
 import type {
   AccountSummary,
   ChannelsSummary,
@@ -18,8 +18,6 @@ type DashboardShellV2Props = {
   preferredName: string | null;
 };
 
-const DRAWER_STORAGE_KEY = "dashboard.drawerCollapsed";
-
 const defaultChatSummary: ChatSummary = {
   phase: "awaiting",
   connectionStatus: "connecting",
@@ -28,9 +26,9 @@ const defaultChatSummary: ChatSummary = {
 };
 
 export default function DashboardShellV2({ preferredName }: DashboardShellV2Props) {
-  const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<DrawerSectionId>("account");
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetSection, setSheetSection] = useState<DrawerSectionId>("account");
   const [accountSummary, setAccountSummary] = useState<AccountSummary | null>(null);
   const [channelsSummary, setChannelsSummary] = useState<ChannelsSummary | null>(null);
   const [skillsSummary, setSkillsSummary] = useState<SkillsSummary | null>(null);
@@ -88,90 +86,66 @@ export default function DashboardShellV2({ preferredName }: DashboardShellV2Prop
     };
   }, []);
 
-  useEffect(() => {
-    try {
-      const persisted = window.localStorage.getItem(DRAWER_STORAGE_KEY);
-      if (persisted === "true" || persisted === "false") {
-        setCollapsed(persisted === "true");
-      }
-    } catch {
-      // Ignore localStorage access issues.
-    }
+  const openSheet = useCallback((section: DrawerSectionId) => {
+    setSheetSection(section);
+    setSheetOpen(true);
   }, []);
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(DRAWER_STORAGE_KEY, String(collapsed));
-    } catch {
-      // Ignore localStorage access issues.
-    }
-  }, [collapsed]);
-
-  const openSection = useCallback((section: DrawerSectionId) => {
-    setActiveSection(section);
-
-    if (typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches) {
-      setMobileOpen(true);
-      return;
-    }
-
-    setCollapsed(false);
+  const closeSheet = useCallback(() => {
+    setSheetOpen(false);
   }, []);
 
   return (
-    <main className="min-h-screen bg-surface-100">
-      <header className="border-b border-surface-200 bg-white">
-        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 px-5 py-5 sm:px-6">
-          <div className="flex items-center gap-3">
+    <main className="flex min-h-dvh items-center justify-center bg-surface-200/60 p-0 sm:p-2 lg:p-4">
+      <div className="flex h-dvh w-full max-w-[1440px] overflow-hidden bg-surface-100 sm:h-[calc(100dvh-16px)] sm:rounded-2xl sm:border sm:border-surface-200 sm:shadow-surface-2 lg:h-[calc(100dvh-32px)]">
+        <DashboardDrawer
+          mobileOpen={mobileOpen}
+          onMobileOpenChange={setMobileOpen}
+          activeSection={sheetSection}
+          onOpenSheet={openSheet}
+          preferredName={preferredName}
+        />
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          {/* Mobile top bar */}
+          <div className="flex items-center justify-between border-b border-surface-200 bg-white px-3 py-2.5 lg:hidden">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="focus-ring inline-flex rounded-lg border border-surface-300 bg-white p-2 text-ink-500 hover:border-ink-200 lg:hidden"
-              aria-label="Open settings drawer"
+              className="focus-ring rounded-lg border border-surface-200 bg-white p-2 text-ink-600 hover:border-surface-300"
+              aria-label="Open menu"
             >
-              <Menu className="h-4 w-4" />
+              <Menu className="h-5 w-5" />
             </button>
-            <div>
-              <p className="font-display text-2xl tracking-tight text-ink-800">ClawsRUs Dashboard</p>
-              <p className="text-sm text-ink-400">
-                Welcome{preferredName ? `, ${preferredName}` : ""}. Your assistant workspace is ready.
-              </p>
-            </div>
+            <span className="text-sm font-semibold text-ink-800">ClawsRUs</span>
+            <div className="w-9" />
           </div>
 
-          <SignOutButton />
-        </div>
-      </header>
-
-      <div className="mx-auto flex h-[calc(100dvh-97px)] w-full max-w-[1600px] min-w-0 gap-0 px-0 sm:px-0">
-        <DashboardDrawer
-          collapsed={collapsed}
-          onCollapsedChange={setCollapsed}
-          mobileOpen={mobileOpen}
-          onMobileOpenChange={setMobileOpen}
-          activeSection={activeSection}
-          onActiveSectionChange={setActiveSection}
-          onAccountSummaryChange={setAccountSummary}
-          onChannelsSummaryChange={setChannelsSummary}
-          onSkillsSummaryChange={setSkillsSummary}
-        />
-
-        <section className="flex min-w-0 flex-1 flex-col gap-3.5 p-3 sm:p-4">
           <div className="animate-fade-in-up animate-stagger-1">
             <DashboardStatusStrip
               accountSummary={accountSummary}
               channelsSummary={channelsSummary}
               skillsSummary={skillsSummary}
               chatSummary={chatSummary}
-              onOpenSection={openSection}
+              onOpenSheet={openSheet}
             />
           </div>
 
           <div className="animate-fade-in-up animate-stagger-2 min-h-0 flex-1">
             <ChatPanel onSummaryChange={setChatSummary} />
           </div>
-        </section>
+        </div>
       </div>
+
+      <SettingsSheet
+        open={sheetOpen}
+        onClose={closeSheet}
+        activeSection={sheetSection}
+        onActiveSectionChange={setSheetSection}
+        onAccountSummaryChange={setAccountSummary}
+        onChannelsSummaryChange={setChannelsSummary}
+        onSkillsSummaryChange={setSkillsSummary}
+      />
     </main>
   );
 }

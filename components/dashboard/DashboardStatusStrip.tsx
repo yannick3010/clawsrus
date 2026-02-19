@@ -14,7 +14,7 @@ type DashboardStatusStripProps = {
   channelsSummary: ChannelsSummary | null;
   skillsSummary: SkillsSummary | null;
   chatSummary: ChatSummary;
-  onOpenSection: (section: DrawerSectionId) => void;
+  onOpenSheet: (section: DrawerSectionId) => void;
 };
 
 const baseChipClass =
@@ -44,14 +44,14 @@ export default function DashboardStatusStrip({
   channelsSummary,
   skillsSummary,
   chatSummary,
-  onOpenSection,
+  onOpenSheet,
 }: DashboardStatusStripProps) {
   const chatConnected = chatSummary.connected;
   const channelConnected = (channelsSummary?.connected ?? 0) > 0;
   const skillsHealthy = (skillsSummary?.error || "") === "";
 
   return (
-    <section className="space-y-2 rounded-xl border border-surface-200 bg-white px-3 py-3 sm:px-4">
+    <section className="border-b border-surface-200 bg-white px-4 py-2.5">
       <div className="flex flex-wrap items-center gap-2">
         <span className={`${baseChipClass} border-surface-200 bg-surface-100 text-ink-700`}>
           <UserCircle2 className="h-3.5 w-3.5" />
@@ -62,7 +62,7 @@ export default function DashboardStatusStrip({
 
         <button
           type="button"
-          onClick={() => onOpenSection("channels")}
+          onClick={() => onOpenSheet("channels")}
           className={`${baseChipClass} focus-ring border-surface-200 bg-surface-100 text-ink-700 hover:border-surface-300`}
         >
           <Cable className="h-3.5 w-3.5" />
@@ -71,7 +71,7 @@ export default function DashboardStatusStrip({
 
         <button
           type="button"
-          onClick={() => onOpenSection("skills")}
+          onClick={() => onOpenSheet("skills")}
           className={`${baseChipClass} focus-ring border-surface-200 bg-surface-100 text-ink-700 hover:border-surface-300`}
         >
           <Sparkles className="h-3.5 w-3.5" />
@@ -88,13 +88,11 @@ export default function DashboardStatusStrip({
           <Bot className="h-3.5 w-3.5" />
           Chat {getChatLabel(chatSummary)}
         </span>
-      </div>
 
-      <div className="flex flex-wrap items-center gap-2">
         {!chatConnected || chatSummary.error ? (
           <button
             type="button"
-            onClick={() => onOpenSection("account")}
+            onClick={() => onOpenSheet("account")}
             className={`${baseChipClass} focus-ring border-amber-200 bg-amber-50 text-status-warn hover:border-amber-300`}
           >
             <AlertTriangle className="h-3.5 w-3.5" />
@@ -105,7 +103,7 @@ export default function DashboardStatusStrip({
         {channelsSummary && !channelConnected ? (
           <button
             type="button"
-            onClick={() => onOpenSection("channels")}
+            onClick={() => onOpenSheet("channels")}
             className={`${baseChipClass} focus-ring border-amber-200 bg-amber-50 text-status-warn hover:border-amber-300`}
           >
             <AlertTriangle className="h-3.5 w-3.5" />
@@ -116,7 +114,7 @@ export default function DashboardStatusStrip({
         {skillsSummary && !skillsHealthy ? (
           <button
             type="button"
-            onClick={() => onOpenSection("skills")}
+            onClick={() => onOpenSheet("skills")}
             className={`${baseChipClass} focus-ring border-amber-200 bg-amber-50 text-status-warn hover:border-amber-300`}
           >
             <AlertTriangle className="h-3.5 w-3.5" />
