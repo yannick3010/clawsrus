@@ -59,7 +59,7 @@ cat > /opt/clawsrus/.env <<'EOF'
 SUPABASE_URL=https://xxx.supabase.co
 SUPABASE_SERVICE_KEY=eyxxx
 RESEND_API_KEY=re_xxx
-OPENAI_API_KEY=sk-xxx
+OPENROUTER_API_KEY=sk-or-xxx
 EOF
 chmod 600 /opt/clawsrus/.env
 

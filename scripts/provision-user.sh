@@ -1,7 +1,7 @@
 #!/bin/bash
 # ClawsRUs — User Provisioning Script
 # Usage: ./provision-user.sh <customer-id> <email> <persona> <tier> [onboarding_payload_b64]
-# Note: OPENAI_API_KEY is read from the environment (set in /opt/clawsrus/.env)
+# Note: OPENROUTER_API_KEY is read from the environment (set in /opt/clawsrus/.env)
 
 set -euo pipefail
 
@@ -17,8 +17,8 @@ if [ -z "$CUSTOMER_ID" ] || [ -z "$CUSTOMER_EMAIL" ] || [ -z "$PERSONA" ] || [ -
     exit 1
 fi
 
-if [ -z "$OPENAI_API_KEY" ]; then
-    echo "Error: OPENAI_API_KEY environment variable is not set"
+if [ -z "$OPENROUTER_API_KEY" ]; then
+    echo "Error: OPENROUTER_API_KEY environment variable is not set"
     exit 1
 fi
 
@@ -338,10 +338,31 @@ GATEWAY_TOKEN=$(generate_gateway_token)
 # Generate OpenClaw config
 cat > "$BASE_DIR/$CUSTOMER_ID/openclaw/openclaw.json" <<OCEOF
 {
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "openrouter": {
+        "baseUrl": "https://openrouter.ai/api/v1",
+        "apiKey": "$OPENROUTER_API_KEY",
+        "api": "openai-responses",
+        "models": [
+          {
+            "id": "minimax/minimax-m2.5",
+            "name": "MiniMax M2.5",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+            "contextWindow": 1000000,
+            "maxTokens": 16384
+          }
+        ]
+      }
+    }
+  },
   "agents": {
     "defaults": {
       "model": {
-        "primary": "openai/gpt-4o"
+        "primary": "openrouter/minimax/minimax-m2.5"
       }
     },
     "list": [
@@ -355,7 +376,7 @@ cat > "$BASE_DIR/$CUSTOMER_ID/openclaw/openclaw.json" <<OCEOF
     ]
   },
   "env": {
-    "OPENAI_API_KEY": "$OPENAI_API_KEY"
+    "OPENROUTER_API_KEY": "$OPENROUTER_API_KEY"
   },
   "session": {
     "dmScope": "per-channel-peer"
