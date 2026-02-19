@@ -60,14 +60,7 @@ export default function ChatMessageBubble({
           <div className="chat-markdown text-ink-700">
             {message.parts.map((part, index) => {
               if (part.kind !== "text") {
-                return (
-                  <p
-                    key={`${message.id}-unsupported-${index}`}
-                    className="rounded-md bg-surface-200 px-2 py-1 text-xs text-ink-500"
-                  >
-                    Unsupported content type
-                  </p>
-                );
+                return null;
               }
 
               return (
@@ -102,14 +95,7 @@ export default function ChatMessageBubble({
         <div className="chat-markdown">
           {message.parts.map((part, index) => {
             if (part.kind !== "text") {
-              return (
-                <p
-                  key={`${message.id}-unsupported-${index}`}
-                  className="rounded-md bg-surface-100 px-2 py-1 text-xs text-ink-500"
-                >
-                  Unsupported content type
-                </p>
-              );
+              return null;
             }
 
             return (
