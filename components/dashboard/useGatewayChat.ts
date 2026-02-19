@@ -61,10 +61,24 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object";
 }
 
+/**
+ * Strip openclaw metadata prefix from history messages.
+ * The gateway prepends conversation context like:
+ *   Conversation info (untrusted metadata):\n\n{...json...}\n[timestamp] actual text
+ * We extract just the actual user text after the timestamp bracket.
+ */
+function stripOpenclawMetadata(raw: string): string {
+  const match = raw.match(
+    /^Conversation info \(untrusted metadata\):[\s\S]*?\n\[.*?\]\s*([\s\S]*)$/
+  );
+  return match ? match[1].trim() : raw.trim();
+}
+
 function toTextParts(content: unknown): NormalizedMessagePart[] {
   if (typeof content === "string") {
-    return content.trim()
-      ? [{ kind: "text", text: content }]
+    const cleaned = stripOpenclawMetadata(content);
+    return cleaned
+      ? [{ kind: "text", text: cleaned }]
       : [{ kind: "unsupported", contentType: "empty" }];
   }
 
@@ -80,8 +94,12 @@ function toTextParts(content: unknown): NormalizedMessagePart[] {
     }
 
     const type = typeof item.type === "string" ? item.type : "unknown";
-    if (type === "text" && typeof item.text === "string") {
-      parts.push({ kind: "text", text: item.text });
+    const isTextType = type === "text" || type === "output_text" || type === "input_text";
+    if (isTextType && typeof item.text === "string") {
+      const cleaned = stripOpenclawMetadata(item.text);
+      if (cleaned) {
+        parts.push({ kind: "text", text: cleaned });
+      }
       continue;
     }
 
