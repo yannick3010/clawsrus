@@ -10,6 +10,58 @@
 }
 
 @layer utilities {
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white;
+  }
+
+  .surface-elevated {
+    @apply bg-white shadow-surface-1;
+  }
+
+  .surface-floating {
+    @apply bg-white shadow-surface-2;
+  }
+
+  .chat-markdown {
+    @apply text-sm leading-relaxed text-navy-700;
+  }
+
+  .chat-markdown p {
+    @apply whitespace-pre-wrap;
+  }
+
+  .chat-markdown p + p {
+    @apply mt-2;
+  }
+
+  .chat-markdown ul {
+    @apply mt-2 list-disc space-y-1 pl-5;
+  }
+
+  .chat-markdown ol {
+    @apply mt-2 list-decimal space-y-1 pl-5;
+  }
+
+  .chat-markdown a {
+    @apply text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-600;
+  }
+
+  .chat-markdown code {
+    @apply rounded bg-navy-900/5 px-1 py-0.5 font-mono text-[0.85em];
+  }
+
+  .chat-markdown pre {
+    @apply mt-2 overflow-x-auto rounded-xl bg-navy-900 px-3 py-2 text-xs text-white;
+  }
+
+  .chat-markdown pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+
+  .chat-markdown blockquote {
+    @apply mt-2 border-l-2 border-navy-200 pl-3 text-navy-600;
+  }
+
   .animate-fade-in-up {
     animation: fadeInUp 0.8s ease-out forwards;
     opacity: 0;
@@ -30,6 +82,10 @@
   .animate-spin-reverse-35 {
     animation: spin-slow 35s linear infinite reverse;
   }
+
+  .animate-fade-in-fast {
+    animation: fadeInFast 0.2s ease-out forwards;
+  }
 }
 
 @keyframes fadeInUp {
@@ -49,5 +105,14 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInFast {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

@@ -1,11 +1,18 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
 import { isNativeChatEnabled } from "@/lib/feature-flags";
 import { useGatewayChat } from "@/components/dashboard/useGatewayChat";
+import ChatThread from "@/components/dashboard/chat/ChatThread";
+import ChatComposer from "@/components/dashboard/chat/ChatComposer";
+import type { ChatSummary } from "@/components/dashboard/types";
 
-export default function ChatPanel() {
+type ChatPanelProps = {
+  onSummaryChange?: (summary: ChatSummary) => void;
+};
+
+export default function ChatPanel({ onSummaryChange }: ChatPanelProps) {
   const nativeChatEnabled = isNativeChatEnabled();
   const [draft, setDraft] = useState("");
   const threadRef = useRef<HTMLDivElement | null>(null);
@@ -23,22 +30,31 @@ export default function ChatPanel() {
 
   const phaseLabel = useMemo(() => {
     if (connectionStatus === "connecting") {
-      return "Connecting to assistant...";
+      return "Connecting to assistant";
     }
     if (connectionStatus === "reconnecting") {
-      return "Reconnecting...";
+      return "Reconnecting to assistant";
     }
     if (phase === "awaiting") {
-      return "Loading conversation...";
+      return "Loading conversation";
     }
     if (phase === "processing") {
-      return "Processing...";
+      return "Processing request";
     }
     if (phase === "responding") {
-      return "Responding...";
+      return "Assistant is responding";
     }
     return "Ready";
   }, [connectionStatus, phase]);
+
+  useEffect(() => {
+    onSummaryChange?.({
+      phase,
+      connectionStatus,
+      error,
+      connected: isConnected,
+    });
+  }, [connectionStatus, error, isConnected, onSummaryChange, phase]);
 
   useEffect(() => {
     const el = threadRef.current;
@@ -48,8 +64,8 @@ export default function ChatPanel() {
     el.scrollTop = el.scrollHeight;
   }, [messages, streamingText]);
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function onSubmit(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
     const text = draft.trim();
     if (!text) {
       return;
@@ -60,14 +76,8 @@ export default function ChatPanel() {
 
   if (!nativeChatEnabled) {
     return (
-      <section className="overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-navy-100 px-4 py-3">
-          <div>
-            <h2 className="text-sm font-semibold text-navy-700">Agent Chat</h2>
-            <p className="text-xs text-navy-400">Native chat is disabled.</p>
-          </div>
-        </div>
-        <div className="flex h-[640px] items-center justify-center px-6 text-center text-sm text-red-600">
+      <section className="surface-elevated flex min-h-[560px] overflow-hidden rounded-2xl border border-surface-200 bg-white">
+        <div className="flex w-full items-center justify-center px-6 text-center text-sm text-red-600">
           Native chat is currently disabled. Set `NATIVE_CHAT_V1=true` to re-enable it.
         </div>
       </section>
@@ -75,104 +85,55 @@ export default function ChatPanel() {
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-navy-100 px-4 py-3">
+    <section className="surface-elevated flex h-full min-h-[560px] min-w-0 flex-col overflow-hidden rounded-2xl border border-surface-200 bg-white">
+      <header className="flex items-center justify-between gap-3 border-b border-surface-200 px-3 py-3 sm:px-4">
         <div>
-          <h2 className="text-sm font-semibold text-navy-700">Agent Chat</h2>
+          <h2 className="text-sm font-semibold text-navy-800">Agent Chat</h2>
           <p className="text-xs text-navy-400">{phaseLabel}</p>
         </div>
+
         <button
           onClick={() => void refresh()}
-          className="inline-flex items-center gap-2 rounded-full border border-navy-200 px-3 py-1.5 text-xs font-medium text-navy-600 hover:border-navy-300"
+          className="focus-ring inline-flex items-center gap-2 rounded-full border border-surface-200 bg-white px-3 py-1.5 text-xs font-medium text-navy-600 hover:border-surface-300"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           Refresh
         </button>
-      </div>
+      </header>
 
-      <div className="relative h-[640px] bg-navy-50" data-testid="native-chat-panel">
-        <div className="flex h-full flex-col">
-          <div className="border-b border-navy-100 bg-white px-4 py-2 text-xs text-navy-500">
-            Status:{" "}
-            <span className={isConnected ? "font-medium text-emerald-700" : "font-medium text-amber-700"}>
-              {connectionStatus}
-            </span>
+      <div className="relative flex min-h-0 flex-1 flex-col" data-testid="native-chat-panel">
+        {!isConnected ? (
+          <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-status-warn">
+            <AlertCircle className="h-3.5 w-3.5" />
+            Gateway status: {connectionStatus}. Messages will send once connection is restored.
           </div>
+        ) : null}
 
-          <div ref={threadRef} className="flex-1 space-y-3 overflow-y-auto p-4">
-            {messages.length === 0 && !streamingText ? (
-              <div className="text-sm text-navy-400">Start the conversation with your assistant.</div>
-            ) : null}
-
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                data-testid="chat-message"
-                data-role={message.role}
-                className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
-                  message.role === "user"
-                    ? "ml-auto bg-brand-500 text-white"
-                    : "mr-auto bg-white text-navy-700"
-                }`}
-              >
-                {message.parts.map((part, index) =>
-                  part.kind === "text" ? (
-                    <p key={`${message.id}-text-${index}`} className="whitespace-pre-wrap">
-                      {part.text}
-                    </p>
-                  ) : (
-                    <p
-                      key={`${message.id}-unsupported-${index}`}
-                      className="rounded-md bg-navy-50 px-2 py-1 text-xs text-navy-500"
-                    >
-                      Unsupported content type
-                    </p>
-                  )
-                )}
-              </div>
-            ))}
-
-            {streamingText ? (
-              <div
-                data-testid="chat-message"
-                data-role="assistant"
-                className="mr-auto max-w-[85%] animate-pulse rounded-2xl bg-white px-3 py-2 text-sm text-navy-700 shadow-sm"
-              >
-                <p className="whitespace-pre-wrap">{streamingText}</p>
-              </div>
-            ) : null}
+        {error ? (
+          <div className="flex items-center gap-2 border-b border-red-200 bg-red-50 px-4 py-2 text-xs text-status-error">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {error}
           </div>
+        ) : null}
 
-          {error ? (
-            <div className="border-t border-navy-100 bg-red-50 px-4 py-2 text-xs text-red-700">{error}</div>
-          ) : null}
+        <ChatThread
+          messages={messages}
+          streamingText={streamingText}
+          threadRef={threadRef}
+          onPromptSelect={setDraft}
+        />
 
-          <form onSubmit={onSubmit} className="border-t border-navy-100 bg-white p-3">
-            <div className="flex items-end gap-2">
-              <textarea
-                data-testid="chat-input"
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder="Type your message..."
-                rows={2}
-                className="min-h-[44px] flex-1 resize-none rounded-xl border border-navy-200 px-3 py-2 text-sm text-navy-700 focus:border-brand-500 focus:outline-none"
-              />
-              <button
-                data-testid="chat-send"
-                type="submit"
-                disabled={!isConnected || isBusy || !draft.trim()}
-                className="rounded-full bg-navy-800 px-4 py-2 text-sm font-semibold text-white hover:bg-navy-700 disabled:opacity-50"
-              >
-                Send
-              </button>
-            </div>
-            {!isConnected ? (
-              <p className="mt-2 text-xs text-navy-400">Waiting for gateway connection.</p>
-            ) : null}
-          </form>
-        </div>
+        <ChatComposer
+          draft={draft}
+          onDraftChange={setDraft}
+          onSubmit={() => onSubmit()}
+          disabled={!isConnected || isBusy || !draft.trim()}
+          connected={isConnected}
+          busy={isBusy}
+        />
+
         {connectionStatus === "connecting" && messages.length === 0 && !error ? (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-navy-50/70 text-navy-400">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-50/65 text-navy-400">
             <Loader2 className="h-6 w-6 animate-spin" />
           </div>
         ) : null}

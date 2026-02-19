@@ -4,7 +4,9 @@ import ProfileSettings from "@/components/dashboard/ProfileSettings";
 import ChannelsPanel from "@/components/dashboard/ChannelsPanel";
 import SkillsPanel from "@/components/dashboard/SkillsPanel";
 import SignOutButton from "@/components/dashboard/SignOutButton";
+import DashboardShellV2 from "@/components/dashboard/DashboardShellV2";
 import { getAuthenticatedAppUser } from "@/lib/dashboard-auth";
+import { isDashboardUiV2Enabled } from "@/lib/feature-flags";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +14,10 @@ export default async function DashboardPage() {
   const auth = await getAuthenticatedAppUser();
   if (!auth) {
     redirect("/login");
+  }
+
+  if (isDashboardUiV2Enabled()) {
+    return <DashboardShellV2 preferredName={auth.appUser.preferred_name} />;
   }
 
   return (

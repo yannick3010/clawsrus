@@ -51,8 +51,12 @@ function LoginForm() {
       } else {
         setSent(true);
       }
-    } catch {
-      setError("Failed to send magic link. Please try again.");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to send magic link. Please try again."
+      );
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import type { AccountSummary } from "@/components/dashboard/types";
 
 type ProfileResponse = {
   email: string;
@@ -11,7 +12,15 @@ type ProfileResponse = {
   tier: string;
 };
 
-export default function ProfileSettings() {
+type ProfileSettingsProps = {
+  variant?: "card" | "embedded";
+  onSummaryChange?: (summary: AccountSummary) => void;
+};
+
+export default function ProfileSettings({
+  variant = "card",
+  onSummaryChange,
+}: ProfileSettingsProps) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -43,6 +52,11 @@ export default function ProfileSettings() {
           persona: data.persona,
           tier: data.tier,
         });
+        onSummaryChange?.({
+          preferredName: data.preferred_name || "",
+          persona: data.persona,
+          tier: data.tier,
+        });
       } catch {
         setError("Failed to load profile");
       } finally {
@@ -51,7 +65,7 @@ export default function ProfileSettings() {
     }
 
     void loadProfile();
-  }, []);
+  }, [onSummaryChange]);
 
   async function onSave(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -76,6 +90,11 @@ export default function ProfileSettings() {
       }
 
       setSuccess("Saved");
+      onSummaryChange?.({
+        preferredName: form.preferred_name,
+        persona: form.persona,
+        tier: form.tier,
+      });
     } catch {
       setError("Could not save settings");
     } finally {
@@ -84,15 +103,23 @@ export default function ProfileSettings() {
   }
 
   return (
-    <section className="rounded-2xl border border-navy-100 bg-white p-5 shadow-sm">
-      <h3 className="text-sm font-semibold text-navy-700">Profile & Preferences</h3>
+    <section
+      className={
+        variant === "embedded"
+          ? "rounded-xl border border-surface-200 bg-white p-4"
+          : "rounded-2xl border border-navy-100 bg-white p-5 shadow-sm"
+      }
+    >
+      {variant === "card" ? (
+        <h3 className="text-sm font-semibold text-navy-700">Profile & Preferences</h3>
+      ) : null}
 
       {loading ? (
-        <div className="mt-5 flex justify-center text-navy-400">
+        <div className={`${variant === "card" ? "mt-5" : "mt-2"} flex justify-center text-navy-400`}>
           <Loader2 className="h-5 w-5 animate-spin" />
         </div>
       ) : (
-        <form onSubmit={onSave} className="mt-4 space-y-3">
+        <form onSubmit={onSave} className={`${variant === "card" ? "mt-4" : "mt-0"} space-y-3`}>
           <label className="block text-xs font-medium uppercase tracking-wide text-navy-400">
             Email
             <input
@@ -109,7 +136,7 @@ export default function ProfileSettings() {
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, preferred_name: e.target.value }))
               }
-              className="mt-1 w-full rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm text-navy-700 focus:border-brand-500 focus:outline-none"
+              className="focus-ring mt-1 w-full rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm text-navy-700 focus:border-brand-500"
               placeholder="How should your agent address you?"
             />
           </label>
@@ -121,7 +148,7 @@ export default function ProfileSettings() {
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, timezone: e.target.value }))
               }
-              className="mt-1 w-full rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm text-navy-700 focus:border-brand-500 focus:outline-none"
+              className="focus-ring mt-1 w-full rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm text-navy-700 focus:border-brand-500"
               placeholder="UTC"
             />
           </label>
@@ -147,7 +174,7 @@ export default function ProfileSettings() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full rounded-full bg-navy-800 px-4 py-2 text-sm font-semibold text-white hover:bg-navy-700 disabled:opacity-50"
+            className="focus-ring w-full rounded-full bg-navy-800 px-4 py-2 text-sm font-semibold text-white hover:bg-navy-700 disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save settings"}
           </button>

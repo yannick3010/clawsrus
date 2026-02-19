@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loader2, CheckCircle2, CircleDashed } from "lucide-react";
+import type { ChannelsSummary } from "@/components/dashboard/types";
 
 type Channel = {
   channel: "telegram" | "whatsapp" | "imessage";
@@ -9,14 +10,22 @@ type Channel = {
   meta?: Record<string, unknown>;
 };
 
-export default function ChannelsPanel() {
+type ChannelsPanelProps = {
+  variant?: "card" | "embedded";
+  onSummaryChange?: (summary: ChannelsSummary) => void;
+};
+
+export default function ChannelsPanel({
+  variant = "card",
+  onSummaryChange,
+}: ChannelsPanelProps) {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
   const [telegramToken, setTelegramToken] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  async function loadChannels() {
+  const loadChannels = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
@@ -27,16 +36,31 @@ export default function ChannelsPanel() {
         return;
       }
       setChannels(data as Channel[]);
+      const rows = data as Channel[];
+      onSummaryChange?.({
+        loading: false,
+        error: "",
+        total: rows.length,
+        connected: rows.filter((item) => item.status === "connected").length,
+        telegramStatus: rows.find((item) => item.channel === "telegram")?.status || "not_connected",
+      });
     } catch {
       setError("Failed to load channels");
+      onSummaryChange?.({
+        loading: false,
+        error: "Failed to load channels",
+        total: 0,
+        connected: 0,
+        telegramStatus: "not_connected",
+      });
     } finally {
       setLoading(false);
     }
-  }
+  }, [onSummaryChange]);
 
   useEffect(() => {
     void loadChannels();
-  }, []);
+  }, [loadChannels]);
 
   async function connectTelegram() {
     setSaving(true);
@@ -64,19 +88,43 @@ export default function ChannelsPanel() {
 
   const telegram = channels.find((item) => item.channel === "telegram");
 
+  useEffect(() => {
+    if (!loading) {
+      onSummaryChange?.({
+        loading,
+        error,
+        total: channels.length,
+        connected: channels.filter((item) => item.status === "connected").length,
+        telegramStatus: channels.find((item) => item.channel === "telegram")?.status || "not_connected",
+      });
+    }
+  }, [channels, error, loading, onSummaryChange]);
+
   return (
-    <section className="rounded-2xl border border-navy-100 bg-white p-5 shadow-sm">
-      <h3 className="text-sm font-semibold text-navy-700">Channels</h3>
-      <p className="mt-1 text-xs text-navy-400">
-        Connect Telegram now. WhatsApp and iMessage are coming soon.
-      </p>
+    <section
+      className={
+        variant === "embedded"
+          ? "rounded-xl border border-surface-200 bg-white p-4"
+          : "rounded-2xl border border-navy-100 bg-white p-5 shadow-sm"
+      }
+    >
+      {variant === "card" ? (
+        <>
+          <h3 className="text-sm font-semibold text-navy-700">Channels</h3>
+          <p className="mt-1 text-xs text-navy-400">
+            Connect Telegram now. WhatsApp and iMessage are coming soon.
+          </p>
+        </>
+      ) : (
+        <p className="text-xs text-navy-400">Connect Telegram. Other channels are coming soon.</p>
+      )}
 
       {loading ? (
-        <div className="mt-4 flex justify-center text-navy-400">
+        <div className={`${variant === "card" ? "mt-4" : "mt-2"} flex justify-center text-navy-400`}>
           <Loader2 className="h-5 w-5 animate-spin" />
         </div>
       ) : (
-        <div className="mt-4 space-y-3">
+        <div className={`${variant === "card" ? "mt-4" : "mt-3"} space-y-3`}>
           <div className="rounded-xl border border-navy-100 p-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-navy-700">Telegram</p>
@@ -92,12 +140,12 @@ export default function ChannelsPanel() {
                   value={telegramToken}
                   onChange={(e) => setTelegramToken(e.target.value)}
                   placeholder="Telegram bot token"
-                  className="w-full rounded-lg border border-navy-200 px-3 py-2 text-sm text-navy-700 focus:border-brand-500 focus:outline-none"
+                  className="focus-ring w-full rounded-lg border border-navy-200 px-3 py-2 text-sm text-navy-700 focus:border-brand-500"
                 />
                 <button
                   onClick={() => void connectTelegram()}
                   disabled={saving || !telegramToken.trim()}
-                  className="w-full rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-400 disabled:opacity-50"
+                  className="focus-ring w-full rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-400 disabled:opacity-50"
                 >
                   {saving ? "Connecting..." : "Connect Telegram"}
                 </button>
