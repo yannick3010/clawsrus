@@ -56,7 +56,7 @@ export default function ChatComposer({
 
       <form
         onSubmit={handleSubmit}
-        className="pointer-events-auto mx-4 mb-3 rounded-2xl border border-surface-200 bg-white shadow-surface-2 sm:mx-8 sm:mb-4 lg:mx-12"
+        className="pointer-events-auto mx-4 mb-[calc(12px+env(safe-area-inset-bottom))] rounded-2xl border border-surface-200 bg-white shadow-surface-2 sm:mx-8 sm:mb-4 lg:mx-12"
       >
         <div className="flex items-end gap-2 px-3 pt-3 pb-2">
           <textarea
