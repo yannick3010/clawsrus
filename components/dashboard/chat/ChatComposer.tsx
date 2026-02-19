@@ -67,7 +67,7 @@ export default function ChatComposer({
             onKeyDown={onKeyDown}
             placeholder="Reply..."
             rows={1}
-            className="focus-ring min-h-[44px] max-h-[160px] flex-1 resize-none rounded-lg border-none bg-transparent px-1 py-2 text-sm text-ink-700 placeholder:text-ink-400 focus:ring-0 focus:ring-offset-0"
+            className="focus-ring min-h-[44px] max-h-[160px] flex-1 resize-none rounded-lg border-none bg-transparent px-1 py-2 text-base sm:text-sm text-ink-700 placeholder:text-ink-400 focus:ring-0 focus:ring-offset-0"
           />
         </div>
 
