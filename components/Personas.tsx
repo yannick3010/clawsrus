@@ -11,9 +11,9 @@ const colorMap = {
     icon: "text-blue-600",
   },
   green: {
-    border: "border-emerald-200",
-    iconBg: "bg-emerald-100",
-    icon: "text-emerald-600",
+    border: "border-brand-200",
+    iconBg: "bg-brand-100",
+    icon: "text-brand-600",
   },
   purple: {
     border: "border-violet-200",
@@ -26,14 +26,14 @@ export default function Personas() {
   const personas = Object.values(PERSONAS);
 
   return (
-    <section id="personas" className="bg-navy-50 py-24 sm:py-32">
+    <section id="personas" className="bg-ink-50 py-24 sm:py-32">
       <div className="mx-auto max-w-5xl px-6">
         <FadeIn>
           <div className="text-center">
-            <h2 className="font-display text-3xl tracking-tight text-navy-800 sm:text-4xl lg:text-5xl">
+            <h2 className="font-display text-3xl tracking-tight text-ink-800 sm:text-4xl lg:text-5xl">
               Choose your AI persona.
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-navy-400">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-400">
               Each persona is pre-configured with the skills, tone, and
               knowledge to excel at its role.
             </p>
@@ -61,18 +61,18 @@ export default function Personas() {
                       <Icon className={`h-6 w-6 ${colors.icon}`} />
                     </div>
                     {isComingSoon && (
-                      <span className="rounded-full bg-navy-100 px-3 py-1 text-xs font-medium text-navy-400">
+                      <span className="rounded-full bg-ink-100 px-3 py-1 text-xs font-medium text-ink-400">
                         Coming Soon
                       </span>
                     )}
                   </div>
-                  <h3 className="mt-5 text-xl font-semibold text-navy-800">
+                  <h3 className="mt-5 text-xl font-semibold text-ink-800">
                     {persona.name}
                   </h3>
-                  <p className="mt-1 text-sm font-medium text-navy-400">
+                  <p className="mt-1 text-sm font-medium text-ink-400">
                     {persona.tagline}
                   </p>
-                  <p className="mt-4 text-sm leading-relaxed text-navy-500">
+                  <p className="mt-4 text-sm leading-relaxed text-ink-500">
                     {persona.description}
                   </p>
                 </div>

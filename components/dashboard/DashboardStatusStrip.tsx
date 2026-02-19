@@ -51,9 +51,9 @@ export default function DashboardStatusStrip({
   const skillsHealthy = (skillsSummary?.error || "") === "";
 
   return (
-    <section className="space-y-2 rounded-2xl border border-surface-200 bg-white px-3 py-3 shadow-surface-1 sm:px-4">
+    <section className="space-y-2 rounded-xl border border-surface-200 bg-white px-3 py-3 sm:px-4">
       <div className="flex flex-wrap items-center gap-2">
-        <span className={`${baseChipClass} border-surface-200 bg-surface-50 text-navy-700`}>
+        <span className={`${baseChipClass} border-surface-200 bg-surface-100 text-ink-700`}>
           <UserCircle2 className="h-3.5 w-3.5" />
           {accountSummary
             ? `${accountSummary.persona.replaceAll("-", " ")} - ${accountSummary.tier}`
@@ -63,7 +63,7 @@ export default function DashboardStatusStrip({
         <button
           type="button"
           onClick={() => onOpenSection("channels")}
-          className={`${baseChipClass} focus-ring border-surface-200 bg-surface-50 text-navy-700 hover:border-surface-300`}
+          className={`${baseChipClass} focus-ring border-surface-200 bg-surface-100 text-ink-700 hover:border-surface-300`}
         >
           <Cable className="h-3.5 w-3.5" />
           Channels {channelsSummary ? `${channelsSummary.connected}/${channelsSummary.total}` : "-"}
@@ -72,7 +72,7 @@ export default function DashboardStatusStrip({
         <button
           type="button"
           onClick={() => onOpenSection("skills")}
-          className={`${baseChipClass} focus-ring border-surface-200 bg-surface-50 text-navy-700 hover:border-surface-300`}
+          className={`${baseChipClass} focus-ring border-surface-200 bg-surface-100 text-ink-700 hover:border-surface-300`}
         >
           <Sparkles className="h-3.5 w-3.5" />
           Skills {skillsSummary ? `${skillsSummary.enabled}/${skillsSummary.total}` : "-"}
@@ -81,7 +81,7 @@ export default function DashboardStatusStrip({
         <span
           className={`${baseChipClass} ${
             chatConnected
-              ? "border-emerald-200 bg-emerald-50 text-status-success"
+              ? "border-brand-200 bg-brand-50 text-brand-700"
               : "border-amber-200 bg-amber-50 text-status-warn"
           }`}
         >

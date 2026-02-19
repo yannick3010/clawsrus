@@ -4,8 +4,32 @@
 
 @layer base {
   ::selection {
-    background-color: #e0e0ff;
-    color: #0a2540;
+    background-color: #DDE8D8;
+    color: #1A1A1A;
+  }
+
+  /* Custom scrollbar — thin warm-grey, only on .main-scroll containers */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #D8D5CE transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #D8D5CE;
+    border-radius: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #A8A8A8;
   }
 }
 
@@ -23,7 +47,7 @@
   }
 
   .chat-markdown {
-    @apply text-sm leading-relaxed text-navy-700;
+    @apply text-sm leading-relaxed text-ink-700;
   }
 
   .chat-markdown p {
@@ -47,11 +71,11 @@
   }
 
   .chat-markdown code {
-    @apply rounded bg-navy-900/5 px-1 py-0.5 font-mono text-[0.85em];
+    @apply rounded bg-ink-800/5 px-1 py-0.5 font-mono text-[0.85em];
   }
 
   .chat-markdown pre {
-    @apply mt-2 overflow-x-auto rounded-xl bg-navy-900 px-3 py-2 text-xs text-white;
+    @apply mt-2 overflow-x-auto rounded-xl bg-ink-800 px-3 py-2 text-xs text-white;
   }
 
   .chat-markdown pre code {
@@ -59,13 +83,19 @@
   }
 
   .chat-markdown blockquote {
-    @apply mt-2 border-l-2 border-navy-200 pl-3 text-navy-600;
+    @apply mt-2 border-l-2 border-ink-200 pl-3 text-ink-600;
   }
 
+  /* ─── Entrance animations ─── */
   .animate-fade-in-up {
-    animation: fadeInUp 0.8s ease-out forwards;
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     opacity: 0;
   }
+
+  .animate-stagger-1 { animation-delay: 0ms; }
+  .animate-stagger-2 { animation-delay: 80ms; }
+  .animate-stagger-3 { animation-delay: 160ms; }
+  .animate-stagger-4 { animation-delay: 240ms; }
 
   .animate-spin-slow-20 {
     animation: spin-slow 20s linear infinite;
@@ -91,7 +121,7 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;

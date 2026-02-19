@@ -22,9 +22,9 @@ export default function AuthCallbackPage() {
 
 function AuthCallbackLoading() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-navy-50 px-6 py-12">
-      <div className="w-full max-w-md rounded-2xl border border-navy-100 bg-white p-8 shadow-sm">
-        <div className="flex items-center gap-3 text-sm text-navy-500">
+    <main className="flex min-h-screen items-center justify-center bg-surface-100 px-6 py-12">
+      <div className="w-full max-w-md rounded-xl border border-surface-200 bg-white p-8">
+        <div className="flex items-center gap-3 text-sm text-ink-500">
           <Loader2 className="h-4 w-4 animate-spin text-brand-500" />
           Completing sign-in...
         </div>
@@ -131,19 +131,19 @@ function AuthCallbackInner() {
   }, [nextPath, searchParams]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-navy-50 px-6 py-12">
-      <div className="w-full max-w-md rounded-2xl border border-navy-100 bg-white p-8 shadow-sm">
+    <main className="flex min-h-screen items-center justify-center bg-surface-100 px-6 py-12">
+      <div className="w-full max-w-md rounded-xl border border-surface-200 bg-white p-8">
         {error ? (
           <>
-            <h1 className="font-display text-2xl text-navy-800">Authentication failed</h1>
+            <h1 className="font-display text-2xl text-ink-800">Authentication failed</h1>
             <p className="mt-3 text-sm text-red-700">{error}</p>
-            <p className="mt-3 text-sm text-navy-500">
+            <p className="mt-3 text-sm text-ink-500">
               Please request a new magic link from the login page.
             </p>
           </>
         ) : (
           <>
-            <div className="flex items-center gap-3 text-sm text-navy-500">
+            <div className="flex items-center gap-3 text-sm text-ink-500">
               <Loader2 className="h-4 w-4 animate-spin text-brand-500" />
               Completing sign-in...
             </div>

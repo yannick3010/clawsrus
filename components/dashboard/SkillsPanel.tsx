@@ -46,11 +46,11 @@ export default function SkillsPanel({
         className={
           variant === "embedded"
             ? "rounded-xl border border-surface-200 bg-white p-4"
-            : "rounded-2xl border border-navy-100 bg-white p-5 shadow-sm"
+            : "rounded-xl border border-surface-200 bg-white p-5"
         }
       >
-        {variant === "card" ? <h3 className="text-sm font-semibold text-navy-700">Skills</h3> : null}
-        <p className="mt-1 text-xs text-navy-400">Native skills controls are disabled.</p>
+        {variant === "card" ? <h3 className="text-sm font-semibold text-ink-700">Skills</h3> : null}
+        <p className="mt-1 text-xs text-ink-400">Native skills controls are disabled.</p>
         <p className="mt-4 text-xs text-red-600">
           Set <code>NATIVE_SKILLS_V1=true</code> to enable this panel.
         </p>
@@ -64,12 +64,12 @@ export default function SkillsPanel({
         className={
           variant === "embedded"
             ? "rounded-xl border border-surface-200 bg-white p-4"
-            : "rounded-2xl border border-navy-100 bg-white p-5 shadow-sm"
+            : "rounded-xl border border-surface-200 bg-white p-5"
         }
       >
-        {variant === "card" ? <h3 className="text-sm font-semibold text-navy-700">Skills</h3> : null}
-        <p className="mt-1 text-xs text-navy-400">No dashboard-managed skills configured.</p>
-        <p className="mt-4 text-xs text-navy-500">
+        {variant === "card" ? <h3 className="text-sm font-semibold text-ink-700">Skills</h3> : null}
+        <p className="mt-1 text-xs text-ink-400">No dashboard-managed skills configured.</p>
+        <p className="mt-4 text-xs text-ink-500">
           Set <code>NEXT_PUBLIC_NATIVE_SKILLS_ALLOWLIST</code> with comma-separated skill IDs.
         </p>
       </section>
@@ -81,19 +81,19 @@ export default function SkillsPanel({
       className={
         variant === "embedded"
           ? "overflow-hidden rounded-xl border border-surface-200 bg-white"
-          : "overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-sm"
+          : "overflow-hidden rounded-xl border border-surface-200 bg-white"
       }
     >
-      <div className="flex items-center justify-between border-b border-navy-100 px-4 py-3">
+      <div className="flex items-center justify-between border-b border-ink-100 px-4 py-3">
         <div>
-          {variant === "card" ? <h3 className="text-sm font-semibold text-navy-700">Skills</h3> : null}
-          <p className="text-xs text-navy-400">
-            Status: <span className={isConnected ? "text-emerald-700" : "text-amber-700"}>{connectionStatus}</span>
+          {variant === "card" ? <h3 className="text-sm font-semibold text-ink-700">Skills</h3> : null}
+          <p className="text-xs text-ink-400">
+            Status: <span className={isConnected ? "text-brand-700" : "text-amber-700"}>{connectionStatus}</span>
           </p>
         </div>
         <button
           onClick={() => void refresh()}
-          className="focus-ring inline-flex items-center gap-2 rounded-full border border-navy-200 px-3 py-1.5 text-xs font-medium text-navy-600 hover:border-navy-300"
+          className="focus-ring inline-flex items-center gap-2 rounded-full border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-600 hover:border-ink-300"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           Refresh
@@ -102,13 +102,13 @@ export default function SkillsPanel({
 
       <div className="space-y-3 p-4" data-testid="native-skills-panel">
         {loading ? (
-          <div className="flex justify-center py-4 text-navy-400">
+          <div className="flex justify-center py-4 text-ink-400">
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         ) : null}
 
         {!loading && skills.length === 0 ? (
-          <p className="text-xs text-navy-400">
+          <p className="text-xs text-ink-400">
             No allowlisted skills were returned by your OpenClaw runtime.
           </p>
         ) : null}
@@ -122,12 +122,12 @@ export default function SkillsPanel({
                 <div
                   key={skill.id}
                   data-testid={`skills-row-${skill.id}`}
-                  className="rounded-xl border border-navy-100 bg-white p-3"
+                  className="rounded-xl border border-ink-100 bg-white p-3"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-medium text-navy-700">{skill.name}</p>
-                      <p className="mt-1 text-xs text-navy-500">{skill.description || skill.id}</p>
+                      <p className="text-sm font-medium text-ink-700">{skill.name}</p>
+                      <p className="mt-1 text-xs text-ink-500">{skill.description || skill.id}</p>
                     </div>
 
                     <button
@@ -137,7 +137,7 @@ export default function SkillsPanel({
                       disabled={toggleDisabled}
                       onClick={() => void toggleSkill(skill.id, !skill.enabled)}
                       className={`focus-ring rounded-full px-3 py-1 text-xs font-semibold text-white disabled:opacity-50 ${
-                        skill.enabled ? "bg-emerald-600 hover:bg-emerald-500" : "bg-navy-600 hover:bg-navy-500"
+                        skill.enabled ? "bg-brand-500 hover:bg-brand-400" : "bg-ink-600 hover:bg-ink-500"
                       }`}
                     >
                       {isSaving ? "Saving..." : skill.enabled ? "Enabled" : "Disabled"}
@@ -145,7 +145,7 @@ export default function SkillsPanel({
                   </div>
 
                   {!skill.mutable ? (
-                    <p className="mt-2 text-xs text-navy-400">This skill cannot be changed from the dashboard.</p>
+                    <p className="mt-2 text-xs text-ink-400">This skill cannot be changed from the dashboard.</p>
                   ) : null}
                 </div>
               );

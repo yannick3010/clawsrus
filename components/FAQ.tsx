@@ -50,7 +50,7 @@ export default function FAQ() {
     <section id="faq" className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-3xl px-6">
         <FadeIn>
-          <h2 className="text-center font-display text-3xl tracking-tight text-navy-800 sm:text-4xl lg:text-5xl">
+          <h2 className="text-center font-display text-3xl tracking-tight text-ink-800 sm:text-4xl lg:text-5xl">
             Questions? We&rsquo;ve got answers.
           </h2>
         </FadeIn>
@@ -58,16 +58,16 @@ export default function FAQ() {
         <div className="mt-12 space-y-3">
           {faqs.map((faq, i) => (
             <FadeIn key={i} delay={i * 50}>
-              <div className="rounded-xl border border-navy-100 bg-white transition-all hover:border-navy-200">
+              <div className="rounded-xl border border-ink-100 bg-white transition-all hover:border-ink-200">
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
                   className="flex w-full items-center justify-between px-6 py-5 text-left"
                 >
-                  <span className="pr-4 font-medium text-navy-800">
+                  <span className="pr-4 font-medium text-ink-800">
                     {faq.q}
                   </span>
                   <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-navy-300 transition-transform duration-300 ${
+                    className={`h-5 w-5 shrink-0 text-ink-300 transition-transform duration-300 ${
                       open === i ? "rotate-180" : ""
                     }`}
                   />
@@ -80,7 +80,7 @@ export default function FAQ() {
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <div className="px-6 pb-5 leading-relaxed text-navy-400">
+                    <div className="px-6 pb-5 leading-relaxed text-ink-400">
                       {faq.a}
                     </div>
                   </div>

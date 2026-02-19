@@ -139,19 +139,19 @@ export default function DashboardDrawer({
   return (
     <>
       <aside
-        className={`hidden h-full border-r border-surface-200 bg-white transition-[width] duration-200 lg:flex lg:flex-col ${
+        className={`hidden h-full border-r border-surface-200 bg-surface-50 transition-[width] duration-200 lg:flex lg:flex-col ${
           collapsed ? "w-[72px]" : "w-[320px]"
         }`}
         aria-label="Dashboard settings drawer"
       >
         <div className="flex items-center justify-between border-b border-surface-200 px-3 py-3">
-          {!collapsed ? <p className="text-sm font-semibold text-navy-700">Workspace Settings</p> : null}
+          {!collapsed ? <p className="text-sm font-semibold text-ink-700">Workspace Settings</p> : null}
           <button
             type="button"
             onClick={() => onCollapsedChange(!collapsed)}
             aria-label={collapsed ? "Expand drawer" : "Collapse drawer"}
             aria-expanded={!collapsed}
-            className="focus-ring rounded-lg border border-surface-200 bg-white p-2 text-navy-600 hover:border-surface-300"
+            className="focus-ring rounded-lg border border-surface-300 bg-white p-2 text-ink-500 hover:border-ink-200"
           >
             {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
           </button>
@@ -170,7 +170,7 @@ export default function DashboardDrawer({
                       onCollapsedChange(false);
                       selectSection(section.id);
                     }}
-                    className={`focus-ring inline-flex h-11 w-11 items-center justify-center rounded-xl border text-navy-600 transition ${
+                    className={`focus-ring inline-flex h-11 w-11 items-center justify-center rounded-xl border text-ink-600 transition ${
                       activeSection === section.id
                         ? "border-brand-200 bg-brand-50 text-brand-700"
                         : "border-surface-200 bg-white hover:border-surface-300"
@@ -222,7 +222,7 @@ export default function DashboardDrawer({
         <div className="animate-fade-in-fast fixed inset-0 z-40 flex lg:hidden" role="dialog" aria-modal="true">
           <button
             type="button"
-            className="h-full flex-1 bg-navy-900/35"
+            className="h-full flex-1 bg-ink-900/30"
             aria-label="Close drawer"
             onClick={() => onMobileOpenChange(false)}
           />
@@ -231,11 +231,11 @@ export default function DashboardDrawer({
             className="flex h-full w-[320px] max-w-[88vw] flex-col border-l border-surface-200 bg-white"
           >
             <div className="flex items-center justify-between border-b border-surface-200 px-4 py-3">
-              <p className="text-sm font-semibold text-navy-700">Workspace Settings</p>
+              <p className="text-sm font-semibold text-ink-700">Workspace Settings</p>
               <button
                 type="button"
                 onClick={() => onMobileOpenChange(false)}
-                className="focus-ring rounded-lg border border-surface-200 bg-white p-2 text-navy-600 hover:border-surface-300"
+                className="focus-ring rounded-lg border border-surface-200 bg-white p-2 text-ink-600 hover:border-surface-300"
                 aria-label="Close drawer"
               >
                 <X className="h-4 w-4" />
@@ -243,7 +243,7 @@ export default function DashboardDrawer({
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
-              <div className="mb-3 flex items-center gap-2 rounded-xl border border-surface-200 bg-surface-50 p-1">
+              <div className="mb-3 flex items-center gap-2 rounded-xl border border-surface-200 bg-surface-100 p-1">
                 {sections.map((section) => {
                   const Icon = section.icon;
                   return (
@@ -253,8 +253,8 @@ export default function DashboardDrawer({
                       onClick={() => selectSection(section.id)}
                       className={`focus-ring inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-2 py-2 text-xs font-medium ${
                         activeSection === section.id
-                          ? "bg-white text-navy-700 shadow-surface-1"
-                          : "text-navy-500 hover:text-navy-700"
+                          ? "bg-white text-ink-700 shadow-surface-1"
+                          : "text-ink-500 hover:text-ink-700"
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
@@ -324,10 +324,10 @@ function DrawerSection({ id, label, active, onClick, sectionRef, children }: Dra
       <button
         type="button"
         onClick={onClick}
-        className={`focus-ring mb-2 flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide ${
+        className={`focus-ring mb-2 flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-widest ${
           active
             ? "border-brand-200 bg-brand-50 text-brand-700"
-            : "border-surface-200 bg-surface-50 text-navy-500 hover:border-surface-300"
+            : "border-surface-200 bg-white text-ink-400 hover:border-surface-300"
         }`}
       >
         {label}

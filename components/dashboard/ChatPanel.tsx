@@ -76,7 +76,7 @@ export default function ChatPanel({ onSummaryChange }: ChatPanelProps) {
 
   if (!nativeChatEnabled) {
     return (
-      <section className="surface-elevated flex min-h-[560px] overflow-hidden rounded-2xl border border-surface-200 bg-white">
+      <section className="flex min-h-[560px] overflow-hidden rounded-xl border border-surface-200 bg-white">
         <div className="flex w-full items-center justify-center px-6 text-center text-sm text-red-600">
           Native chat is currently disabled. Set `NATIVE_CHAT_V1=true` to re-enable it.
         </div>
@@ -85,16 +85,16 @@ export default function ChatPanel({ onSummaryChange }: ChatPanelProps) {
   }
 
   return (
-    <section className="surface-elevated flex h-full min-h-[560px] min-w-0 flex-col overflow-hidden rounded-2xl border border-surface-200 bg-white">
+    <section className="flex h-full min-h-[560px] min-w-0 flex-col overflow-hidden rounded-xl border border-surface-200 bg-white">
       <header className="flex items-center justify-between gap-3 border-b border-surface-200 px-3 py-3 sm:px-4">
         <div>
-          <h2 className="text-sm font-semibold text-navy-800">Agent Chat</h2>
-          <p className="text-xs text-navy-400">{phaseLabel}</p>
+          <h2 className="text-sm font-semibold text-ink-800">Agent Chat</h2>
+          <p className="text-xs text-ink-400">{phaseLabel}</p>
         </div>
 
         <button
           onClick={() => void refresh()}
-          className="focus-ring inline-flex items-center gap-2 rounded-full border border-surface-200 bg-white px-3 py-1.5 text-xs font-medium text-navy-600 hover:border-surface-300"
+          className="focus-ring inline-flex items-center gap-2 rounded-full border border-surface-300 bg-white px-3 py-1.5 text-xs font-medium text-ink-500 hover:border-ink-200 hover:text-ink-700 transition"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           Refresh
@@ -133,7 +133,7 @@ export default function ChatPanel({ onSummaryChange }: ChatPanelProps) {
         />
 
         {connectionStatus === "connecting" && messages.length === 0 && !error ? (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-50/65 text-navy-400">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-100/65 text-ink-400">
             <Loader2 className="h-6 w-6 animate-spin" />
           </div>
         ) : null}
