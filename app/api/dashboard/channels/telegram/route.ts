@@ -32,6 +32,23 @@ export async function POST(req: NextRequest) {
 
     const botUsername = String(tgData.result.username);
 
+    // Apply runtime config BEFORE persisting to the database so we never
+    // mark the channel as "connected" when the container was not actually
+    // reconfigured (the bot would not respond to Telegram messages).
+    const runtimeResult = await applyTelegramRuntimeConfig({
+      userId: auth.appUser.id,
+      botToken: token,
+      botUsername,
+    });
+
+    if (!runtimeResult.updated) {
+      const reason = "reason" in runtimeResult ? runtimeResult.reason : "unknown";
+      return NextResponse.json(
+        { error: `Failed to activate Telegram bot: ${reason}` },
+        { status: 502 }
+      );
+    }
+
     const now = new Date().toISOString();
     const [{ error: userUpdateError }, { error: channelUpdateError }] = await Promise.all([
       supabase
@@ -68,17 +85,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const runtimeResult = await applyTelegramRuntimeConfig({
-      userId: auth.appUser.id,
-      botToken: token,
-      botUsername,
-    });
-
     return NextResponse.json({
       connected: true,
       bot_username: botUsername,
-      runtime_updated: runtimeResult.updated,
-      runtime_reason: "reason" in runtimeResult ? runtimeResult.reason : undefined,
     });
   } catch {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
@@ -89,6 +98,16 @@ export async function DELETE() {
   const auth = await getAuthenticatedAppUser();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const runtimeResult = await removeTelegramRuntimeConfig(auth.appUser.id);
+
+  if (!runtimeResult.updated) {
+    const reason = "reason" in runtimeResult ? runtimeResult.reason : "unknown";
+    return NextResponse.json(
+      { error: `Failed to deactivate Telegram bot: ${reason}` },
+      { status: 502 }
+    );
   }
 
   const now = new Date().toISOString();
@@ -121,11 +140,5 @@ export async function DELETE() {
     return NextResponse.json({ error: channelUpdateError.message }, { status: 500 });
   }
 
-  const runtimeResult = await removeTelegramRuntimeConfig(auth.appUser.id);
-
-  return NextResponse.json({
-    disconnected: true,
-    runtime_updated: runtimeResult.updated,
-    runtime_reason: "reason" in runtimeResult ? runtimeResult.reason : undefined,
-  });
+  return NextResponse.json({ disconnected: true });
 }
