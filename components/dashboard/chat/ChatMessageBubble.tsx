@@ -49,46 +49,57 @@ export default function ChatMessageBubble({
     }
   }
 
+  if (isUser) {
+    return (
+      <div
+        data-testid="chat-message"
+        data-role="user"
+        className={`flex justify-end ${compact ? "mt-1" : "mt-5"}`}
+      >
+        <article className="max-w-[85%] rounded-2xl bg-surface-100 px-4 py-3 sm:max-w-[75%]">
+          <div className="chat-markdown text-ink-700">
+            {message.parts.map((part, index) => {
+              if (part.kind !== "text") {
+                return (
+                  <p
+                    key={`${message.id}-unsupported-${index}`}
+                    className="rounded-md bg-surface-200 px-2 py-1 text-xs text-ink-500"
+                  >
+                    Unsupported content type
+                  </p>
+                );
+              }
+
+              return (
+                <ReactMarkdown
+                  key={`${message.id}-text-${index}`}
+                  remarkPlugins={[remarkGfm]}
+                  allowedElements={["p", "ul", "ol", "li", "strong", "em", "a", "code", "pre", "blockquote"]}
+                  components={{
+                    a: ({ node: _node, ...props }) => <a {...props} target="_blank" rel="noreferrer" />,
+                  }}
+                >
+                  {part.text}
+                </ReactMarkdown>
+              );
+            })}
+          </div>
+          <time className="mt-1.5 block text-right text-[11px] text-ink-400">
+            {formatTime(message.timestamp)}
+          </time>
+        </article>
+      </div>
+    );
+  }
+
   return (
     <div
       data-testid="chat-message"
-      data-role={message.role}
-      className={`flex ${isUser ? "justify-end" : "justify-start"} ${compact ? "mt-1" : "mt-4"}`}
+      data-role="assistant"
+      className={`${compact ? "mt-1" : "mt-5"}`}
     >
-      <article
-        className={`group max-w-[92%] rounded-2xl border px-4 py-3 shadow-surface-1 sm:max-w-[86%] ${
-          isUser
-            ? "border-brand-500 bg-brand-500 text-white"
-            : "border-surface-200 bg-white text-ink-700"
-        }`}
-      >
-        <header className="mb-2 flex items-center justify-between gap-3">
-          <p className={`text-[11px] font-semibold uppercase tracking-wide ${isUser ? "text-brand-50" : "text-ink-400"}`}>
-            {message.role === "assistant" ? "Assistant" : message.role}
-          </p>
-
-          <div className="flex items-center gap-2">
-            <time className={`text-[11px] ${isUser ? "text-brand-100" : "text-ink-400"}`}>
-              {formatTime(message.timestamp)}
-            </time>
-            {!isUser && !isStreaming ? (
-              <button
-                type="button"
-                onClick={() => void copyMessage()}
-                className={`focus-ring rounded-md p-1 transition ${
-                  isUser
-                    ? "text-brand-50/90 hover:bg-white/15"
-                    : "text-ink-400 hover:bg-surface-100 hover:text-ink-600"
-                }`}
-                aria-label="Copy assistant response"
-              >
-                {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-              </button>
-            ) : null}
-          </div>
-        </header>
-
-        <div className={isUser ? "chat-markdown text-white" : "chat-markdown"}>
+      <article className="group max-w-[92%] sm:max-w-[86%]">
+        <div className="chat-markdown">
           {message.parts.map((part, index) => {
             if (part.kind !== "text") {
               return (
@@ -114,6 +125,22 @@ export default function ChatMessageBubble({
               </ReactMarkdown>
             );
           })}
+        </div>
+
+        <div className="mt-1.5 flex items-center gap-2">
+          <time className="text-[11px] text-ink-400">
+            {formatTime(message.timestamp)}
+          </time>
+          {!isStreaming ? (
+            <button
+              type="button"
+              onClick={() => void copyMessage()}
+              className="focus-ring rounded-md p-1 text-ink-300 opacity-0 transition group-hover:opacity-100 hover:bg-surface-100 hover:text-ink-600"
+              aria-label="Copy assistant response"
+            >
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            </button>
+          ) : null}
         </div>
       </article>
     </div>

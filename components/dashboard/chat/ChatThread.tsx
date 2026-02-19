@@ -27,7 +27,7 @@ export default function ChatThread({ messages, streamingText, threadRef, onPromp
       role="log"
       aria-live="polite"
       aria-relevant="additions text"
-      className="min-h-0 flex-1 overflow-y-auto px-3 py-4 pb-32 sm:px-5"
+      className="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-36 sm:px-8 lg:px-12"
     >
       {!hasMessages ? (
         <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center rounded-xl border border-dashed border-surface-300 bg-surface-100/70 px-6 py-10 text-center">
