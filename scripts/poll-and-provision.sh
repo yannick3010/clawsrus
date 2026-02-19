@@ -16,6 +16,16 @@ log() {
     echo "[$(date -Iseconds)] $1" | tee -a "$LOG_FILE"
 }
 
+encode_base64() {
+    local VALUE=$1
+
+    if ! command -v base64 >/dev/null 2>&1; then
+        return 1
+    fi
+
+    printf '%s' "$VALUE" | base64 | tr -d '\n'
+}
+
 send_welcome_email() {
     local EMAIL=$1
     local PERSONA_NAME=$2
@@ -67,6 +77,11 @@ provision_user() {
     local EMAIL=$(echo "$ROW" | jq -r '.email')
     local PERSONA=$(echo "$ROW" | jq -r '.persona')
     local TIER=$(echo "$ROW" | jq -r '.tier')
+    local ONBOARDING_PAYLOAD_B64=""
+
+    if ! ONBOARDING_PAYLOAD_B64=$(encode_base64 "$ROW"); then
+        log "WARNING: Failed to encode onboarding payload for $USER_ID; proceeding with defaults"
+    fi
 
     local PERSONA_NAME
     case "$PERSONA" in
@@ -81,7 +96,7 @@ provision_user() {
 
     update_user_status "$USER_ID" "provisioning"
 
-    if "$SCRIPT_DIR/provision-user.sh" "$USER_ID" "$EMAIL" "$PERSONA" "$TIER" 2>&1 | tee -a "$LOG_FILE"; then
+    if "$SCRIPT_DIR/provision-user.sh" "$USER_ID" "$EMAIL" "$PERSONA" "$TIER" "$ONBOARDING_PAYLOAD_B64" 2>&1 | tee -a "$LOG_FILE"; then
         local CONTAINER_NAME="clawsrus-${USER_ID}"
         if docker ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
             update_user_status "$USER_ID" "active" "$CONTAINER_NAME"
