@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Plus_Jakarta_Sans } from "next/font/google";
+import { Instrument_Serif, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -10,7 +10,7 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
@@ -30,9 +30,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`scroll-smooth ${instrumentSerif.variable} ${plusJakarta.variable}`}
+      className={`scroll-smooth ${instrumentSerif.variable} ${dmSans.variable}`}
     >
-      <body className="font-body text-navy-800 antialiased">{children}</body>
+      <body className="font-body text-ink-800 antialiased">{children}</body>
     </html>
   );
 }

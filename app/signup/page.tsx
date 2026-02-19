@@ -47,9 +47,9 @@ export default function SignupPage() {
 
 function SignupLoading() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-navy-50 px-6 py-12">
-      <div className="w-full max-w-lg rounded-2xl border border-navy-100 bg-white p-8 shadow-sm">
-        <p className="text-sm text-navy-400">Loading...</p>
+    <main className="flex min-h-screen items-center justify-center bg-surface-100 px-6 py-12">
+      <div className="w-full max-w-lg rounded-xl border border-surface-200 bg-white p-8">
+        <p className="text-sm text-ink-400">Loading...</p>
       </div>
     </main>
   );
@@ -145,21 +145,21 @@ function SignupForm() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-navy-50 px-6 py-12">
+    <main className="flex min-h-screen items-center justify-center bg-surface-100 px-6 py-12">
       <div className="w-full max-w-lg">
         {/* Progress bar */}
         <div className="mb-8">
-          <div className="flex items-center justify-between text-sm text-navy-400">
+          <div className="flex items-center justify-between text-sm text-ink-400">
             <span>Step {step} of {TOTAL_STEPS}</span>
             <button
               onClick={handleBack}
-              className="inline-flex items-center gap-1 text-navy-400 transition hover:text-navy-600"
+              className="inline-flex items-center gap-1 text-ink-400 transition hover:text-ink-600"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               Back
             </button>
           </div>
-          <div className="mt-3 h-1.5 rounded-full bg-navy-100">
+          <div className="mt-3 h-1.5 rounded-full bg-ink-100">
             <div
               className="h-1.5 rounded-full bg-brand-500 transition-all duration-300"
               style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
@@ -167,7 +167,7 @@ function SignupForm() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-navy-100 bg-white p-8 shadow-sm">
+        <div className="rounded-xl border border-surface-200 bg-white p-8">
           {step === 1 && (
             <StepBasics
               data={data}
@@ -222,7 +222,7 @@ function SignupForm() {
           {step === 2 && (
             <button
               onClick={() => setStep(3)}
-              className="mt-3 w-full text-center text-sm text-navy-400 transition hover:text-navy-600"
+              className="mt-3 w-full text-center text-sm text-ink-400 transition hover:text-ink-600"
             >
               Skip this step
             </button>
@@ -242,32 +242,32 @@ function StepBasics({
 }) {
   return (
     <>
-      <h2 className="font-display text-2xl tracking-tight text-navy-800 sm:text-3xl">
+      <h2 className="font-display text-2xl tracking-tight text-ink-800 sm:text-3xl">
         Let&apos;s get started
       </h2>
-      <p className="mt-2 text-sm text-navy-400">
+      <p className="mt-2 text-sm text-ink-400">
         Tell us a bit about yourself so your assistant can be personalized from day one.
       </p>
       <div className="mt-6 space-y-4">
-        <label className="block text-sm font-medium text-navy-600">
+        <label className="block text-sm font-medium text-ink-600">
           Your name
           <input
             type="text"
             required
             value={data.name}
             onChange={(e) => onChange({ name: e.target.value })}
-            className="mt-2 w-full rounded-xl border border-navy-200 px-4 py-2.5 text-sm text-navy-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="mt-2 w-full rounded-xl border border-ink-200 px-4 py-2.5 text-sm text-ink-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             placeholder="Nick"
           />
         </label>
-        <label className="block text-sm font-medium text-navy-600">
+        <label className="block text-sm font-medium text-ink-600">
           Email
           <input
             type="email"
             required
             value={data.email}
             onChange={(e) => onChange({ email: e.target.value })}
-            className="mt-2 w-full rounded-xl border border-navy-200 px-4 py-2.5 text-sm text-navy-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="mt-2 w-full rounded-xl border border-ink-200 px-4 py-2.5 text-sm text-ink-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             placeholder="you@example.com"
           />
         </label>
@@ -285,20 +285,20 @@ function StepRole({
 }) {
   return (
     <>
-      <h2 className="font-display text-2xl tracking-tight text-navy-800 sm:text-3xl">
+      <h2 className="font-display text-2xl tracking-tight text-ink-800 sm:text-3xl">
         What do you do?
       </h2>
-      <p className="mt-2 text-sm text-navy-400">
+      <p className="mt-2 text-sm text-ink-400">
         This helps your assistant tailor its suggestions. Totally optional.
       </p>
       <div className="mt-6">
-        <label className="block text-sm font-medium text-navy-600">
+        <label className="block text-sm font-medium text-ink-600">
           Role or industry
           <input
             type="text"
             value={data.role}
             onChange={(e) => onChange({ role: e.target.value })}
-            className="mt-2 w-full rounded-xl border border-navy-200 px-4 py-2.5 text-sm text-navy-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="mt-2 w-full rounded-xl border border-ink-200 px-4 py-2.5 text-sm text-ink-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             placeholder="e.g. Marketing, Engineering, Founder"
           />
         </label>
@@ -316,10 +316,10 @@ function StepHelpTopics({
 }) {
   return (
     <>
-      <h2 className="font-display text-2xl tracking-tight text-navy-800 sm:text-3xl">
+      <h2 className="font-display text-2xl tracking-tight text-ink-800 sm:text-3xl">
         What do you need help with?
       </h2>
-      <p className="mt-2 text-sm text-navy-400">
+      <p className="mt-2 text-sm text-ink-400">
         Select everything that applies. Your assistant will set these up automatically.
       </p>
       <div className="mt-6 grid gap-3">
@@ -333,23 +333,23 @@ function StepHelpTopics({
               className={`flex items-center gap-4 rounded-xl border px-4 py-3.5 text-left transition-all ${
                 selected
                   ? "border-brand-500 bg-brand-50 shadow-sm"
-                  : "border-navy-200 bg-white hover:border-navy-300"
+                  : "border-ink-200 bg-white hover:border-ink-300"
               }`}
             >
               <div
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${
                   selected
                     ? "border-brand-500 bg-brand-500 text-white"
-                    : "border-navy-300 bg-white"
+                    : "border-ink-300 bg-white"
                 }`}
               >
                 {selected && <Check className="h-3.5 w-3.5" />}
               </div>
               <div>
-                <span className="text-sm font-medium text-navy-800">
+                <span className="text-sm font-medium text-ink-800">
                   {topic.label}
                 </span>
-                <span className="ml-2 text-sm text-navy-400">
+                <span className="ml-2 text-sm text-ink-400">
                   {topic.description}
                 </span>
               </div>
@@ -370,16 +370,16 @@ function StepPreferences({
 }) {
   return (
     <>
-      <h2 className="font-display text-2xl tracking-tight text-navy-800 sm:text-3xl">
+      <h2 className="font-display text-2xl tracking-tight text-ink-800 sm:text-3xl">
         Almost there
       </h2>
-      <p className="mt-2 text-sm text-navy-400">
+      <p className="mt-2 text-sm text-ink-400">
         A couple more preferences so your assistant communicates just right.
       </p>
 
       <div className="mt-6 space-y-6">
         <fieldset>
-          <legend className="text-sm font-medium text-navy-600">
+          <legend className="text-sm font-medium text-ink-600">
             How should your assistant communicate?
           </legend>
           <div className="mt-3 grid gap-2">
@@ -391,14 +391,14 @@ function StepPreferences({
                 className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all ${
                   data.communicationStyle === style.id
                     ? "border-brand-500 bg-brand-50 shadow-sm"
-                    : "border-navy-200 bg-white hover:border-navy-300"
+                    : "border-ink-200 bg-white hover:border-ink-300"
                 }`}
               >
                 <div
                   className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
                     data.communicationStyle === style.id
                       ? "border-brand-500"
-                      : "border-navy-300"
+                      : "border-ink-300"
                   }`}
                 >
                   {data.communicationStyle === style.id && (
@@ -406,10 +406,10 @@ function StepPreferences({
                   )}
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-navy-800">
+                  <span className="text-sm font-medium text-ink-800">
                     {style.label}
                   </span>
-                  <span className="ml-2 text-sm text-navy-400">
+                  <span className="ml-2 text-sm text-ink-400">
                     — {style.description}
                   </span>
                 </div>
@@ -419,7 +419,7 @@ function StepPreferences({
         </fieldset>
 
         <fieldset>
-          <legend className="text-sm font-medium text-navy-600">
+          <legend className="text-sm font-medium text-ink-600">
             What&apos;s your top priority?
           </legend>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -431,7 +431,7 @@ function StepPreferences({
                 className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                   data.topPriority === priority.id
                     ? "bg-brand-500 text-white shadow-md"
-                    : "border border-navy-200 bg-white text-navy-600 hover:border-navy-300"
+                    : "border border-ink-200 bg-white text-ink-600 hover:border-ink-300"
                 }`}
               >
                 {priority.label}

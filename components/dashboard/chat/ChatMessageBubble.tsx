@@ -59,16 +59,16 @@ export default function ChatMessageBubble({
         className={`group max-w-[92%] rounded-2xl border px-4 py-3 shadow-surface-1 sm:max-w-[86%] ${
           isUser
             ? "border-brand-500 bg-brand-500 text-white"
-            : "border-surface-200 bg-white text-navy-700"
+            : "border-surface-200 bg-white text-ink-700"
         }`}
       >
         <header className="mb-2 flex items-center justify-between gap-3">
-          <p className={`text-[11px] font-semibold uppercase tracking-wide ${isUser ? "text-brand-50" : "text-navy-400"}`}>
+          <p className={`text-[11px] font-semibold uppercase tracking-wide ${isUser ? "text-brand-50" : "text-ink-400"}`}>
             {message.role === "assistant" ? "Assistant" : message.role}
           </p>
 
           <div className="flex items-center gap-2">
-            <time className={`text-[11px] ${isUser ? "text-brand-100" : "text-navy-400"}`}>
+            <time className={`text-[11px] ${isUser ? "text-brand-100" : "text-ink-400"}`}>
               {formatTime(message.timestamp)}
             </time>
             {!isUser && !isStreaming ? (
@@ -78,7 +78,7 @@ export default function ChatMessageBubble({
                 className={`focus-ring rounded-md p-1 transition ${
                   isUser
                     ? "text-brand-50/90 hover:bg-white/15"
-                    : "text-navy-400 hover:bg-surface-100 hover:text-navy-600"
+                    : "text-ink-400 hover:bg-surface-100 hover:text-ink-600"
                 }`}
                 aria-label="Copy assistant response"
               >
@@ -94,7 +94,7 @@ export default function ChatMessageBubble({
               return (
                 <p
                   key={`${message.id}-unsupported-${index}`}
-                  className="rounded-md bg-surface-100 px-2 py-1 text-xs text-navy-500"
+                  className="rounded-md bg-surface-100 px-2 py-1 text-xs text-ink-500"
                 >
                   Unsupported content type
                 </p>

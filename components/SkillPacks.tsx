@@ -45,10 +45,10 @@ export default function SkillPacks() {
       <div className="mx-auto max-w-5xl px-6">
         <FadeIn>
           <div className="text-center">
-            <h2 className="font-display text-3xl tracking-tight text-navy-800 sm:text-4xl lg:text-5xl">
+            <h2 className="font-display text-3xl tracking-tight text-ink-800 sm:text-4xl lg:text-5xl">
               Make it even more capable.
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-navy-400">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-400">
               Your assistant comes loaded with core skills out of the box. Want
               to go further? Add specialized skill packs.
             </p>
@@ -58,33 +58,33 @@ export default function SkillPacks() {
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {skillPacks.map((pack, i) => (
             <FadeIn key={pack.name} delay={i * 100}>
-              <div className="group rounded-2xl border border-navy-100 p-6 transition-all hover:border-brand-200 hover:shadow-lg hover:shadow-brand-100/50">
+              <div className="group rounded-2xl border border-ink-100 p-6 transition-all hover:border-brand-200 hover:shadow-lg hover:shadow-brand-100/50">
                 <div className="flex items-center justify-between">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy-50 transition-colors group-hover:bg-brand-50">
-                    <pack.icon className="h-5 w-5 text-navy-400 transition-colors group-hover:text-brand-500" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-ink-50 transition-colors group-hover:bg-brand-50">
+                    <pack.icon className="h-5 w-5 text-ink-400 transition-colors group-hover:text-brand-500" />
                   </div>
                   <span className="text-sm font-semibold text-brand-500">
                     {pack.price}
                   </span>
                 </div>
-                <h3 className="mt-4 font-semibold text-navy-800">
+                <h3 className="mt-4 font-semibold text-ink-800">
                   {pack.name}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-navy-400">
+                <p className="mt-2 text-sm leading-relaxed text-ink-400">
                   {pack.description}
                 </p>
               </div>
             </FadeIn>
           ))}
           <FadeIn delay={skillPacks.length * 100}>
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-navy-200 p-6 text-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy-50">
-                <span className="text-lg text-navy-300">+</span>
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink-200 p-6 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-ink-50">
+                <span className="text-lg text-ink-300">+</span>
               </div>
-              <h3 className="mt-4 font-semibold text-navy-800">
+              <h3 className="mt-4 font-semibold text-ink-800">
                 More coming soon
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-navy-400">
+              <p className="mt-2 text-sm leading-relaxed text-ink-400">
                 We&rsquo;re constantly building new skill packs. Have a request?
                 Let us know.
               </p>
@@ -93,7 +93,7 @@ export default function SkillPacks() {
         </div>
 
         <FadeIn delay={700}>
-          <p className="mt-12 text-center text-sm text-navy-300">
+          <p className="mt-12 text-center text-sm text-ink-300">
             Skill packs are one-time purchases. Buy them whenever you&rsquo;re
             ready — no rush.
           </p>

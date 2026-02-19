@@ -119,21 +119,21 @@ export default function DashboardShellV2({ preferredName }: DashboardShellV2Prop
   }, []);
 
   return (
-    <main className="min-h-screen bg-surface-50">
+    <main className="min-h-screen bg-surface-100">
       <header className="border-b border-surface-200 bg-white">
-        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 px-5 py-5 sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="focus-ring inline-flex rounded-lg border border-surface-200 bg-white p-2 text-navy-600 hover:border-surface-300 lg:hidden"
+              className="focus-ring inline-flex rounded-lg border border-surface-300 bg-white p-2 text-ink-500 hover:border-ink-200 lg:hidden"
               aria-label="Open settings drawer"
             >
               <Menu className="h-4 w-4" />
             </button>
             <div>
-              <p className="font-display text-2xl tracking-tight text-navy-900">ClawsRUs Dashboard</p>
-              <p className="text-sm text-navy-500">
+              <p className="font-display text-2xl tracking-tight text-ink-800">ClawsRUs Dashboard</p>
+              <p className="text-sm text-ink-400">
                 Welcome{preferredName ? `, ${preferredName}` : ""}. Your assistant workspace is ready.
               </p>
             </div>
@@ -143,7 +143,7 @@ export default function DashboardShellV2({ preferredName }: DashboardShellV2Prop
         </div>
       </header>
 
-      <div className="mx-auto flex h-[calc(100dvh-89px)] w-full max-w-[1600px] min-w-0 gap-0 px-0 sm:px-0">
+      <div className="mx-auto flex h-[calc(100dvh-97px)] w-full max-w-[1600px] min-w-0 gap-0 px-0 sm:px-0">
         <DashboardDrawer
           collapsed={collapsed}
           onCollapsedChange={setCollapsed}
@@ -156,16 +156,18 @@ export default function DashboardShellV2({ preferredName }: DashboardShellV2Prop
           onSkillsSummaryChange={setSkillsSummary}
         />
 
-        <section className="flex min-w-0 flex-1 flex-col gap-3 p-3 sm:p-4">
-          <DashboardStatusStrip
-            accountSummary={accountSummary}
-            channelsSummary={channelsSummary}
-            skillsSummary={skillsSummary}
-            chatSummary={chatSummary}
-            onOpenSection={openSection}
-          />
+        <section className="flex min-w-0 flex-1 flex-col gap-3.5 p-3 sm:p-4">
+          <div className="animate-fade-in-up animate-stagger-1">
+            <DashboardStatusStrip
+              accountSummary={accountSummary}
+              channelsSummary={channelsSummary}
+              skillsSummary={skillsSummary}
+              chatSummary={chatSummary}
+              onOpenSection={openSection}
+            />
+          </div>
 
-          <div className="min-h-0 flex-1">
+          <div className="animate-fade-in-up animate-stagger-2 min-h-0 flex-1">
             <ChatPanel onSummaryChange={setChatSummary} />
           </div>
         </section>

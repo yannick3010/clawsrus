@@ -169,8 +169,8 @@ function SetupStatusPage() {
       <div className="flex min-h-screen items-center justify-center bg-white px-6">
         <div className="max-w-md text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
-          <h1 className="mt-4 font-display text-2xl text-navy-800">Invalid setup link</h1>
-          <p className="mt-2 text-sm text-navy-400">
+          <h1 className="mt-4 font-display text-2xl text-ink-800">Invalid setup link</h1>
+          <p className="mt-2 text-sm text-ink-400">
             This page requires a valid checkout session. Please restart from the homepage.
           </p>
           <a
@@ -185,25 +185,25 @@ function SetupStatusPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-navy-50 px-6 py-16">
-      <div className="w-full max-w-xl rounded-2xl border border-navy-100 bg-white p-8 shadow-sm">
+    <main className="flex min-h-screen items-center justify-center bg-surface-100 px-6 py-16">
+      <div className="w-full max-w-xl rounded-xl border border-surface-200 bg-white p-8">
         <div className="flex items-center gap-3">
           {status === "active" ? (
-            <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+            <CheckCircle2 className="h-8 w-8 text-brand-500" />
           ) : status === "provision_failed" ? (
             <AlertCircle className="h-8 w-8 text-red-500" />
           ) : (
             <Rocket className="h-8 w-8 text-brand-500" />
           )}
           <div>
-            <h1 className="font-display text-3xl tracking-tight text-navy-800">
+            <h1 className="font-display text-3xl tracking-tight text-ink-800">
               Setting up your assistant
             </h1>
-            <p className="mt-1 text-sm text-navy-400">{statusLabel}</p>
+            <p className="mt-1 text-sm text-ink-400">{statusLabel}</p>
           </div>
         </div>
 
-        <div className="mt-6 rounded-xl border border-navy-100 bg-navy-50 px-4 py-3 text-sm text-navy-500">
+        <div className="mt-6 rounded-xl border border-ink-100 bg-ink-50 px-4 py-3 text-sm text-ink-500">
           We&apos;re provisioning your dedicated OpenClaw instance. You&apos;ll be redirected
           automatically to your dashboard once it is ready.
         </div>
@@ -230,7 +230,7 @@ function SetupStatusPage() {
                 }
               })();
             }}
-            className="mt-6 inline-flex items-center gap-2 rounded-full border border-navy-200 px-4 py-2 text-sm font-semibold text-navy-600 hover:border-navy-300"
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-ink-200 px-4 py-2 text-sm font-semibold text-ink-600 hover:border-ink-300"
           >
             <RefreshCw className="h-4 w-4" />
             Retry provisioning

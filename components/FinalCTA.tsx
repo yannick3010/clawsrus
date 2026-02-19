@@ -3,7 +3,7 @@ import { FadeIn } from "./FadeIn";
 
 export default function FinalCTA() {
   return (
-    <section className="relative overflow-hidden bg-navy-800 py-24 sm:py-32">
+    <section className="relative overflow-hidden bg-ink-800 py-24 sm:py-32">
       {/* Decorative gradient orbs */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-20 left-1/4 h-[400px] w-[400px] rounded-full bg-brand-500/10 blur-[120px]" />
@@ -18,7 +18,7 @@ export default function FinalCTA() {
         </FadeIn>
 
         <FadeIn delay={100}>
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-navy-200">
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink-200">
             Your AI assistant is waiting. Pick a plan, follow the setup guide,
             and start handing off your to-do list today.
           </p>
@@ -28,7 +28,7 @@ export default function FinalCTA() {
           <div className="mt-10">
             <a
               href="/signup?tier=standard&persona=personal-assistant"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-base font-semibold text-navy-800 shadow-xl transition-all hover:bg-navy-50 hover:shadow-2xl"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-base font-semibold text-ink-800 shadow-xl transition-all hover:bg-ink-50 hover:shadow-2xl"
             >
               Get Your AI Assistant
               <ArrowRight className="h-4 w-4" />
@@ -37,7 +37,7 @@ export default function FinalCTA() {
         </FadeIn>
 
         <FadeIn delay={300}>
-          <p className="mt-6 text-sm text-navy-300">
+          <p className="mt-6 text-sm text-ink-300">
             Set up in under 10 minutes. No technical skills needed.
           </p>
         </FadeIn>

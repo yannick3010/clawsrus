@@ -21,14 +21,14 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-navy-50">
-      <header className="border-b border-navy-100 bg-white">
+    <main className="min-h-screen bg-surface-100">
+      <header className="border-b border-ink-100 bg-white">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
           <div>
-            <p className="font-display text-2xl tracking-tight text-navy-800">
+            <p className="font-display text-2xl tracking-tight text-ink-800">
               ClawsRUs Dashboard
             </p>
-            <p className="text-sm text-navy-400">
+            <p className="text-sm text-ink-400">
               Welcome{auth.appUser.preferred_name ? `, ${auth.appUser.preferred_name}` : ""}.
             </p>
           </div>

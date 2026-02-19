@@ -107,74 +107,74 @@ export default function ProfileSettings({
       className={
         variant === "embedded"
           ? "rounded-xl border border-surface-200 bg-white p-4"
-          : "rounded-2xl border border-navy-100 bg-white p-5 shadow-sm"
+          : "rounded-xl border border-surface-200 bg-white p-5"
       }
     >
       {variant === "card" ? (
-        <h3 className="text-sm font-semibold text-navy-700">Profile & Preferences</h3>
+        <h3 className="text-sm font-semibold text-ink-700">Profile & Preferences</h3>
       ) : null}
 
       {loading ? (
-        <div className={`${variant === "card" ? "mt-5" : "mt-2"} flex justify-center text-navy-400`}>
+        <div className={`${variant === "card" ? "mt-5" : "mt-2"} flex justify-center text-ink-400`}>
           <Loader2 className="h-5 w-5 animate-spin" />
         </div>
       ) : (
         <form onSubmit={onSave} className={`${variant === "card" ? "mt-4" : "mt-0"} space-y-3`}>
-          <label className="block text-xs font-medium uppercase tracking-wide text-navy-400">
+          <label className="block text-xs font-medium uppercase tracking-wide text-ink-400">
             Email
             <input
               value={form.email}
               disabled
-              className="mt-1 w-full rounded-lg border border-navy-100 bg-navy-50 px-3 py-2 text-sm text-navy-500"
+              className="mt-1 w-full rounded-lg border border-ink-100 bg-ink-50 px-3 py-2 text-sm text-ink-500"
             />
           </label>
 
-          <label className="block text-xs font-medium uppercase tracking-wide text-navy-400">
+          <label className="block text-xs font-medium uppercase tracking-wide text-ink-400">
             Preferred Name
             <input
               value={form.preferred_name}
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, preferred_name: e.target.value }))
               }
-              className="focus-ring mt-1 w-full rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm text-navy-700 focus:border-brand-500"
+              className="focus-ring mt-1 w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-700 focus:border-brand-500"
               placeholder="How should your agent address you?"
             />
           </label>
 
-          <label className="block text-xs font-medium uppercase tracking-wide text-navy-400">
+          <label className="block text-xs font-medium uppercase tracking-wide text-ink-400">
             Timezone
             <input
               value={form.timezone}
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, timezone: e.target.value }))
               }
-              className="focus-ring mt-1 w-full rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm text-navy-700 focus:border-brand-500"
+              className="focus-ring mt-1 w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-700 focus:border-brand-500"
               placeholder="UTC"
             />
           </label>
 
-          <div className="grid grid-cols-2 gap-3 text-xs text-navy-400">
-            <div className="rounded-lg border border-navy-100 bg-navy-50 px-3 py-2">
+          <div className="grid grid-cols-2 gap-3 text-xs text-ink-400">
+            <div className="rounded-lg border border-ink-100 bg-ink-50 px-3 py-2">
               <p className="uppercase tracking-wide">Persona</p>
-              <p className="mt-1 text-sm font-medium capitalize text-navy-700">
+              <p className="mt-1 text-sm font-medium capitalize text-ink-700">
                 {form.persona.replaceAll("-", " ")}
               </p>
             </div>
-            <div className="rounded-lg border border-navy-100 bg-navy-50 px-3 py-2">
+            <div className="rounded-lg border border-ink-100 bg-ink-50 px-3 py-2">
               <p className="uppercase tracking-wide">Tier</p>
-              <p className="mt-1 text-sm font-medium capitalize text-navy-700">
+              <p className="mt-1 text-sm font-medium capitalize text-ink-700">
                 {form.tier}
               </p>
             </div>
           </div>
 
           {error && <p className="text-xs text-red-600">{error}</p>}
-          {success && <p className="text-xs text-emerald-600">{success}</p>}
+          {success && <p className="text-xs text-brand-600">{success}</p>}
 
           <button
             type="submit"
             disabled={saving}
-            className="focus-ring w-full rounded-full bg-navy-800 px-4 py-2 text-sm font-semibold text-white hover:bg-navy-700 disabled:opacity-50"
+            className="focus-ring w-full rounded-full bg-ink-800 px-4 py-2 text-sm font-semibold text-white hover:bg-ink-700 disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save settings"}
           </button>

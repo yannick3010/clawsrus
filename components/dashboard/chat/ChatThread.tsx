@@ -30,10 +30,10 @@ export default function ChatThread({ messages, streamingText, threadRef, onPromp
       className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-5"
     >
       {!hasMessages ? (
-        <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center rounded-2xl border border-dashed border-surface-300 bg-surface-50/70 px-6 py-10 text-center">
+        <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center rounded-xl border border-dashed border-surface-300 bg-surface-100/70 px-6 py-10 text-center">
           <Sparkles className="h-8 w-8 text-brand-500" />
-          <p className="mt-3 text-base font-semibold text-navy-700">Start a polished, focused conversation</p>
-          <p className="mt-2 text-sm text-navy-500">
+          <p className="mt-3 text-base font-semibold text-ink-700">Start a polished, focused conversation</p>
+          <p className="mt-2 text-sm text-ink-500">
             Ask for strategy, drafting, summaries, or operational help. The assistant keeps context for this session.
           </p>
 
@@ -43,9 +43,9 @@ export default function ChatThread({ messages, streamingText, threadRef, onPromp
                 key={prompt}
                 type="button"
                 onClick={() => onPromptSelect(prompt)}
-                className="focus-ring inline-flex items-center gap-2 rounded-xl border border-surface-200 bg-white px-3 py-2 text-left text-sm text-navy-600 transition hover:border-surface-300 hover:text-navy-700"
+                className="focus-ring inline-flex items-center gap-2 rounded-lg border border-surface-200 bg-white px-3 py-2 text-left text-sm text-ink-600 transition hover:border-surface-300 hover:text-ink-700"
               >
-                <MessageSquareText className="h-4 w-4 text-navy-400" />
+                <MessageSquareText className="h-4 w-4 text-ink-400" />
                 {prompt}
               </button>
             ))}

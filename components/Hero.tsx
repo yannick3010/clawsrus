@@ -28,14 +28,14 @@ export default function Hero() {
 
       <div className="relative mx-auto max-w-4xl px-6 text-center">
         <h1
-          className="animate-fade-in-up font-display text-5xl tracking-tight text-navy-800 sm:text-6xl lg:text-7xl"
+          className="animate-fade-in-up font-display text-5xl tracking-tight text-ink-800 sm:text-6xl lg:text-7xl"
           style={{ animationDelay: "0.1s" }}
         >
           Your personal AI assistant that actually knows what to do.
         </h1>
 
         <p
-          className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-navy-400 sm:text-xl"
+          className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-ink-400 sm:text-xl"
           style={{ animationDelay: "0.3s" }}
         >
           No setup headaches. No prompt engineering. Just a ready-to-go
@@ -56,14 +56,14 @@ export default function Hero() {
           </a>
           <a
             href="#how-it-works"
-            className="inline-flex items-center gap-2 rounded-full border border-navy-200 px-8 py-3.5 text-base font-semibold text-navy-600 transition-all hover:border-navy-300 hover:text-navy-800"
+            className="inline-flex items-center gap-2 rounded-full border border-ink-200 px-8 py-3.5 text-base font-semibold text-ink-600 transition-all hover:border-ink-300 hover:text-ink-800"
           >
             See How It Works
           </a>
         </div>
 
         <p
-          className="animate-fade-in-up mt-6 text-sm text-navy-300"
+          className="animate-fade-in-up mt-6 text-sm text-ink-300"
           style={{ animationDelay: "0.65s" }}
         >
           Set up in under 10 minutes. One-time setup fee — no recurring costs

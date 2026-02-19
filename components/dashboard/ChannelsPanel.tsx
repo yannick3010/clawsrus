@@ -105,33 +105,33 @@ export default function ChannelsPanel({
       className={
         variant === "embedded"
           ? "rounded-xl border border-surface-200 bg-white p-4"
-          : "rounded-2xl border border-navy-100 bg-white p-5 shadow-sm"
+          : "rounded-xl border border-surface-200 bg-white p-5"
       }
     >
       {variant === "card" ? (
         <>
-          <h3 className="text-sm font-semibold text-navy-700">Channels</h3>
-          <p className="mt-1 text-xs text-navy-400">
+          <h3 className="text-sm font-semibold text-ink-700">Channels</h3>
+          <p className="mt-1 text-xs text-ink-400">
             Connect Telegram now. WhatsApp and iMessage are coming soon.
           </p>
         </>
       ) : (
-        <p className="text-xs text-navy-400">Connect Telegram. Other channels are coming soon.</p>
+        <p className="text-xs text-ink-400">Connect Telegram. Other channels are coming soon.</p>
       )}
 
       {loading ? (
-        <div className={`${variant === "card" ? "mt-4" : "mt-2"} flex justify-center text-navy-400`}>
+        <div className={`${variant === "card" ? "mt-4" : "mt-2"} flex justify-center text-ink-400`}>
           <Loader2 className="h-5 w-5 animate-spin" />
         </div>
       ) : (
         <div className={`${variant === "card" ? "mt-4" : "mt-3"} space-y-3`}>
-          <div className="rounded-xl border border-navy-100 p-3">
+          <div className="rounded-xl border border-ink-100 p-3">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-navy-700">Telegram</p>
+              <p className="text-sm font-medium text-ink-700">Telegram</p>
               <StatusBadge status={telegram?.status || "not_connected"} />
             </div>
             {telegram?.status === "connected" ? (
-              <p className="mt-2 text-xs text-emerald-700">
+              <p className="mt-2 text-xs text-brand-700">
                 Connected as @{String(telegram.meta?.bot_username || "bot")}
               </p>
             ) : (
@@ -140,7 +140,7 @@ export default function ChannelsPanel({
                   value={telegramToken}
                   onChange={(e) => setTelegramToken(e.target.value)}
                   placeholder="Telegram bot token"
-                  className="focus-ring w-full rounded-lg border border-navy-200 px-3 py-2 text-sm text-navy-700 focus:border-brand-500"
+                  className="focus-ring w-full rounded-lg border border-ink-200 px-3 py-2 text-sm text-ink-700 focus:border-brand-500"
                 />
                 <button
                   onClick={() => void connectTelegram()}
@@ -166,7 +166,7 @@ export default function ChannelsPanel({
 function StatusBadge({ status }: { status: Channel["status"] }) {
   if (status === "connected") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+      <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-1 text-xs font-medium text-brand-700">
         <CheckCircle2 className="h-3.5 w-3.5" />
         Connected
       </span>
@@ -175,7 +175,7 @@ function StatusBadge({ status }: { status: Channel["status"] }) {
 
   if (status === "coming_soon") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-navy-100 px-2 py-1 text-xs font-medium text-navy-500">
+      <span className="inline-flex items-center gap-1 rounded-full bg-ink-100 px-2 py-1 text-xs font-medium text-ink-500">
         <CircleDashed className="h-3.5 w-3.5" />
         Coming soon
       </span>
@@ -192,12 +192,12 @@ function StatusBadge({ status }: { status: Channel["status"] }) {
 
 function ChannelComingSoon({ name }: { name: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-navy-200 bg-navy-50 p-3">
+    <div className="rounded-xl border border-dashed border-ink-200 bg-ink-50 p-3">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-navy-600">{name}</p>
+        <p className="text-sm font-medium text-ink-600">{name}</p>
         <StatusBadge status="coming_soon" />
       </div>
-      <p className="mt-1 text-xs text-navy-400">We&apos;re working on this integration.</p>
+      <p className="mt-1 text-xs text-ink-400">We&apos;re working on this integration.</p>
     </div>
   );
 }
