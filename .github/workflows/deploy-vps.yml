@@ -17,7 +17,7 @@ jobs:
           script: |
             cd /opt/clawsrus/app
             git pull origin main
-            npm install --production
+            npm install
             npx next build
             systemctl restart clawsrus-app
             echo "Deploy complete: $(git log --oneline -1)"
