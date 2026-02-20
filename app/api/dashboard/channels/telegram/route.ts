@@ -124,7 +124,7 @@ export async function DELETE() {
       {
         user_id: auth.appUser.id,
         channel: "telegram",
-        status: "disconnected",
+        status: "not_connected",
         meta: {},
         updated_at: now,
       },
