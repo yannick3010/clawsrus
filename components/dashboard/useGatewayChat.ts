@@ -40,6 +40,7 @@ export type NormalizedChatMessage = {
   role: ChatRole;
   timestamp: number;
   parts: NormalizedMessagePart[];
+  source?: "telegram";
 };
 
 type ChatEventPayload = {
@@ -66,27 +67,68 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * The gateway prepends conversation context like:
  *   Conversation info (untrusted metadata):\n\n{...json...}\n[timestamp] actual text
  * We extract just the actual user text after the timestamp bracket.
+ *
+ * Returns the cleaned text plus an optional source (e.g. "telegram") detected
+ * from the metadata JSON.
  */
-function stripOpenclawMetadata(raw: string): string {
-  const match = raw.match(
+function stripOpenclawMetadata(raw: string): { text: string; source?: "telegram" } {
+  // Primary: original regex that expects a [timestamp] bracket after the JSON block
+  const withBracket = raw.match(
     /^Conversation info \(untrusted metadata\):[\s\S]*?\n\[.*?\]\s*([\s\S]*)$/
   );
-  return match ? match[1].trim() : raw.trim();
+  if (withBracket) {
+    const source = detectSource(raw);
+    return { text: withBracket[1].trim(), source };
+  }
+
+  // Fallback: metadata header + JSON block without a [timestamp] bracket
+  const fallback = raw.match(
+    /^Conversation info \(untrusted metadata\):\s*\n\s*(\{[\s\S]*?\})\s*\n([\s\S]*)$/
+  );
+  if (fallback) {
+    const source = detectSource(raw, fallback[1]);
+    return { text: fallback[2].trim(), source };
+  }
+
+  return { text: raw.trim() };
 }
 
-function toTextParts(content: unknown): NormalizedMessagePart[] {
+/** Check if the metadata JSON indicates a Telegram-sourced message. */
+function detectSource(raw: string, jsonStr?: string): "telegram" | undefined {
+  const block = jsonStr ?? raw.match(/\{[\s\S]*?\}/)?.[0];
+  if (!block) return undefined;
+  try {
+    const parsed = JSON.parse(block);
+    if (
+      isRecord(parsed) &&
+      typeof parsed.message_id === "string" &&
+      typeof parsed.sender === "string"
+    ) {
+      return "telegram";
+    }
+  } catch {
+    // not valid JSON – ignore
+  }
+  return undefined;
+}
+
+function toTextParts(content: unknown): { parts: NormalizedMessagePart[]; source?: "telegram" } {
   if (typeof content === "string") {
-    const cleaned = stripOpenclawMetadata(content);
-    return cleaned
-      ? [{ kind: "text", text: cleaned }]
-      : [{ kind: "unsupported", contentType: "empty" }];
+    const { text, source } = stripOpenclawMetadata(content);
+    return {
+      parts: text
+        ? [{ kind: "text", text }]
+        : [{ kind: "unsupported", contentType: "empty" }],
+      source,
+    };
   }
 
   if (!Array.isArray(content)) {
-    return [];
+    return { parts: [] };
   }
 
   const parts: NormalizedMessagePart[] = [];
+  let detectedSource: "telegram" | undefined;
   for (const item of content) {
     if (!isRecord(item)) {
       parts.push({ kind: "unsupported", contentType: "unknown" });
@@ -96,9 +138,10 @@ function toTextParts(content: unknown): NormalizedMessagePart[] {
     const type = typeof item.type === "string" ? item.type : "unknown";
     const isTextType = type === "text" || type === "output_text" || type === "input_text";
     if (isTextType && typeof item.text === "string") {
-      const cleaned = stripOpenclawMetadata(item.text);
-      if (cleaned) {
-        parts.push({ kind: "text", text: cleaned });
+      const { text, source } = stripOpenclawMetadata(item.text);
+      if (source) detectedSource = source;
+      if (text) {
+        parts.push({ kind: "text", text });
       }
       continue;
     }
@@ -106,7 +149,7 @@ function toTextParts(content: unknown): NormalizedMessagePart[] {
     parts.push({ kind: "unsupported", contentType: type });
   }
 
-  return parts;
+  return { parts, source: detectedSource };
 }
 
 function normalizeHistoryMessage(message: unknown, index: number): NormalizedChatMessage | null {
@@ -122,7 +165,7 @@ function normalizeHistoryMessage(message: unknown, index: number): NormalizedCha
       ? message.timestamp
       : Date.now() + index;
 
-  let parts = toTextParts(message.content);
+  let { parts, source } = toTextParts(message.content);
   if (parts.length === 0 && typeof message.text === "string") {
     parts = [{ kind: "text", text: message.text }];
   }
@@ -136,6 +179,7 @@ function normalizeHistoryMessage(message: unknown, index: number): NormalizedCha
     role: normalizedRole,
     timestamp,
     parts,
+    ...(source ? { source } : {}),
   };
 }
 
