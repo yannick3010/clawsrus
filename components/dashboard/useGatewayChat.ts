@@ -167,7 +167,11 @@ function normalizeHistoryMessage(message: unknown, index: number): NormalizedCha
 
   let { parts, source } = toTextParts(message.content);
   if (parts.length === 0 && typeof message.text === "string") {
-    parts = [{ kind: "text", text: message.text }];
+    const stripped = stripOpenclawMetadata(message.text);
+    if (stripped.source) source = stripped.source;
+    parts = stripped.text
+      ? [{ kind: "text", text: stripped.text }]
+      : [{ kind: "unsupported", contentType: "empty" }];
   }
   if (parts.length === 0) {
     return null;
