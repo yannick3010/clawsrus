@@ -7,6 +7,7 @@ import {
   type GatewayChatHistoryResult,
   type GatewayChatSendParams,
 } from "@/lib/gateway-ws-client";
+import { isRecord, stripOpenclawMetadata } from "@/lib/strip-openclaw-metadata";
 
 type ProxyTokenErrorReason =
   | "container_missing"
@@ -58,59 +59,7 @@ function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object";
-}
-
-/**
- * Strip openclaw metadata prefix from history messages.
- * The gateway prepends conversation context like:
- *   Conversation info (untrusted metadata):\n\n{...json...}\n[timestamp] actual text
- * We extract just the actual user text after the timestamp bracket.
- *
- * Returns the cleaned text plus an optional source (e.g. "telegram") detected
- * from the metadata JSON.
- */
-function stripOpenclawMetadata(raw: string): { text: string; source?: "telegram" } {
-  // Primary: original regex that expects a [timestamp] bracket after the JSON block
-  const withBracket = raw.match(
-    /^Conversation info \(untrusted metadata\):[\s\S]*?\n\[.*?\]\s*([\s\S]*)$/
-  );
-  if (withBracket) {
-    const source = detectSource(raw);
-    return { text: withBracket[1].trim(), source };
-  }
-
-  // Fallback: metadata header + JSON block without a [timestamp] bracket
-  const fallback = raw.match(
-    /^Conversation info \(untrusted metadata\):\s*\n\s*(\{[\s\S]*?\})\s*\n([\s\S]*)$/
-  );
-  if (fallback) {
-    const source = detectSource(raw, fallback[1]);
-    return { text: fallback[2].trim(), source };
-  }
-
-  return { text: raw.trim() };
-}
-
-/** Check if the metadata JSON indicates a Telegram-sourced message. */
-function detectSource(raw: string, jsonStr?: string): "telegram" | undefined {
-  const block = jsonStr ?? raw.match(/\{[\s\S]*?\}/)?.[0];
-  if (!block) return undefined;
-  try {
-    const parsed = JSON.parse(block);
-    if (
-      isRecord(parsed) &&
-      typeof parsed.message_id === "string" &&
-      typeof parsed.sender === "string"
-    ) {
-      return "telegram";
-    }
-  } catch {
-    // not valid JSON – ignore
-  }
-  return undefined;
-}
+// isRecord, stripOpenclawMetadata, detectSource imported from @/lib/strip-openclaw-metadata
 
 function toTextParts(content: unknown): { parts: NormalizedMessagePart[]; source?: "telegram" } {
   if (typeof content === "string") {
@@ -466,8 +415,9 @@ export function useGatewayChat(enabled: boolean) {
         }
 
         if (payload.state === "delta") {
-          const next = extractText(payload.message);
-          if (typeof next === "string") {
+          const raw = extractText(payload.message);
+          const next = typeof raw === "string" ? stripOpenclawMetadata(raw).text : null;
+          if (typeof next === "string" && next) {
             setStreamingText((prev) => {
               if (!prev || next.length >= prev.length) {
                 streamTextRef.current = next;
@@ -505,7 +455,10 @@ export function useGatewayChat(enabled: boolean) {
           if (maybeAssistant) {
             setMessages((prev) => [...prev, maybeAssistant]);
           } else if (streamTextRef.current.trim()) {
-            setMessages((prev) => [...prev, localMessage("assistant", streamTextRef.current)]);
+            const abortedText = stripOpenclawMetadata(streamTextRef.current).text;
+            if (abortedText) {
+              setMessages((prev) => [...prev, localMessage("assistant", abortedText)]);
+            }
           }
           setRunId(null);
           streamTextRef.current = "";

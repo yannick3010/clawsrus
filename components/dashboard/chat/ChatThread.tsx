@@ -4,6 +4,7 @@ import type { RefObject } from "react";
 import { MessageSquareText, Sparkles } from "lucide-react";
 import ChatMessageBubble from "@/components/dashboard/chat/ChatMessageBubble";
 import type { NormalizedChatMessage } from "@/components/dashboard/useGatewayChat";
+import { stripOpenclawMetadata } from "@/lib/strip-openclaw-metadata";
 
 type ChatThreadProps = {
   messages: NormalizedChatMessage[];
@@ -72,7 +73,7 @@ export default function ChatThread({ messages, streamingText, threadRef, onPromp
             id: "streaming",
             role: "assistant",
             timestamp: Date.now(),
-            parts: [{ kind: "text", text: streamingText }],
+            parts: [{ kind: "text", text: stripOpenclawMetadata(streamingText).text || streamingText }],
           }}
         />
       ) : null}
