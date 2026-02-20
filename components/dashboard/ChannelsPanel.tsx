@@ -86,6 +86,26 @@ export default function ChannelsPanel({
     }
   }
 
+  async function disconnectTelegram() {
+    setSaving(true);
+    setError("");
+    try {
+      const res = await fetch("/api/dashboard/channels/telegram", {
+        method: "DELETE",
+      });
+      const data = (await res.json()) as { error?: string };
+      if (!res.ok) {
+        setError(data.error || "Failed to disconnect Telegram");
+        return;
+      }
+      await loadChannels();
+    } catch {
+      setError("Failed to disconnect Telegram");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   const telegram = channels.find((item) => item.channel === "telegram");
 
   useEffect(() => {
@@ -131,9 +151,18 @@ export default function ChannelsPanel({
               <StatusBadge status={telegram?.status || "not_connected"} />
             </div>
             {telegram?.status === "connected" ? (
-              <p className="mt-2 text-xs text-brand-700">
-                Connected as @{String(telegram.meta?.bot_username || "bot")}
-              </p>
+              <div className="mt-2 flex items-center justify-between">
+                <p className="text-xs text-brand-700">
+                  Connected as @{String(telegram.meta?.bot_username || "bot")}
+                </p>
+                <button
+                  onClick={() => void disconnectTelegram()}
+                  disabled={saving}
+                  className="focus-ring rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-100 disabled:opacity-50"
+                >
+                  {saving ? "Removing..." : "Disconnect"}
+                </button>
+              </div>
             ) : (
               <div className="mt-3 space-y-2">
                 <input
