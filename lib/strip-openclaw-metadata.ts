@@ -7,13 +7,60 @@
  * We extract just the actual user text after the timestamp bracket.
  */
 
+const METADATA_HEADER = "Conversation info (untrusted metadata):";
+
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object";
 }
 
+/**
+ * Find the outermost JSON object in a string starting from `start`.
+ * Properly handles nested braces.
+ * Returns the JSON substring or null.
+ */
+function findJsonBlock(str: string, start: number): string | null {
+  const open = str.indexOf("{", start);
+  if (open === -1) return null;
+
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+
+  for (let i = open; i < str.length; i++) {
+    const ch = str[i];
+
+    if (escape) {
+      escape = false;
+      continue;
+    }
+
+    if (ch === "\\") {
+      escape = true;
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = !inString;
+      continue;
+    }
+
+    if (inString) continue;
+
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        return str.slice(open, i + 1);
+      }
+    }
+  }
+
+  return null;
+}
+
 /** Check if the metadata JSON indicates a Telegram-sourced message. */
 export function detectSource(raw: string, jsonStr?: string): "telegram" | undefined {
-  const block = jsonStr ?? raw.match(/\{[\s\S]*?\}/)?.[0];
+  const block = jsonStr ?? findJsonBlock(raw, 0);
   if (!block) return undefined;
   try {
     const parsed = JSON.parse(block);
@@ -37,7 +84,12 @@ export function detectSource(raw: string, jsonStr?: string): "telegram" | undefi
  * from the metadata JSON.
  */
 export function stripOpenclawMetadata(raw: string): { text: string; source?: "telegram" } {
-  // Primary: original regex that expects a [timestamp] bracket after the JSON block
+  if (!raw.startsWith(METADATA_HEADER)) {
+    return { text: raw.trim() };
+  }
+
+  // --- Strategy 1: [timestamp] bracket after metadata ---
+  // The primary pattern: header ... \n[timestamp] user text
   const withBracket = raw.match(
     /^Conversation info \(untrusted metadata\):[\s\S]*?\n\[.*?\]\s*([\s\S]*)$/
   );
@@ -46,14 +98,55 @@ export function stripOpenclawMetadata(raw: string): { text: string; source?: "te
     return { text: withBracket[1].trim(), source };
   }
 
-  // Fallback: metadata header + JSON block without a [timestamp] bracket
-  const fallback = raw.match(
-    /^Conversation info \(untrusted metadata\):\s*\n\s*(\{[\s\S]*?\})\s*\n([\s\S]*)$/
-  );
-  if (fallback) {
-    const source = detectSource(raw, fallback[1]);
-    return { text: fallback[2].trim(), source };
+  // --- Strategy 2: proper JSON block parsing (handles nested braces) ---
+  const jsonBlock = findJsonBlock(raw, METADATA_HEADER.length);
+  if (jsonBlock) {
+    const jsonEnd = raw.indexOf(jsonBlock) + jsonBlock.length;
+    const source = detectSource(raw, jsonBlock);
+    // Everything after the JSON block is the user message
+    const rest = raw.slice(jsonEnd).trim();
+    if (rest) {
+      return { text: rest, source };
+    }
+    // JSON was the entire content — metadata only, no user text
+    return { text: "", source };
   }
 
+  // --- Strategy 3: aggressive fallback ---
+  // Header is present but we couldn't parse the structure.
+  // Try to find the first line that doesn't look like metadata.
+  const lines = raw.split("\n");
+  const textLines: string[] = [];
+  let pastHeader = false;
+  for (const line of lines) {
+    if (!pastHeader) {
+      // Skip the header line itself
+      if (line.startsWith(METADATA_HEADER)) {
+        pastHeader = true;
+        continue;
+      }
+    }
+    if (pastHeader) {
+      // Skip empty lines and JSON-like lines between header and user text
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      if (trimmed.startsWith("{") || trimmed.startsWith("}") || trimmed.startsWith('"')) continue;
+      // Once we hit a non-metadata line, take everything from here
+      const idx = raw.indexOf(line);
+      const rest = raw.slice(idx).trim();
+      if (rest) {
+        return { text: rest, source: detectSource(raw) };
+      }
+    }
+    textLines.push(line);
+  }
+
+  // Nothing matched — log and return as-is (better than showing metadata)
+  if (typeof console !== "undefined") {
+    console.warn(
+      "[strip-openclaw-metadata] Unrecognized metadata format, first 300 chars:",
+      raw.slice(0, 300)
+    );
+  }
   return { text: raw.trim() };
 }
