@@ -19,6 +19,10 @@ This directory contains all product specs, feature roadmaps, and design decision
 | [SPEC-referral.md](./SPEC-referral.md) | 🔴 Planned | Referral program mechanics |
 | [SPEC-enterprise.md](./SPEC-enterprise.md) | 🔴 Planned | Multi-agent, concierge setup, custom integrations |
 
+## Operations
+
+- [DEPLOY-CHECKLIST.md](./DEPLOY-CHECKLIST.md) — Pre/post deploy checks, env parity, and login smoke tests
+
 **Legend:**
 - 🔴 Planned (not started)
 - 🟡 Draft (in progress)
