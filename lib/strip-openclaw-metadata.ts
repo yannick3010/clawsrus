@@ -58,7 +58,7 @@ function findJsonBlock(str: string, start: number): string | null {
   return null;
 }
 
-/** Check if the metadata JSON indicates a Telegram-sourced message. */
+/** Check if the metadata JSON explicitly indicates a Telegram-sourced message. */
 export function detectSource(raw: string, jsonStr?: string): "telegram" | undefined {
   const block = jsonStr ?? findJsonBlock(raw, 0);
   if (!block) return undefined;
@@ -66,8 +66,8 @@ export function detectSource(raw: string, jsonStr?: string): "telegram" | undefi
     const parsed = JSON.parse(block);
     if (
       isRecord(parsed) &&
-      typeof parsed.message_id === "string" &&
-      typeof parsed.sender === "string"
+      typeof parsed.channel === "string" &&
+      parsed.channel.trim().toLowerCase() === "telegram"
     ) {
       return "telegram";
     }
