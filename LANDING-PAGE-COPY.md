@@ -21,13 +21,13 @@
 Your personal AI assistant that actually knows what to do.
 
 **Subheadline:**
-No setup headaches. No prompt engineering. Just a ready-to-go assistant on Telegram that handles your life admin — so you can focus on what matters.
+No setup headaches. No prompt engineering. Choose a pre-configured agent, install with one click, and start chatting right from your dashboard.
 
 **CTA Button:**
 Get Started — From $29/mo
 
 **Supporting line (below CTA):**
-Set up in under 10 minutes. Cancel anytime.
+One-click install. One-time setup fee — no recurring costs from us.
 
 ---
 
@@ -54,11 +54,11 @@ Sound familiar? You're not alone. Most AI tools are built for developers, not fo
 Meet your new assistant. It already knows the job.
 
 **Body Copy:**
-ClawsRUs is a personal AI assistant that comes pre-configured and ready to work — right inside Telegram.
+ClawsRUs gives you pre-configured AI agents that are ready to work the moment you install them — right from your own dashboard.
 
-No blank canvas. No technical setup. No learning curve.
+No blank canvas. No technical setup. No extra apps to install.
 
-Your assistant arrives knowing how to help with scheduling, research, reminders, travel planning, shopping, and all the life admin that eats up your day. And it gets better the more you use it — learning your preferences, your routines, and your priorities over time.
+Pick the basic agent, or choose one that's already been trained and configured for your specific use case. Either way, your assistant arrives knowing how to help with scheduling, research, reminders, travel planning, shopping, and all the life admin that eats up your day. And it gets better the more you use it — learning your preferences, your routines, and your priorities over time.
 
 **Pull quote / Callout:**
 Think of it less like a chatbot and more like a capable, always-available personal assistant who never drops the ball.
@@ -75,12 +75,12 @@ Pick your plan
 Choose the tier that fits your needs. Every plan includes your Personal Assistant with core skills built in.
 
 **Step 2:**
-Quick guided setup
-After checkout, follow a simple walkthrough to connect your Telegram. No coding. No terminal. Just a few clicks.
+One-click install
+Choose your agent and install it with a single click. No coding. No extra apps. Your dashboard is ready in seconds.
 
 **Step 3:**
-Start asking for help
-Your assistant is live. Ask it to research a trip, set a reminder, draft an email, plan your week — whatever you need. It's ready.
+Start chatting
+Open your dashboard and start chatting. Ask it to research a trip, set a reminder, draft an email, plan your week — whatever you need.
 
 **Supporting line:**
 Most people are up and running in under 10 minutes.
@@ -159,7 +159,7 @@ Every plan includes your Personal Assistant with core skills. Upgrade anytime.
 For getting started with your AI assistant.
 - 1 Personal Assistant persona
 - Core skills included (messaging, research, reminders)
-- Telegram integration
+- Built-in dashboard
 - Long-term memory
 - Email support
 
@@ -199,10 +199,10 @@ Questions? We've got answers.
 A: Nope. After checkout, you'll follow a simple guided walkthrough that takes about 10 minutes. If you can install an app on your phone, you can set this up.
 
 **Q: What is OpenClaw?**
-A: OpenClaw is the powerful open-source AI framework that runs under the hood. We handle all the technical stuff — you just chat with your assistant on Telegram.
+A: OpenClaw is the powerful open-source AI framework that runs under the hood. We handle all the technical stuff — you just chat with your assistant from your dashboard.
 
 **Q: How is this different from ChatGPT or other AI tools?**
-A: Most AI tools give you a blank chat window and leave you to figure it out. Your ClawsRUs assistant comes pre-configured for a specific job, remembers your preferences across conversations, and gets better over time. It's the difference between hiring someone and Googling "how to do things."
+A: Most AI tools give you a blank chat window and leave you to figure it out. ClawsRUs agents come pre-configured and trained for specific jobs — install one with a single click and start chatting from your dashboard. Your assistant remembers your preferences across conversations and gets better over time. It's the difference between hiring someone and Googling "how to do things."
 
 **Q: What can my assistant actually do?**
 A: Research, scheduling, reminders, travel planning, email drafting, shopping lists, event planning, and general Q&A — to start. You can add skill packs to expand its capabilities anytime.
@@ -213,8 +213,8 @@ A: Yes. Your assistant has long-term memory built in. It remembers your preferen
 **Q: Can I cancel anytime?**
 A: Absolutely. No contracts, no cancellation fees. You can cancel your subscription anytime from your Stripe billing page.
 
-**Q: What messaging apps does it work with?**
-A: Right now, Telegram. We're adding Discord and Slack support soon.
+**Q: Do I need to install any app to use my assistant?**
+A: No. Your assistant lives in your ClawsRUs dashboard — just log in and start chatting. No Telegram, no Slack, no extra apps to install.
 
 **Q: What if I need help?**
 A: Email us at hello@clawsrus.com. Starter members get email support. Pro and Agency members get priority support with faster response times.
@@ -227,13 +227,13 @@ A: Email us at hello@clawsrus.com. Starter members get email support. Pro and Ag
 Ready to stop doing everything yourself?
 
 **Subheadline:**
-Your AI assistant is waiting. Pick a plan, follow the setup guide, and start handing off your to-do list today.
+Your AI assistant is one click away. Pick a plan, install your agent, and start chatting from your dashboard today.
 
 **CTA Button:**
-Get Your AI Assistant — From $29/mo
+Get Your AI Assistant
 
 **Below CTA:**
-Set up in under 10 minutes. No technical skills needed. Cancel anytime.
+One-click install. No extra apps needed. No technical skills required.
 
 ---
 
@@ -254,14 +254,14 @@ Powered by OpenClaw.
 ## Copy Notes for Implementation
 
 ### Key messaging threads woven throughout:
-1. **No setup headaches** — Repeated in hero, how-it-works, pricing, FAQ, and final CTA
-2. **Pre-configured, not blank canvas** — Differentiator repeated in problem, solution, and FAQ
-3. **Gets better over time** — Memory/learning mentioned in solution, features, and FAQ
-4. **Under 10 minutes** — Specific, concrete claim used in hero, how-it-works, and final CTA
+1. **One-click install** — Pre-configured agents ready instantly, no setup friction. Repeated in hero, how-it-works, solution, personas, and final CTA
+2. **Built-in dashboard** — Chat immediately, no external apps needed. Repeated in hero, solution, how-it-works, FAQ, and final CTA
+3. **Pre-configured and trained for your use case** — Not a blank canvas. Choose the basic agent or one already configured for a specific role. Repeated in solution, personas, and FAQ
+4. **Gets better over time** — Memory/learning mentioned in solution, features, and FAQ
 
 ### Tone guidelines:
 - Use "you" and "your" liberally — this is about them, not us
-- Avoid jargon: no "AI agents," "LLMs," "prompts," "containers," "instances"
+- Avoid jargon: no "LLMs," "prompts," "containers," "instances"
 - Keep sentences short. One idea per sentence where possible.
 - Contractions are good (you'll, it's, don't, we're)
 - Confident but never pushy. No fake urgency, no countdown timers, no "limited spots."

@@ -43,7 +43,7 @@ export const TIERS = {
     description: "Everything you need to get started",
     features: [
       "Personal Assistant persona",
-      "Telegram messaging",
+      "Built-in chat dashboard",
       "All skills included",
       "Guided self-serve setup",
       "Email support",
@@ -59,7 +59,7 @@ export const TIERS = {
     description: "White-glove setup with hands-on help",
     features: [
       "Personal Assistant persona",
-      "Telegram messaging",
+      "Built-in chat dashboard",
       "All skills included",
       "We set everything up for you",
       "1-on-1 onboarding call",

@@ -38,9 +38,9 @@ export default function Hero() {
           className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-ink-400 sm:text-xl"
           style={{ animationDelay: "0.3s" }}
         >
-          No setup headaches. No prompt engineering. Just a ready-to-go
-          assistant on Telegram that handles your life admin — so you can focus
-          on what matters.
+          No setup headaches. No prompt engineering. Choose a pre-configured
+          agent, install with one click, and start chatting right from your
+          dashboard.
         </p>
 
         <div
@@ -66,8 +66,7 @@ export default function Hero() {
           className="animate-fade-in-up mt-6 text-sm text-ink-300"
           style={{ animationDelay: "0.65s" }}
         >
-          Set up in under 10 minutes. One-time setup fee — no recurring costs
-          from us.
+          One-click install. One-time setup fee — no recurring costs from us.
         </p>
       </div>
     </section>

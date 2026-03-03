@@ -12,16 +12,16 @@ const steps = [
   {
     number: "02",
     icon: Settings,
-    title: "Quick guided setup",
+    title: "One-click install",
     description:
-      "After checkout, follow a simple walkthrough to connect your Telegram. No coding. No terminal. Just a few clicks.",
+      "Choose your agent and install it with a single click. No coding. No extra apps. Your dashboard is ready in seconds.",
   },
   {
     number: "03",
     icon: MessageCircle,
-    title: "Start asking for help",
+    title: "Start chatting",
     description:
-      "Your assistant is live. Ask it to research a trip, set a reminder, draft an email, plan your week — whatever you need.",
+      "Open your dashboard and start chatting. Ask it to research a trip, set a reminder, draft an email, plan your week — whatever you need.",
   },
 ];
 
@@ -35,7 +35,7 @@ export default function HowItWorks() {
               Up and running in three steps.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-400">
-              From signup to chatting with your AI — in under 10 minutes.
+              Pick an agent, install, and start chatting — all in under 10 minutes.
             </p>
           </div>
         </FadeIn>
