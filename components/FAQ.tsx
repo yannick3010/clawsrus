@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: "How is this different from ChatGPT or other AI tools?",
-    a: 'Most AI tools give you a blank chat window and leave you to figure it out. Your ClawsRUs assistant comes pre-configured for a specific job, remembers your preferences across conversations, and gets better over time. It\u2019s the difference between hiring someone and Googling "how to do things."',
+    a: "Most AI tools give you a blank chat window and leave you to figure it out. Your ClawsRUs assistant comes pre-configured for a specific job, remembers your preferences across conversations, and gets better over time. It\u2019s the difference between hiring someone and Googling \u201Chow to do things.\u201D",
   },
   {
     q: "What can my assistant actually do?",
