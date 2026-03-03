@@ -8,7 +8,7 @@ export default function Footer() {
               ClawsRUs
             </div>
             <p className="mt-2 text-sm text-ink-400">
-              Your personal AI team, ready in minutes.
+              Your personal AI team, one click away.
             </p>
           </div>
           <nav className="flex flex-wrap justify-center gap-8 text-sm text-ink-400">

@@ -11,11 +11,11 @@ const faqs = [
   },
   {
     q: "What is OpenClaw?",
-    a: "OpenClaw is the powerful open-source AI framework that runs under the hood. We handle all the technical stuff \u2014 you just chat with your assistant on Telegram.",
+    a: "OpenClaw is the powerful open-source AI framework that runs under the hood. We handle all the technical stuff \u2014 you just chat with your assistant from your dashboard.",
   },
   {
     q: "How is this different from ChatGPT or other AI tools?",
-    a: 'Most AI tools give you a blank chat window and leave you to figure it out. Your ClawsRUs assistant comes pre-configured for a specific job, remembers your preferences across conversations, and gets better over time. It\u2019s the difference between hiring someone and Googling "how to do things."',
+    a: 'Most AI tools give you a blank chat window and leave you to figure it out. ClawsRUs agents come pre-configured and trained for specific jobs \u2014 install one with a single click and start chatting from your dashboard. Your assistant remembers your preferences across conversations and gets better over time. It\u2019s the difference between hiring someone and Googling "how to do things."',
   },
   {
     q: "What can my assistant actually do?",
@@ -26,12 +26,8 @@ const faqs = [
     a: "Yes. Your assistant has long-term memory built in. It remembers your preferences, past requests, and context \u2014 so you never have to repeat yourself.",
   },
   {
-    q: "How do I create a Telegram bot?",
-    a: "It takes about 2 minutes. After checkout, our setup page walks you through it step-by-step: open Telegram, message @BotFather, send /newbot, pick a name, and copy the token. That's it.",
-  },
-  {
-    q: "What messaging apps does it work with?",
-    a: "Right now, Telegram. We\u2019re adding Discord and Slack support soon.",
+    q: "Do I need to install any app to use my assistant?",
+    a: "No. Your assistant lives in your ClawsRUs dashboard \u2014 just log in and start chatting. No Telegram, no Slack, no extra apps to install.",
   },
   {
     q: "Can I switch personas later?",
@@ -39,7 +35,7 @@ const faqs = [
   },
   {
     q: "Is my data private?",
-    a: "Yes. Each customer gets an isolated container. Your conversations go through your own Telegram bot. We don\u2019t have access to your chat content.",
+    a: "Yes. Each customer gets an isolated container. Your conversations stay in your private dashboard. We don\u2019t have access to your chat content.",
   },
 ];
 

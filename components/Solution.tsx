@@ -12,24 +12,25 @@ export default function Solution() {
 
         <FadeIn delay={100}>
           <p className="mt-8 text-lg leading-relaxed text-ink-500">
-            ClawsRUs is a personal AI assistant that comes pre-configured and
-            ready to work — right inside Telegram.
+            ClawsRUs gives you pre-configured AI agents that are ready to work
+            the moment you install them — right from your own dashboard.
           </p>
         </FadeIn>
 
         <FadeIn delay={200}>
           <p className="mt-4 text-lg leading-relaxed text-ink-500">
-            No blank canvas. No technical setup. No learning curve.
+            No blank canvas. No technical setup. No extra apps to install.
           </p>
         </FadeIn>
 
         <FadeIn delay={300}>
           <p className="mt-4 text-lg leading-relaxed text-ink-500">
-            Your assistant arrives knowing how to help with scheduling,
-            research, reminders, travel planning, shopping, and all the life
-            admin that eats up your day. And it gets better the more you use it
-            — learning your preferences, your routines, and your priorities over
-            time.
+            Pick the basic agent, or choose one that&rsquo;s already been
+            trained and configured for your specific use case. Either way, your
+            assistant arrives knowing how to help with scheduling, research,
+            reminders, travel planning, shopping, and all the life admin that
+            eats up your day. And it gets better the more you use it — learning
+            your preferences, your routines, and your priorities over time.
           </p>
         </FadeIn>
 

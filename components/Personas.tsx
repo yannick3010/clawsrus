@@ -31,11 +31,11 @@ export default function Personas() {
         <FadeIn>
           <div className="text-center">
             <h2 className="font-display text-3xl tracking-tight text-ink-800 sm:text-4xl lg:text-5xl">
-              Choose your AI persona.
+              Choose your AI agent.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-400">
-              Each persona is pre-configured with the skills, tone, and
-              knowledge to excel at its role.
+              Each agent comes pre-trained and configured for its role. Pick
+              one and install with a single click.
             </p>
           </div>
         </FadeIn>

@@ -19,8 +19,8 @@ export default function FinalCTA() {
 
         <FadeIn delay={100}>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink-200">
-            Your AI assistant is waiting. Pick a plan, follow the setup guide,
-            and start handing off your to-do list today.
+            Your AI assistant is one click away. Pick a plan, install your
+            agent, and start chatting from your dashboard today.
           </p>
         </FadeIn>
 
@@ -38,7 +38,8 @@ export default function FinalCTA() {
 
         <FadeIn delay={300}>
           <p className="mt-6 text-sm text-ink-300">
-            Set up in under 10 minutes. No technical skills needed.
+            One-click install. No extra apps needed. No technical skills
+            required.
           </p>
         </FadeIn>
       </div>
