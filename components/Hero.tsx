@@ -31,7 +31,7 @@ export default function Hero() {
           className="animate-fade-in-up font-display text-5xl tracking-tight text-ink-800 sm:text-6xl lg:text-7xl"
           style={{ animationDelay: "0.1s" }}
         >
-          your personal ai agent in one click
+          Your Personal AI Assistant with One Click
         </h1>
 
         <p
