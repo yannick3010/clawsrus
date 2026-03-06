@@ -24,7 +24,7 @@ fi
 
 BASE_DIR="/opt/clawsrus/customers"
 TEMPLATE_DIR="/opt/clawsrus/templates"
-APP_ORIGIN="${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+APP_ORIGIN="${NEXT_PUBLIC_APP_URL:-https://app.clawsrus.com}"
 OPENCLAW_IMAGE="${OPENCLAW_IMAGE:-clawsrus/openclaw-runtime:2026.2.17-r1}"
 OPENCLAW_DOCKER_NETWORK="${OPENCLAW_DOCKER_NETWORK:-clawsrus-network}"
 OPENCLAW_GATEWAY_PORT="${OPENCLAW_GATEWAY_PORT:-18789}"

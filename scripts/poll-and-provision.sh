@@ -9,6 +9,7 @@ SUPABASE_URL="${SUPABASE_URL}"
 SUPABASE_SERVICE_KEY="${SUPABASE_SERVICE_KEY}"
 RESEND_API_KEY="${RESEND_API_KEY}"
 NEXT_PUBLIC_APP_URL="${NEXT_PUBLIC_APP_URL:-https://app.clawsrus.com}"
+export NEXT_PUBLIC_APP_URL
 SCRIPT_DIR="/opt/clawsrus/scripts"
 LOG_FILE="/var/log/clawsrus/poller.log"
 
