@@ -50,12 +50,15 @@ export default function DashboardShellV2({ preferredName }: DashboardShellV2Prop
             preferred_name?: string | null;
             persona?: string;
             tier?: string;
+            plan_code?: string;
+            setup_package?: string;
           };
           if (!cancelled) {
             setAccountSummary({
               preferredName: me.preferred_name || "",
               persona: me.persona || "personal-assistant",
-              tier: me.tier || "free",
+              membershipPlan: me.plan_code || me.tier || "free",
+              setupPackage: me.setup_package || "standard",
             });
           }
         }

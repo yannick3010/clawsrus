@@ -10,6 +10,8 @@ type ProfileResponse = {
   timezone: string;
   persona: string;
   tier: string;
+  setup_package?: string;
+  membership_plan?: string;
   plan_code?: string;
 };
 
@@ -31,7 +33,8 @@ export default function ProfileSettings({
     preferred_name: "",
     timezone: "UTC",
     persona: "",
-    tier: "",
+    membershipPlan: "",
+    setupPackage: "",
   });
 
   useEffect(() => {
@@ -51,12 +54,14 @@ export default function ProfileSettings({
           preferred_name: data.preferred_name || "",
           timezone: data.timezone || "UTC",
           persona: data.persona,
-          tier: data.plan_code || data.tier,
+          membershipPlan: data.membership_plan || data.plan_code || data.tier,
+          setupPackage: data.setup_package || "standard",
         });
         onSummaryChange?.({
           preferredName: data.preferred_name || "",
           persona: data.persona,
-          tier: data.plan_code || data.tier,
+          membershipPlan: data.membership_plan || data.plan_code || data.tier,
+          setupPackage: data.setup_package || "standard",
         });
       } catch {
         setError("Failed to load profile");
@@ -94,7 +99,8 @@ export default function ProfileSettings({
       onSummaryChange?.({
         preferredName: form.preferred_name,
         persona: form.persona,
-        tier: form.tier,
+        membershipPlan: form.membershipPlan,
+        setupPackage: form.setupPackage,
       });
     } catch {
       setError("Could not save settings");
@@ -162,9 +168,15 @@ export default function ProfileSettings({
               </p>
             </div>
             <div className="rounded-lg border border-ink-100 bg-ink-50 px-3 py-2">
-              <p className="uppercase tracking-wide">Tier</p>
+              <p className="uppercase tracking-wide">Membership</p>
               <p className="mt-1 text-sm font-medium capitalize text-ink-700">
-                {form.tier}
+                {form.membershipPlan}
+              </p>
+            </div>
+            <div className="rounded-lg border border-ink-100 bg-ink-50 px-3 py-2">
+              <p className="uppercase tracking-wide">Setup Package</p>
+              <p className="mt-1 text-sm font-medium capitalize text-ink-700">
+                {form.setupPackage}
               </p>
             </div>
           </div>
