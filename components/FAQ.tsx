@@ -20,11 +20,7 @@ const faqs: { q: string; a: ReactNode }[] = [
   },
   {
     q: "How much does ClawsRUs cost?",
-    a: "ClawsRUs offers a Free tier ($0 forever) and a Pro tier ($79/month). Every signup starts with a 7-day Pro trial so you can try all features before deciding.",
-  },
-  {
-    q: "Is ClawsRUs free?",
-    a: "Yes \u2014 ClawsRUs has a free tier that includes your AI assistant with all free skills. You can upgrade to Pro ($79/month) anytime to unlock paid skills and priority support.",
+    a: "ClawsRUs Standard is a one-time $199 setup fee — no subscriptions, no recurring costs. The Concierge tier ($599 one-time) includes white-glove setup, a 1-on-1 onboarding call, and custom persona tuning.",
   },
   {
     q: "What can my assistant actually do?",
@@ -89,7 +85,7 @@ const faqs: { q: string; a: ReactNode }[] = [
   },
   {
     q: "How does ClawsRUs compare to hiring a virtual assistant?",
-    a: "A human VA costs $500\u20132,000/month and works limited hours. ClawsRUs Pro costs $79/month, is available 24/7, responds instantly, and never forgets what you told it. It handles research, scheduling, reminders, and email drafting \u2014 the same tasks you\u2019d delegate to a VA for routine admin.",
+    a: "A human VA costs $500\u20132,000/month and works limited hours. ClawsRUs is a one-time $199 setup fee, is available 24/7, responds instantly, and never forgets what you told it. It handles research, scheduling, reminders, and email drafting \u2014 the same tasks you\u2019d delegate to a VA for routine admin.",
   },
 ];
 

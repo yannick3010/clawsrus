@@ -27,7 +27,7 @@ export default function FinalCTA() {
         <FadeIn delay={200}>
           <div className="mt-10">
             <a
-              href="/signup?tier=free&persona=personal-assistant"
+              href="/signup?tier=standard&persona=personal-assistant"
               className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-base font-semibold text-ink-800 shadow-xl transition-all hover:bg-ink-50 hover:shadow-2xl"
             >
               Get Your AI Assistant
@@ -38,8 +38,7 @@ export default function FinalCTA() {
 
         <FadeIn delay={300}>
           <p className="mt-6 text-sm text-ink-300">
-            Free to start. Set up in under 10 minutes. No technical skills
-            needed.
+            Set up in under 10 minutes. No technical skills needed.
           </p>
         </FadeIn>
       </div>

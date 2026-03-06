@@ -48,10 +48,10 @@ export default function Hero() {
           style={{ animationDelay: "0.5s" }}
         >
           <a
-            href="/signup?tier=free&persona=personal-assistant"
+            href="/signup?tier=standard&persona=personal-assistant"
             className="inline-flex items-center gap-2 rounded-full bg-brand-500 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand-500/25 transition-all hover:bg-brand-400 hover:shadow-xl hover:shadow-brand-500/30"
           >
-            Start Your Free Trial
+            Get Started — From $199
             <ArrowRight className="h-4 w-4" />
           </a>
           <a
@@ -66,7 +66,7 @@ export default function Hero() {
           className="animate-fade-in-up mt-6 text-sm text-ink-300"
           style={{ animationDelay: "0.65s" }}
         >
-          Free forever tier available. No credit card required.
+          One-time setup fee. No subscriptions, no recurring costs.
         </p>
       </div>
     </section>
