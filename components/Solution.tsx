@@ -11,34 +11,33 @@ export default function Solution() {
         </FadeIn>
 
         <FadeIn delay={100}>
-          <p className="mt-8 text-lg leading-relaxed text-ink-500">
-            ClawsRUs gives you pre-configured AI agents that are ready to work
-            the moment you install them — right from your own dashboard.
+          <h3 className="mt-8 font-display text-2xl tracking-tight text-ink-800">
+            What is ClawsRUs?
+          </h3>
+          <p className="mt-4 text-lg leading-relaxed text-ink-500">
+            ClawsRUs is a managed, pre-configured AI assistant that runs inside
+            Telegram. It is built on OpenClaw, the open-source AI framework, but
+            requires zero technical knowledge to set up or use. ClawsRUs handles
+            scheduling, research, reminders, email drafting, travel planning,
+            and everyday life admin for busy professionals and entrepreneurs.
+            Setup takes under 10 minutes — no coding, no terminal commands, no
+            prompt engineering. Think of it as a done-for-you AI assistant: you
+            sign up, follow three steps, and start chatting.
           </p>
         </FadeIn>
 
         <FadeIn delay={200}>
           <p className="mt-4 text-lg leading-relaxed text-ink-500">
-            No blank canvas. No technical setup. No extra apps to install.
+            Your assistant arrives ready to handle scheduling, research,
+            reminders, travel, and shopping — the life admin that eats your day.
           </p>
         </FadeIn>
 
         <FadeIn delay={300}>
-          <p className="mt-4 text-lg leading-relaxed text-ink-500">
-            Pick the basic agent, or choose one that&rsquo;s already been
-            trained and configured for your specific use case. Either way, your
-            assistant arrives knowing how to help with scheduling, research,
-            reminders, travel planning, shopping, and all the life admin that
-            eats up your day. And it gets better the more you use it — learning
-            your preferences, your routines, and your priorities over time.
-          </p>
-        </FadeIn>
-
-        <FadeIn delay={400}>
           <blockquote className="mt-12 rounded-2xl border-l-4 border-brand-500 bg-brand-50/60 px-8 py-8">
             <p className="font-display text-xl italic leading-relaxed text-ink-700">
-              Think of it less like a chatbot and more like a capable,
-              always-available personal assistant who never drops the ball.
+              Less chatbot, more chief of staff — always available, never drops
+              the ball.
             </p>
           </blockquote>
         </FadeIn>

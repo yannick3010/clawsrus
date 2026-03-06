@@ -19,15 +19,15 @@ export default function FinalCTA() {
 
         <FadeIn delay={100}>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink-200">
-            Your AI assistant is one click away. Pick a plan, install your
-            agent, and start chatting from your dashboard today.
+            Your AI assistant is ready. Pick a plan, set it up in minutes, and
+            start handing off your to-do list — today.
           </p>
         </FadeIn>
 
         <FadeIn delay={200}>
           <div className="mt-10">
             <a
-              href="/signup?tier=standard&persona=personal-assistant"
+              href="/signup?tier=free&persona=personal-assistant"
               className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-base font-semibold text-ink-800 shadow-xl transition-all hover:bg-ink-50 hover:shadow-2xl"
             >
               Get Your AI Assistant
@@ -38,8 +38,8 @@ export default function FinalCTA() {
 
         <FadeIn delay={300}>
           <p className="mt-6 text-sm text-ink-300">
-            One-click install. No extra apps needed. No technical skills
-            required.
+            Free to start. Set up in under 10 minutes. No technical skills
+            needed.
           </p>
         </FadeIn>
       </div>

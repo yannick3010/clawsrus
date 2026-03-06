@@ -34,8 +34,8 @@ export default function Personas() {
               Choose your AI agent.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-400">
-              Each agent comes pre-trained and configured for its role. Pick
-              one and install with a single click.
+              Each persona comes pre-loaded with specialized skills, so it's
+              effective from message one.
             </p>
           </div>
         </FadeIn>

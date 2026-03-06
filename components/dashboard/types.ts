@@ -18,9 +18,9 @@ export type SkillsSummary = {
   loading: boolean;
   error: string;
   total: number;
-  enabled: number;
-  connected: boolean;
-  connectionStatus: "connecting" | "connected" | "reconnecting" | "disconnected";
+  installed: number;
+  active: number;
+  locked: number;
 };
 
 export type ChatSummary = {

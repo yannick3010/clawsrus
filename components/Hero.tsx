@@ -31,16 +31,16 @@ export default function Hero() {
           className="animate-fade-in-up font-display text-5xl tracking-tight text-ink-800 sm:text-6xl lg:text-7xl"
           style={{ animationDelay: "0.1s" }}
         >
-          Your Personal AI Assistant with One Click
+          Your Pre-Configured AI Assistant — Ready in Minutes, Not Months
         </h1>
 
         <p
           className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-ink-400 sm:text-xl"
           style={{ animationDelay: "0.3s" }}
         >
-          No setup headaches. No prompt engineering. Choose a pre-configured
-          agent, install with one click, and start chatting right from your
-          dashboard.
+          A managed AI assistant on Telegram for busy professionals. No coding,
+          no prompt engineering, no setup headaches. Just tell it what you need
+          — scheduling, research, email, reminders — and it handles the rest.
         </p>
 
         <div
@@ -48,10 +48,10 @@ export default function Hero() {
           style={{ animationDelay: "0.5s" }}
         >
           <a
-            href="/signup?tier=standard&persona=personal-assistant"
+            href="/signup?tier=free&persona=personal-assistant"
             className="inline-flex items-center gap-2 rounded-full bg-brand-500 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand-500/25 transition-all hover:bg-brand-400 hover:shadow-xl hover:shadow-brand-500/30"
           >
-            Get Started — From $199
+            Start Your Free Trial
             <ArrowRight className="h-4 w-4" />
           </a>
           <a
@@ -66,7 +66,7 @@ export default function Hero() {
           className="animate-fade-in-up mt-6 text-sm text-ink-300"
           style={{ animationDelay: "0.65s" }}
         >
-          One-click install. One-time setup fee — no recurring costs from us.
+          Free forever tier available. No credit card required.
         </p>
       </div>
     </section>

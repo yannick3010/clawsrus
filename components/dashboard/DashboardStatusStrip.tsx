@@ -75,7 +75,7 @@ export default function DashboardStatusStrip({
           className={`${baseChipClass} animate-stagger-3 focus-ring border-surface-200 bg-surface-100 text-ink-700 hover:border-surface-300`}
         >
           <Sparkles className="h-3.5 w-3.5" />
-          Skills {skillsSummary ? `${skillsSummary.enabled}/${skillsSummary.total}` : "-"}
+          Skills {skillsSummary ? `${skillsSummary.active}/${skillsSummary.total}` : "-"}
         </button>
 
         <span

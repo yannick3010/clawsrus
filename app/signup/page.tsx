@@ -58,7 +58,7 @@ function SignupLoading() {
 function SignupForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const tier = searchParams.get("tier") || "standard";
+  const tier = searchParams.get("tier") || "free";
   const persona = searchParams.get("persona") || "personal-assistant";
 
   const [step, setStep] = useState(1);
@@ -116,7 +116,9 @@ function SignupForm() {
         }),
       });
       const result = await res.json();
-      if (result.url) {
+      if (result.setup_url) {
+        window.location.href = result.setup_url;
+      } else if (result.url) {
         window.location.href = result.url;
       } else {
         setError(result.error || "Something went wrong. Please try again.");
@@ -205,10 +207,10 @@ function SignupForm() {
             className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition-all hover:bg-brand-400 hover:shadow-xl disabled:opacity-50 disabled:shadow-none"
           >
             {loading ? (
-              "Redirecting to checkout..."
+              "Creating trial account..."
             ) : step === TOTAL_STEPS ? (
               <>
-                Continue to Payment
+                Start 7-Day Pro Trial
                 <ArrowRight className="h-4 w-4" />
               </>
             ) : (

@@ -1,10 +1,11 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { FadeIn } from "./FadeIn";
 
-const faqs = [
+const faqs: { q: string; a: ReactNode }[] = [
   {
     q: "Do I need any technical skills to set up my assistant?",
     a: "Nope. After checkout, you\u2019ll follow a simple guided walkthrough that takes about 10 minutes. If you can install an app on your phone, you can set this up.",
@@ -18,8 +19,37 @@ const faqs = [
     a: 'Most AI tools give you a blank chat window and leave you to figure it out. ClawsRUs agents come pre-configured and trained for specific jobs \u2014 install one with a single click and start chatting from your dashboard. Your assistant remembers your preferences across conversations and gets better over time. It\u2019s the difference between hiring someone and Googling "how to do things."',
   },
   {
+    q: "How much does ClawsRUs cost?",
+    a: "ClawsRUs offers a Free tier ($0 forever) and a Pro tier ($79/month). Every signup starts with a 7-day Pro trial so you can try all features before deciding.",
+  },
+  {
+    q: "Is ClawsRUs free?",
+    a: "Yes \u2014 ClawsRUs has a free tier that includes your AI assistant with all free skills. You can upgrade to Pro ($79/month) anytime to unlock paid skills and priority support.",
+  },
+  {
     q: "What can my assistant actually do?",
-    a: "Research, scheduling, reminders, travel planning, email drafting, shopping lists, event planning, and general Q&A \u2014 to start. You can add skill packs to expand its capabilities anytime.",
+    a: (
+      <>
+        Your assistant can help with:
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          <li>Research and quick answers</li>
+          <li>Scheduling and calendar management</li>
+          <li>Reminders and follow-ups</li>
+          <li>Travel planning</li>
+          <li>Email drafting</li>
+          <li>Shopping lists and product research</li>
+          <li>Event planning and coordination</li>
+          <li>General Q&amp;A</li>
+        </ul>
+        <span className="mt-2 block">
+          You can add skill packs to expand its capabilities anytime.
+        </span>
+      </>
+    ),
+  },
+  {
+    q: "Does ClawsRUs work on iPhone and Android?",
+    a: "Yes. ClawsRUs runs inside Telegram, which is available on iPhone, Android, desktop, and web. No separate app to install.",
   },
   {
     q: "Does my assistant remember things between conversations?",
@@ -36,6 +66,30 @@ const faqs = [
   {
     q: "Is my data private?",
     a: "Yes. Each customer gets an isolated container. Your conversations stay in your private dashboard. We don\u2019t have access to your chat content.",
+  },
+  {
+    q: "How is ClawsRUs different from ChatGPT?",
+    a: "ChatGPT is a general-purpose chatbot \u2014 you get a blank window and figure it out yourself. ClawsRUs is a pre-configured AI assistant that comes ready to handle specific tasks like scheduling, research, and email. It has long-term memory, runs inside Telegram, and requires no prompt engineering. Think of ChatGPT as a search engine you talk to; ClawsRUs is a personal assistant you delegate to.",
+  },
+  {
+    q: "What is a managed AI assistant?",
+    a: "A managed AI assistant is an AI service where someone else handles the technical setup, hosting, updates, and security \u2014 you just use it. ClawsRUs is a managed AI assistant built on OpenClaw. You get all the power of OpenClaw without needing to install, configure, or maintain anything yourself.",
+  },
+  {
+    q: "Can I use ClawsRUs for my business?",
+    a: "Yes. ClawsRUs is designed for busy professionals and entrepreneurs. It handles research, email drafting, scheduling, and task management. Many users run it alongside their existing tools to offload repetitive admin work.",
+  },
+  {
+    q: "Is ClawsRUs an OpenClaw agent?",
+    a: "Yes. ClawsRUs is built on OpenClaw, the open-source AI framework. We pre-configure and manage the OpenClaw agent for you, so you get the full power of the framework without any technical setup.",
+  },
+  {
+    q: "Do I need to know how to code to use ClawsRUs?",
+    a: "No. ClawsRUs is designed for people with zero technical background. Setup takes under 10 minutes and involves no coding, no terminal commands, and no configuration files. If you can use Telegram, you can use ClawsRUs.",
+  },
+  {
+    q: "How does ClawsRUs compare to hiring a virtual assistant?",
+    a: "A human VA costs $500\u20132,000/month and works limited hours. ClawsRUs Pro costs $79/month, is available 24/7, responds instantly, and never forgets what you told it. It handles research, scheduling, reminders, and email drafting \u2014 the same tasks you\u2019d delegate to a VA for routine admin.",
   },
 ];
 

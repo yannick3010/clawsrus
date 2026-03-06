@@ -7,7 +7,7 @@ const steps = [
     icon: CreditCard,
     title: "Pick your plan",
     description:
-      "Choose the tier that fits your needs. Every plan includes your AI assistant with all core skills built in.",
+      "Choose Free or Pro. Both include your AI assistant with all core skills — nothing extra to configure.",
   },
   {
     number: "02",
@@ -58,11 +58,6 @@ export default function HowItWorks() {
           ))}
         </div>
 
-        <FadeIn delay={500}>
-          <p className="mt-16 text-center text-ink-300">
-            Most people are up and running in under 10 minutes.
-          </p>
-        </FadeIn>
       </div>
     </section>
   );

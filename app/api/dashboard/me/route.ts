@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedAppUser } from "@/lib/dashboard-auth";
 import { supabase } from "@/lib/supabase";
+import { isAllInclusivePaidPlan } from "@/lib/plans";
+import { getUserSubscriptionSnapshot } from "@/lib/skills-marketplace";
 
 export async function GET() {
   const auth = await getAuthenticatedAppUser();
@@ -8,12 +10,25 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const subscription = await getUserSubscriptionSnapshot(auth.appUser.id);
+  const subscriptionStatus = subscription?.status ?? null;
+  const planCode = isAllInclusivePaidPlan({
+    planCode: "pro",
+    subscriptionStatus,
+  })
+    ? "pro"
+    : "free";
+
   return NextResponse.json({
     email: auth.appUser.email,
     preferred_name: auth.appUser.preferred_name,
     timezone: auth.appUser.timezone || "UTC",
     persona: auth.appUser.persona,
     tier: auth.appUser.tier,
+    plan_code: planCode,
+    subscription_status: subscriptionStatus,
+    trial_ends_at: subscription?.current_period_end ?? null,
+    trial_expired: subscription?.trial_expired ?? false,
     status: auth.appUser.status,
   });
 }

@@ -49,6 +49,10 @@ export default function Features() {
             <h2 className="font-display text-3xl tracking-tight text-ink-800 sm:text-4xl lg:text-5xl">
               Everything your assistant can do for you.
             </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-400">
+              Built for busy professionals, entrepreneurs, and anyone who wants
+              AI help without the technical setup.
+            </p>
           </div>
         </FadeIn>
 
@@ -82,9 +86,9 @@ export default function Features() {
               Your assistant remembers.
             </h4>
             <p className="mt-3 leading-relaxed text-ink-500">
-              Unlike one-off AI chats, your ClawsRUs assistant builds context
-              over time. It learns your preferences, remembers past
-              conversations, and gets more helpful the longer you use it.
+              Unlike one-off AI chats, your assistant remembers past
+              conversations and learns your preferences — so you never have to
+              repeat yourself.
             </p>
           </div>
         </FadeIn>

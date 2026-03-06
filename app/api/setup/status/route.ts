@@ -9,25 +9,47 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Feature not enabled" }, { status: 404 });
   }
 
+  const setupToken = req.nextUrl.searchParams.get("setup_token");
   const sessionId = req.nextUrl.searchParams.get("session_id");
-  if (!sessionId) {
-    return NextResponse.json({ error: "session_id is required" }, { status: 400 });
+  if (!setupToken && !sessionId) {
+    return NextResponse.json(
+      { error: "setup_token (or legacy session_id) is required" },
+      { status: 400 }
+    );
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    const paymentIntentId =
-      typeof session.payment_intent === "string" ? session.payment_intent : null;
+    let user:
+      | {
+          status: string;
+        }
+      | null = null;
+    let error: { message: string } | null = null;
 
-    if (!paymentIntentId) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+    if (setupToken) {
+      const result = await supabase
+        .from("users")
+        .select("status")
+        .eq("setup_token", setupToken)
+        .maybeSingle();
+      user = result.data as { status: string } | null;
+      error = result.error ? { message: result.error.message } : null;
+    } else if (sessionId) {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      const paymentIntentId =
+        typeof session.payment_intent === "string" ? session.payment_intent : null;
+      if (!paymentIntentId) {
+        return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+      }
+
+      const result = await supabase
+        .from("users")
+        .select("status")
+        .eq("stripe_payment_intent_id", paymentIntentId)
+        .maybeSingle();
+      user = result.data as { status: string } | null;
+      error = result.error ? { message: result.error.message } : null;
     }
-
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("status")
-      .eq("stripe_payment_intent_id", paymentIntentId)
-      .maybeSingle();
 
     if (error || !user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
