@@ -30,7 +30,7 @@ const jsonLd = {
           name: "What is OpenClaw?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "OpenClaw is the powerful open-source AI framework that runs under the hood. We handle all the technical stuff — you just chat with your assistant on Telegram.",
+            text: "OpenClaw is the powerful open-source AI framework that runs under the hood. We handle all the technical stuff — you just chat with your assistant from your dashboard.",
           },
         },
         {
@@ -38,7 +38,7 @@ const jsonLd = {
           name: "How is this different from ChatGPT or other AI tools?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: 'Most AI tools give you a blank chat window and leave you to figure it out. Your ClawsRUs assistant comes pre-configured for a specific job, remembers your preferences across conversations, and gets better over time. It\u2019s the difference between hiring someone and Googling "how to do things."',
+            text: 'Most AI tools give you a blank chat window and leave you to figure it out. ClawsRUs agents come pre-configured for specific jobs — scheduling, research, email — and remember your preferences across conversations. Think of ChatGPT as a search engine you talk to; ClawsRUs is a personal assistant you delegate to.',
           },
         },
         {
@@ -46,7 +46,7 @@ const jsonLd = {
           name: "How much does ClawsRUs cost?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "ClawsRUs has one-time setup packages (Standard $199 or Concierge $599). Every signup also includes a 7-day Pro membership trial. After trial, continue on Free ($0) or Pro ($79/month).",
+            text: "ClawsRUs has one-time setup packages (Standard $199 or Concierge $599). Every signup also includes a 7-day Pro membership trial. After trial, continue on Free ($0) or Pro ($29/month).",
           },
         },
         {
@@ -70,7 +70,7 @@ const jsonLd = {
           name: "Does ClawsRUs work on iPhone and Android?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes. ClawsRUs runs inside Telegram, which is available on iPhone, Android, desktop, and web. No separate app to install.",
+            text: "Yes. Your ClawsRUs dashboard works on any device with a browser — iPhone, Android, tablet, or desktop. No app to install.",
           },
         },
         {
@@ -79,22 +79,6 @@ const jsonLd = {
           acceptedAnswer: {
             "@type": "Answer",
             text: "Yes. Your assistant has long-term memory built in. It remembers your preferences, past requests, and context — so you never have to repeat yourself.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "How do I create a Telegram bot?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "It takes about 2 minutes. After checkout, our setup page walks you through it step-by-step: open Telegram, message @BotFather, send /newbot, pick a name, and copy the token. That's it.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "What messaging apps does it work with?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Right now, Telegram. We're adding Discord and Slack support soon.",
           },
         },
         {
@@ -110,15 +94,7 @@ const jsonLd = {
           name: "Is my data private?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes. Each customer gets an isolated container. Your conversations go through your own Telegram bot. We don't have access to your chat content.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "How is ClawsRUs different from ChatGPT?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "ChatGPT is a general-purpose chatbot — you get a blank window and figure it out yourself. ClawsRUs is a pre-configured AI assistant that comes ready to handle specific tasks like scheduling, research, and email. It has long-term memory, runs inside Telegram, and requires no prompt engineering. Think of ChatGPT as a search engine you talk to; ClawsRUs is a personal assistant you delegate to.",
+            text: "Yes. Each customer gets an isolated container. Your conversations stay in your private dashboard. We don't have access to your chat content.",
           },
         },
         {
@@ -150,7 +126,7 @@ const jsonLd = {
           name: "Do I need to know how to code to use ClawsRUs?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "No. ClawsRUs is designed for people with zero technical background. Setup takes under 10 minutes and involves no coding, no terminal commands, and no configuration files. If you can use Telegram, you can use ClawsRUs.",
+            text: "No. ClawsRUs is designed for people with zero technical background. Setup takes under 10 minutes and involves no coding, no terminal commands, and no configuration files. If you can use a web browser, you can use ClawsRUs.",
           },
         },
         {
@@ -167,10 +143,10 @@ const jsonLd = {
       "@type": "SoftwareApplication",
       name: "ClawsRUs",
       applicationCategory: "BusinessApplication",
-      featureList: "Long-term memory, Scheduling, Research, Email drafting, Reminders, Skill packs, Telegram integration",
-      operatingSystem: "Telegram",
+      featureList: "Long-term memory, Scheduling, Research, Email drafting, Reminders, Skill packs, Web and mobile dashboard",
+      operatingSystem: "Web, iOS, Android",
       description:
-        "A pre-configured personal AI assistant on Telegram that handles scheduling, research, reminders, and life admin.",
+        "A pre-configured personal AI assistant with its own web and mobile dashboard that handles scheduling, research, reminders, and life admin.",
       offers: [
         {
           "@type": "Offer",
@@ -189,7 +165,7 @@ const jsonLd = {
         {
           "@type": "Offer",
           name: "Pro Membership",
-          price: "79",
+          price: "29",
           priceCurrency: "USD",
           billingIncrement: "P1M",
           description: "Optional monthly membership with all paid skills included.",
@@ -200,7 +176,7 @@ const jsonLd = {
       "@type": "WebSite",
       name: "ClawsRUs",
       url: "https://www.clawsrus.com",
-      description: "Managed, pre-configured AI assistant on Telegram for busy professionals. Built on OpenClaw.",
+      description: "Managed, pre-configured AI assistant with web and mobile dashboard for busy professionals. Built on OpenClaw.",
     },
     {
       "@type": "Product",

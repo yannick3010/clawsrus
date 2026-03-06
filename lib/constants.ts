@@ -83,8 +83,8 @@ export const MEMBERSHIP_PLANS = {
   pro: {
     id: "pro",
     name: "Pro",
-    price: 79,
-    priceLabel: "$79",
+    price: 29,
+    priceLabel: "$29",
     priceSuffix: "per month",
     description: "All-inclusive access to all free and paid skills.",
   },

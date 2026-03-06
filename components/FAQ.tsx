@@ -16,11 +16,11 @@ const faqs: { q: string; a: ReactNode }[] = [
   },
   {
     q: "How is this different from ChatGPT or other AI tools?",
-    a: 'Most AI tools give you a blank chat window and leave you to figure it out. ClawsRUs agents come pre-configured and trained for specific jobs \u2014 install one with a single click and start chatting from your dashboard. Your assistant remembers your preferences across conversations and gets better over time. It\u2019s the difference between hiring someone and Googling "how to do things."',
+    a: 'Most AI tools give you a blank chat window and leave you to figure it out. ClawsRUs agents come pre-configured for specific jobs — scheduling, research, email — and remember your preferences across conversations. Think of ChatGPT as a search engine you talk to; ClawsRUs is a personal assistant you delegate to.',
   },
   {
     q: "How much does ClawsRUs cost?",
-    a: "ClawsRUs has one-time setup packages (Standard $199 or Concierge $599). Every signup includes a 7-day Pro membership trial, then you can continue on Free ($0) or Pro ($79/month).",
+    a: "ClawsRUs has one-time setup packages (Standard $199 or Concierge $599). Every signup includes a 7-day Pro membership trial, then you can continue on Free ($0) or Pro ($29/month).",
   },
   {
     q: "Is ClawsRUs free?",
@@ -49,7 +49,7 @@ const faqs: { q: string; a: ReactNode }[] = [
   },
   {
     q: "Does ClawsRUs work on iPhone and Android?",
-    a: "Yes. ClawsRUs runs inside Telegram, which is available on iPhone, Android, desktop, and web. No separate app to install.",
+    a: "Yes. Your ClawsRUs dashboard works on any device with a browser — iPhone, Android, tablet, or desktop. No app to install.",
   },
   {
     q: "Does my assistant remember things between conversations?",
@@ -57,7 +57,7 @@ const faqs: { q: string; a: ReactNode }[] = [
   },
   {
     q: "Do I need to install any app to use my assistant?",
-    a: "No. Your assistant lives in your ClawsRUs dashboard \u2014 just log in and start chatting. No Telegram, no Slack, no extra apps to install.",
+    a: "No. Your assistant lives in your ClawsRUs dashboard \u2014 just log in from any browser and start chatting. Works on desktop and mobile, no extra apps to install.",
   },
   {
     q: "Can I switch personas later?",
@@ -66,10 +66,6 @@ const faqs: { q: string; a: ReactNode }[] = [
   {
     q: "Is my data private?",
     a: "Yes. Each customer gets an isolated container. Your conversations stay in your private dashboard. We don\u2019t have access to your chat content.",
-  },
-  {
-    q: "How is ClawsRUs different from ChatGPT?",
-    a: "ChatGPT is a general-purpose chatbot \u2014 you get a blank window and figure it out yourself. ClawsRUs is a pre-configured AI assistant that comes ready to handle specific tasks like scheduling, research, and email. It has long-term memory, runs inside Telegram, and requires no prompt engineering. Think of ChatGPT as a search engine you talk to; ClawsRUs is a personal assistant you delegate to.",
   },
   {
     q: "What is a managed AI assistant?",
@@ -85,7 +81,7 @@ const faqs: { q: string; a: ReactNode }[] = [
   },
   {
     q: "Do I need to know how to code to use ClawsRUs?",
-    a: "No. ClawsRUs is designed for people with zero technical background. Setup takes under 10 minutes and involves no coding, no terminal commands, and no configuration files. If you can use Telegram, you can use ClawsRUs.",
+    a: "No. ClawsRUs is designed for people with zero technical background. Setup takes under 10 minutes and involves no coding, no terminal commands, and no configuration files. If you can use a web browser, you can use ClawsRUs.",
   },
   {
     q: "How does ClawsRUs compare to hiring a virtual assistant?",

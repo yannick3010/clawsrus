@@ -126,8 +126,9 @@ export default function Pricing() {
 
         <FadeIn delay={450}>
           <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-ink-400">
-            Membership after setup: Free includes all free skills plus
-            pay-as-you-go paid skills; Pro ($79/month) includes all paid skills.
+            Every signup includes a 7-day Pro trial — no credit card required
+            for the trial. After that, stay on Free or upgrade to Pro
+            ($29/month) for all paid skills.
           </p>
         </FadeIn>
       </div>

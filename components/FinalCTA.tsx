@@ -38,7 +38,7 @@ export default function FinalCTA() {
 
         <FadeIn delay={300}>
           <p className="mt-6 text-sm text-ink-300">
-            Set up in under 10 minutes, then choose Free or Pro membership.
+          One-time setup · 7-day Pro trial included · No subscription required.
           </p>
         </FadeIn>
       </div>
