@@ -8,7 +8,7 @@ export default function Footer() {
               ClawsRUs
             </div>
             <p className="mt-2 text-sm text-ink-400">
-              Your personal AI team, one click away.
+              Your personal AI assistant, ready in minutes.
             </p>
           </div>
           <nav className="flex flex-wrap justify-center gap-8 text-sm text-ink-400">
@@ -42,10 +42,19 @@ export default function Footer() {
           </nav>
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ink-100 pt-8 text-xs text-ink-300 sm:flex-row">
+          <span>&copy; 2026 ClawsRUs. All rights reserved.</span>
           <span>
-            &copy; {new Date().getFullYear()} ClawsRUs. All rights reserved.
+            Built on{" "}
+            <a
+              href="https://github.com/openclaw"
+              className="underline transition-colors hover:text-ink-500"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              OpenClaw
+            </a>
+            , the open-source AI framework.
           </span>
-          <span>Powered by OpenClaw</span>
         </div>
       </div>
     </footer>

@@ -21,9 +21,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "ClawsRUs — Your Personal AI Assistant, Ready in Minutes",
+  title: "ClawsRUs — Pre-Configured AI Assistant on Telegram | Free Trial",
   description:
-    "No setup headaches. No prompt engineering. Just a ready-to-go assistant on Telegram that handles your life admin.",
+    "ClawsRUs is a pre-configured personal AI assistant on Telegram. Handles scheduling, research, reminders, and life admin. Set up in 10 minutes. Free tier available.",
 };
 
 export default function RootLayout({

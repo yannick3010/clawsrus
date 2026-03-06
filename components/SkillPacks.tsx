@@ -49,8 +49,8 @@ export default function SkillPacks() {
               Make it even more capable.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-400">
-              Your assistant comes loaded with core skills out of the box. Want
-              to go further? Add specialized skill packs.
+              Core skills are included. Add specialized packs when you need
+              more.
             </p>
           </div>
         </FadeIn>
@@ -94,8 +94,8 @@ export default function SkillPacks() {
 
         <FadeIn delay={700}>
           <p className="mt-12 text-center text-sm text-ink-300">
-            Skill packs are one-time purchases. Buy them whenever you&rsquo;re
-            ready — no rush.
+            Skill packs are one-time purchases — no subscriptions, no
+            pressure.
           </p>
         </FadeIn>
       </div>

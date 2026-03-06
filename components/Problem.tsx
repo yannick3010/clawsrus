@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import { FadeIn } from "./FadeIn";
 
 const painPoints = [
-  "You sign up for a tool and stare at a blank chat window",
+  "You sign up for yet another tool... and stare at a blank chat window with no idea what to type",
   "You spend hours writing the perfect prompt\u2026 and still get generic answers",
   "You try to set up an AI agent and hit a wall of config files and terminal commands",
   "You give up and go back to doing everything yourself",
@@ -40,8 +40,8 @@ export default function Problem() {
 
         <FadeIn delay={650}>
           <p className="mt-8 text-lg leading-relaxed text-ink-500">
-            Sound familiar? You&rsquo;re not alone. Most AI tools are built for
-            developers, not for people who just want things handled.
+            Sound familiar? Most AI tools are built for developers, not for
+            people who just want things handled.
           </p>
         </FadeIn>
       </div>

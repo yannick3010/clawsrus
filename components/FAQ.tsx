@@ -1,10 +1,11 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { FadeIn } from "./FadeIn";
 
-const faqs = [
+const faqs: { q: string; a: ReactNode }[] = [
   {
     q: "Do I need any technical skills to set up my assistant?",
     a: "Nope. After checkout, you\u2019ll follow a simple guided walkthrough that takes about 10 minutes. If you can install an app on your phone, you can set this up.",
@@ -18,8 +19,37 @@ const faqs = [
     a: 'Most AI tools give you a blank chat window and leave you to figure it out. ClawsRUs agents come pre-configured and trained for specific jobs \u2014 install one with a single click and start chatting from your dashboard. Your assistant remembers your preferences across conversations and gets better over time. It\u2019s the difference between hiring someone and Googling "how to do things."',
   },
   {
+    q: "How much does ClawsRUs cost?",
+    a: "ClawsRUs offers a Free tier ($0 forever) and a Pro tier ($79/month). Every signup starts with a 7-day Pro trial so you can try all features before deciding.",
+  },
+  {
+    q: "Is ClawsRUs free?",
+    a: "Yes \u2014 ClawsRUs has a free tier that includes your AI assistant with all free skills. You can upgrade to Pro ($79/month) anytime to unlock paid skills and priority support.",
+  },
+  {
     q: "What can my assistant actually do?",
-    a: "Research, scheduling, reminders, travel planning, email drafting, shopping lists, event planning, and general Q&A \u2014 to start. You can add skill packs to expand its capabilities anytime.",
+    a: (
+      <>
+        Your assistant can help with:
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          <li>Research and quick answers</li>
+          <li>Scheduling and calendar management</li>
+          <li>Reminders and follow-ups</li>
+          <li>Travel planning</li>
+          <li>Email drafting</li>
+          <li>Shopping lists and product research</li>
+          <li>Event planning and coordination</li>
+          <li>General Q&amp;A</li>
+        </ul>
+        <span className="mt-2 block">
+          You can add skill packs to expand its capabilities anytime.
+        </span>
+      </>
+    ),
+  },
+  {
+    q: "Does ClawsRUs work on iPhone and Android?",
+    a: "Yes. ClawsRUs runs inside Telegram, which is available on iPhone, Android, desktop, and web. No separate app to install.",
   },
   {
     q: "Does my assistant remember things between conversations?",
