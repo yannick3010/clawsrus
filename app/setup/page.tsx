@@ -33,6 +33,7 @@ export default function SetupPage() {
 
 function SetupStatusPage() {
   const searchParams = useSearchParams();
+  const setupToken = searchParams.get("setup_token");
   const sessionId = searchParams.get("session_id");
   const [status, setStatus] = useState<SetupStatus | null>(null);
   const [error, setError] = useState("");
@@ -58,7 +59,7 @@ function SetupStatusPage() {
   }, [status]);
 
   const triggerSetup = useCallback(async () => {
-    if (!sessionId) {
+    if (!setupToken && !sessionId) {
       return;
     }
 
@@ -66,23 +67,27 @@ function SetupStatusPage() {
     const res = await fetch("/api/setup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId }),
+      body: JSON.stringify({
+        ...(setupToken ? { setup_token: setupToken } : {}),
+        ...(sessionId ? { session_id: sessionId } : {}),
+      }),
     });
 
     const data = (await res.json()) as { error?: string };
     if (!res.ok) {
       throw new Error(data.error || "Failed to start setup");
     }
-  }, [sessionId]);
+  }, [sessionId, setupToken]);
 
   const checkStatus = useCallback(async () => {
-    if (!sessionId) {
+    if (!setupToken && !sessionId) {
       return;
     }
 
-    const res = await fetch(`/api/setup/status?session_id=${encodeURIComponent(sessionId)}`, {
-      cache: "no-store",
-    });
+    const query = setupToken
+      ? `setup_token=${encodeURIComponent(setupToken)}`
+      : `session_id=${encodeURIComponent(sessionId || "")}`;
+    const res = await fetch(`/api/setup/status?${query}`, { cache: "no-store" });
     const data = (await res.json()) as { status?: SetupStatus; error?: string };
 
     if (!res.ok || !data.status) {
@@ -91,10 +96,10 @@ function SetupStatusPage() {
 
     setStatus(data.status);
     return data.status;
-  }, [sessionId]);
+  }, [sessionId, setupToken]);
 
   const bootstrapAndRedirect = useCallback(async () => {
-    if (!sessionId || bootstrapped) {
+    if ((!setupToken && !sessionId) || bootstrapped) {
       return;
     }
 
@@ -105,7 +110,10 @@ function SetupStatusPage() {
       const res = await fetch("/api/auth/bootstrap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId }),
+        body: JSON.stringify({
+          ...(setupToken ? { setup_token: setupToken } : {}),
+          ...(sessionId ? { session_id: sessionId } : {}),
+        }),
       });
 
       const data = (await res.json()) as { redirect_url?: string; error?: string };
@@ -119,10 +127,10 @@ function SetupStatusPage() {
       setError(err instanceof Error ? err.message : "Could not redirect");
       setBootstrapped(false);
     }
-  }, [bootstrapped, sessionId]);
+  }, [bootstrapped, sessionId, setupToken]);
 
   useEffect(() => {
-    if (!sessionId || initializedRef.current) {
+    if ((!setupToken && !sessionId) || initializedRef.current) {
       return;
     }
 
@@ -130,7 +138,11 @@ function SetupStatusPage() {
 
     async function start() {
       try {
-        await triggerSetup();
+        try {
+          await triggerSetup();
+        } catch (setupErr) {
+          setError(setupErr instanceof Error ? setupErr.message : "Setup failed");
+        }
         const current = await checkStatus();
         if (current === "active") {
           await bootstrapAndRedirect();
@@ -141,16 +153,21 @@ function SetupStatusPage() {
     }
 
     void start();
-  }, [sessionId, triggerSetup, checkStatus, bootstrapAndRedirect]);
+  }, [sessionId, setupToken, triggerSetup, checkStatus, bootstrapAndRedirect]);
 
   useEffect(() => {
-    if (!sessionId || redirecting) {
+    if ((!setupToken && !sessionId) || redirecting) {
       return;
     }
 
     if (!status || ["pending_provision", "provisioning", "awaiting_setup"].includes(status)) {
       const timer = window.setInterval(async () => {
         try {
+          if (!status || status === "awaiting_setup") {
+            await triggerSetup().catch((setupErr) => {
+              setError(setupErr instanceof Error ? setupErr.message : "Setup failed");
+            });
+          }
           const current = await checkStatus();
           if (current === "active") {
             await bootstrapAndRedirect();
@@ -162,16 +179,16 @@ function SetupStatusPage() {
 
       return () => window.clearInterval(timer);
     }
-  }, [sessionId, status, redirecting, checkStatus, bootstrapAndRedirect]);
+  }, [sessionId, setupToken, status, redirecting, checkStatus, bootstrapAndRedirect, triggerSetup]);
 
-  if (!sessionId) {
+  if (!setupToken && !sessionId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white px-6">
         <div className="max-w-md text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
           <h1 className="mt-4 font-display text-2xl text-ink-800">Invalid setup link</h1>
           <p className="mt-2 text-sm text-ink-400">
-            This page requires a valid checkout session. Please restart from the homepage.
+            This page requires a valid setup link. Please restart from the signup flow.
           </p>
           <a
             href="/"

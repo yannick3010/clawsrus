@@ -13,7 +13,7 @@ ONBOARDING_PAYLOAD_B64="${5:-}"
 
 if [ -z "$CUSTOMER_ID" ] || [ -z "$CUSTOMER_EMAIL" ] || [ -z "$PERSONA" ] || [ -z "$TIER" ]; then
     echo "Usage: ./provision-user.sh <customer-id> <email> <persona> <tier> [onboarding_payload_b64]"
-    echo "Example: ./provision-user.sh user-123 john@example.com personal-assistant standard"
+    echo "Example: ./provision-user.sh user-123 john@example.com personal-assistant free"
     exit 1
 fi
 
@@ -308,12 +308,12 @@ fi
 
 # Set resource limits based on tier
 case "$TIER" in
-    standard)
+    free|standard)
         CPU_LIMIT="1"
         MEMORY_LIMIT="1G"
         NODE_HEAP_MB="768"
         ;;
-    concierge)
+    pro|concierge|agency|enterprise)
         CPU_LIMIT="2"
         MEMORY_LIMIT="2G"
         NODE_HEAP_MB="1536"

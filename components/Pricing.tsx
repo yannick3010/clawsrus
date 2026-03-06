@@ -22,8 +22,8 @@ export default function Pricing() {
               Simple, honest pricing.
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-ink-400">
-              One-time setup fee. No subscriptions, no hidden costs. Pay once
-              and your AI assistant is yours.
+              Every plan starts with a 7-day Pro trial. After 7 days, choose
+              Free (forever) or Pro ($79/mo) to keep premium skills.
             </p>
           </div>
         </FadeIn>
@@ -67,26 +67,17 @@ export default function Pricing() {
         <div className="mt-12 grid gap-8 md:grid-cols-2">
           {tiers.map((tier, i) => {
             const isPopular = "popular" in tier && tier.popular;
-            const isConcierge = tier.id === "concierge";
-            const isSoldOut = isConcierge; // Concierge sold out for February
 
             return (
               <FadeIn key={tier.id} delay={200 + i * 150}>
                 <div
                   className={`relative rounded-2xl border p-8 transition-all ${
-                    isSoldOut
-                      ? "border-ink-100 bg-ink-50/50 opacity-60"
-                      : isPopular
-                        ? "border-brand-300 bg-white shadow-xl shadow-brand-100/50"
-                        : "border-ink-200 bg-white hover:shadow-lg"
+                    isPopular
+                      ? "border-brand-300 bg-white shadow-xl shadow-brand-100/50"
+                      : "border-ink-200 bg-white hover:shadow-lg"
                   }`}
                 >
-                  {isSoldOut && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-ink-300 px-4 py-1 text-xs font-semibold text-white">
-                      February Slots Full
-                    </div>
-                  )}
-                  {isPopular && !isSoldOut && (
+                  {isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-4 py-1 text-xs font-semibold text-white">
                       Most Popular
                     </div>
@@ -116,23 +107,17 @@ export default function Pricing() {
                       </li>
                     ))}
                   </ul>
-                  {isSoldOut ? (
-                    <div className="mt-8 rounded-lg bg-ink-100 px-4 py-3 text-center text-sm text-ink-400">
-                      All February slots booked. Check back in March!
-                    </div>
-                  ) : (
-                    <a
-                      href={`/signup?tier=${tier.id}&persona=${selectedPersona}`}
-                      className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
-                        isPopular
-                          ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400 hover:shadow-xl"
-                          : "bg-ink-800 text-white hover:bg-ink-700"
-                      }`}
-                    >
-                      Get Started
-                      <ArrowRight className="h-4 w-4" />
-                    </a>
-                  )}
+                  <a
+                    href={`/signup?tier=${tier.id}&persona=${selectedPersona}`}
+                    className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
+                      isPopular
+                        ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400 hover:shadow-xl"
+                        : "bg-ink-800 text-white hover:bg-ink-700"
+                    }`}
+                  >
+                    Start 7-Day Trial
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
                 </div>
               </FadeIn>
             );

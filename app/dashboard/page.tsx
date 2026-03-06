@@ -5,6 +5,7 @@ import ChannelsPanel from "@/components/dashboard/ChannelsPanel";
 import SkillsPanel from "@/components/dashboard/SkillsPanel";
 import SignOutButton from "@/components/dashboard/SignOutButton";
 import DashboardShellV2 from "@/components/dashboard/DashboardShellV2";
+import DashboardTrialBanner from "@/components/dashboard/DashboardTrialBanner";
 import { getAuthenticatedAppUser } from "@/lib/dashboard-auth";
 import { isDashboardUiV2Enabled } from "@/lib/feature-flags";
 
@@ -35,6 +36,8 @@ export default async function DashboardPage() {
           <SignOutButton />
         </div>
       </header>
+
+      <DashboardTrialBanner />
 
       <div className="mx-auto grid w-full max-w-7xl gap-6 px-6 py-6 lg:grid-cols-[1fr_360px]">
         <ChatPanel />

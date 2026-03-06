@@ -34,37 +34,35 @@ export const PERSONAS = {
 export type PersonaId = keyof typeof PERSONAS;
 
 export const TIERS = {
-  standard: {
-    id: "standard",
-    name: "Standard",
-    price: 199,
-    priceLabel: "$199",
-    priceSuffix: "one-time setup",
-    description: "Everything you need to get started",
+  free: {
+    id: "free",
+    name: "Free",
+    price: 0,
+    priceLabel: "$0",
+    priceSuffix: "forever",
+    description: "All free OpenClaw skills, installed on demand",
     features: [
       "Personal Assistant persona",
-      "Built-in chat dashboard",
-      "All skills included",
+      "Telegram messaging",
+      "Install any free skill",
+      "Buy paid skills individually",
       "Guided self-serve setup",
-      "Email support",
     ],
     limits: { cpu: "1", memory: "1G" },
   },
-  concierge: {
-    id: "concierge",
-    name: "Concierge",
-    price: 599,
-    priceLabel: "$599",
-    priceSuffix: "one-time setup",
-    description: "White-glove setup with hands-on help",
+  pro: {
+    id: "pro",
+    name: "Pro",
+    price: 79,
+    priceLabel: "$79",
+    priceSuffix: "per month",
+    description: "All-inclusive access to free and paid skills",
     features: [
       "Personal Assistant persona",
-      "Built-in chat dashboard",
-      "All skills included",
-      "We set everything up for you",
-      "1-on-1 onboarding call",
-      "Custom persona tuning",
+      "Telegram messaging",
+      "All paid skills included",
       "Priority support",
+      "Faster provisioning queue",
     ],
     limits: { cpu: "2", memory: "2G" },
     popular: true,
@@ -74,6 +72,6 @@ export const TIERS = {
 export type TierId = keyof typeof TIERS;
 
 export const STRIPE_PRICE_IDS: Record<TierId, string> = {
-  standard: process.env.STRIPE_PRICE_STANDARD || "",
-  concierge: process.env.STRIPE_PRICE_CONCIERGE || "",
+  free: "",
+  pro: process.env.STRIPE_PRICE_PRO || "",
 };

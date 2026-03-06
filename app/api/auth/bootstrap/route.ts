@@ -69,25 +69,62 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { session_id } = (await req.json()) as { session_id?: string };
+    const { session_id, setup_token } = (await req.json()) as {
+      session_id?: string;
+      setup_token?: string;
+    };
 
-    if (!session_id) {
-      return NextResponse.json({ error: "session_id is required" }, { status: 400 });
+    if (!session_id && !setup_token) {
+      return NextResponse.json(
+        { error: "setup_token (or legacy session_id) is required" },
+        { status: 400 }
+      );
     }
 
-    const session = await stripe.checkout.sessions.retrieve(session_id);
-    const paymentIntentId =
-      typeof session.payment_intent === "string" ? session.payment_intent : null;
+    let user:
+      | {
+          id: string;
+          email: string;
+          status: string;
+          auth_user_id?: string | null;
+        }
+      | null = null;
+    let userError: { message: string } | null = null;
 
-    if (!paymentIntentId) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+    if (setup_token) {
+      const result = await supabase
+        .from("users")
+        .select("id,email,status,auth_user_id")
+        .eq("setup_token", setup_token)
+        .maybeSingle();
+      user = result.data as {
+        id: string;
+        email: string;
+        status: string;
+        auth_user_id?: string | null;
+      } | null;
+      userError = result.error ? { message: result.error.message } : null;
+    } else if (session_id) {
+      const session = await stripe.checkout.sessions.retrieve(session_id);
+      const paymentIntentId =
+        typeof session.payment_intent === "string" ? session.payment_intent : null;
+      if (!paymentIntentId) {
+        return NextResponse.json({ error: "Invalid session" }, { status: 400 });
+      }
+
+      const result = await supabase
+        .from("users")
+        .select("id,email,status,auth_user_id")
+        .eq("stripe_payment_intent_id", paymentIntentId)
+        .maybeSingle();
+      user = result.data as {
+        id: string;
+        email: string;
+        status: string;
+        auth_user_id?: string | null;
+      } | null;
+      userError = result.error ? { message: result.error.message } : null;
     }
-
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .select("id,email,status,auth_user_id")
-      .eq("stripe_payment_intent_id", paymentIntentId)
-      .maybeSingle();
 
     if (userError || !user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

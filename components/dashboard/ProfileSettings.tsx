@@ -10,6 +10,7 @@ type ProfileResponse = {
   timezone: string;
   persona: string;
   tier: string;
+  plan_code?: string;
 };
 
 type ProfileSettingsProps = {
@@ -50,12 +51,12 @@ export default function ProfileSettings({
           preferred_name: data.preferred_name || "",
           timezone: data.timezone || "UTC",
           persona: data.persona,
-          tier: data.tier,
+          tier: data.plan_code || data.tier,
         });
         onSummaryChange?.({
           preferredName: data.preferred_name || "",
           persona: data.persona,
-          tier: data.tier,
+          tier: data.plan_code || data.tier,
         });
       } catch {
         setError("Failed to load profile");

@@ -6,6 +6,7 @@ import ChatPanel from "@/components/dashboard/ChatPanel";
 import DashboardDrawer from "@/components/dashboard/DashboardDrawer";
 import DashboardStatusStrip from "@/components/dashboard/DashboardStatusStrip";
 import SettingsSheet from "@/components/dashboard/SettingsSheet";
+import DashboardTrialBanner from "@/components/dashboard/DashboardTrialBanner";
 import type {
   AccountSummary,
   ChannelsSummary,
@@ -54,7 +55,7 @@ export default function DashboardShellV2({ preferredName }: DashboardShellV2Prop
             setAccountSummary({
               preferredName: me.preferred_name || "",
               persona: me.persona || "personal-assistant",
-              tier: me.tier || "standard",
+              tier: me.tier || "free",
             });
           }
         }
@@ -120,6 +121,8 @@ export default function DashboardShellV2({ preferredName }: DashboardShellV2Prop
             <span className="text-sm font-semibold text-ink-800">ClawsRUs</span>
             <div className="w-9" />
           </div>
+
+          <DashboardTrialBanner />
 
           <div className="animate-fade-in-up animate-stagger-1">
             <DashboardStatusStrip
