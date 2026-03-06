@@ -31,16 +31,16 @@ export default function Hero() {
           className="animate-fade-in-up font-display text-5xl tracking-tight text-ink-800 sm:text-6xl lg:text-7xl"
           style={{ animationDelay: "0.1s" }}
         >
-          Your Personal AI Assistant with One Click
+          Your Pre-Configured AI Assistant — Ready in Minutes, Not Months
         </h1>
 
         <p
           className="animate-fade-in-up mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-ink-400 sm:text-xl"
           style={{ animationDelay: "0.3s" }}
         >
-          A pre-configured personal AI assistant on Telegram — no setup
-          headaches, no prompt engineering. Handles your life admin so you can
-          get back to actual work.
+          A managed AI assistant on Telegram for busy professionals. No coding,
+          no prompt engineering, no setup headaches. Just tell it what you need
+          — scheduling, research, email, reminders — and it handles the rest.
         </p>
 
         <div
@@ -66,7 +66,7 @@ export default function Hero() {
           className="animate-fade-in-up mt-6 text-sm text-ink-300"
           style={{ animationDelay: "0.65s" }}
         >
-          Set up in under 10 minutes. Start free — upgrade to Pro anytime.
+          Free forever tier available. No credit card required.
         </p>
       </div>
     </section>

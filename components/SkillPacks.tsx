@@ -52,6 +52,7 @@ export default function SkillPacks() {
               Core skills are included. Add specialized packs when you need
               more.
             </p>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-ink-300">ClawsRUs skill packs are add-on capabilities for your AI assistant — install them with one click to expand what your assistant can do.</p>
           </div>
         </FadeIn>
 

@@ -44,7 +44,7 @@ export default function Footer() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ink-100 pt-8 text-xs text-ink-300 sm:flex-row">
           <span>&copy; 2026 ClawsRUs. All rights reserved.</span>
           <span>
-            Built on{" "}
+            ClawsRUs is a managed AI assistant service built on{" "}
             <a
               href="https://github.com/openclaw"
               className="underline transition-colors hover:text-ink-500"

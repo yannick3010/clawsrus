@@ -15,11 +15,14 @@ export default function Solution() {
             What is ClawsRUs?
           </h3>
           <p className="mt-4 text-lg leading-relaxed text-ink-500">
-            ClawsRUs is a pre-configured AI assistant that runs inside Telegram.
-            It handles scheduling, research, reminders, email drafting, travel
-            planning, and everyday life admin. Setup takes under 10 minutes — no
-            coding or technical skills required. Built on OpenClaw, the
-            open-source AI framework.
+            ClawsRUs is a managed, pre-configured AI assistant that runs inside
+            Telegram. It is built on OpenClaw, the open-source AI framework, but
+            requires zero technical knowledge to set up or use. ClawsRUs handles
+            scheduling, research, reminders, email drafting, travel planning,
+            and everyday life admin for busy professionals and entrepreneurs.
+            Setup takes under 10 minutes — no coding, no terminal commands, no
+            prompt engineering. Think of it as a done-for-you AI assistant: you
+            sign up, follow three steps, and start chatting.
           </p>
         </FadeIn>
 

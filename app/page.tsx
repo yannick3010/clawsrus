@@ -113,12 +113,61 @@ const jsonLd = {
             text: "Yes. Each customer gets an isolated container. Your conversations go through your own Telegram bot. We don't have access to your chat content.",
           },
         },
+        {
+          "@type": "Question",
+          name: "How is ClawsRUs different from ChatGPT?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "ChatGPT is a general-purpose chatbot — you get a blank window and figure it out yourself. ClawsRUs is a pre-configured AI assistant that comes ready to handle specific tasks like scheduling, research, and email. It has long-term memory, runs inside Telegram, and requires no prompt engineering. Think of ChatGPT as a search engine you talk to; ClawsRUs is a personal assistant you delegate to.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What is a managed AI assistant?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "A managed AI assistant is an AI service where someone else handles the technical setup, hosting, updates, and security — you just use it. ClawsRUs is a managed AI assistant built on OpenClaw. You get all the power of OpenClaw without needing to install, configure, or maintain anything yourself.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Can I use ClawsRUs for my business?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. ClawsRUs is designed for busy professionals and entrepreneurs. It handles research, email drafting, scheduling, and task management. Many users run it alongside their existing tools to offload repetitive admin work.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Is ClawsRUs an OpenClaw agent?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. ClawsRUs is built on OpenClaw, the open-source AI framework. We pre-configure and manage the OpenClaw agent for you, so you get the full power of the framework without any technical setup.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Do I need to know how to code to use ClawsRUs?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. ClawsRUs is designed for people with zero technical background. Setup takes under 10 minutes and involves no coding, no terminal commands, and no configuration files. If you can use Telegram, you can use ClawsRUs.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How does ClawsRUs compare to hiring a virtual assistant?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "A human VA costs $500–2,000/month and works limited hours. ClawsRUs Pro costs $79/month, is available 24/7, responds instantly, and never forgets what you told it. It handles research, scheduling, reminders, and email drafting — the same tasks you'd delegate to a VA for routine admin.",
+          },
+        },
       ],
     },
     {
       "@type": "SoftwareApplication",
       name: "ClawsRUs",
-      applicationCategory: "LifestyleApplication",
+      applicationCategory: "BusinessApplication",
+      featureList: "Long-term memory, Scheduling, Research, Email drafting, Reminders, Skill packs, Telegram integration",
       operatingSystem: "Telegram",
       description:
         "A pre-configured personal AI assistant on Telegram that handles scheduling, research, reminders, and life admin.",
@@ -142,9 +191,29 @@ const jsonLd = {
       ],
     },
     {
+      "@type": "WebSite",
+      name: "ClawsRUs",
+      url: "https://www.clawsrus.com",
+      description: "Managed, pre-configured AI assistant on Telegram for busy professionals. Built on OpenClaw.",
+    },
+    {
+      "@type": "Product",
+      name: "ClawsRUs Pro",
+      description: "All-inclusive managed AI assistant with premium skills, priority support, and long-term memory.",
+      brand: { "@type": "Organization", name: "ClawsRUs" },
+      offers: {
+        "@type": "Offer",
+        price: "79",
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+        url: "https://www.clawsrus.com/signup?tier=pro&persona=personal-assistant",
+      },
+    },
+    {
       "@type": "Organization",
       name: "ClawsRUs",
       url: "https://www.clawsrus.com",
+      description: "ClawsRUs is a managed AI assistant service built on OpenClaw, the open-source AI framework.",
     },
   ],
 };

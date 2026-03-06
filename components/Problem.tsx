@@ -16,6 +16,7 @@ export default function Problem() {
           <h2 className="font-display text-3xl tracking-tight text-ink-800 sm:text-4xl lg:text-5xl">
             You&rsquo;ve got better things to do.
           </h2>
+          <p className="mt-2 text-lg text-ink-400">Why most AI assistant tools fail busy professionals</p>
         </FadeIn>
 
         <FadeIn delay={100}>
