@@ -3,7 +3,8 @@ export type DrawerSectionId = "account" | "channels" | "skills";
 export type AccountSummary = {
   preferredName: string;
   persona: string;
-  tier: string;
+  membershipPlan: string;
+  setupPackage: string;
 };
 
 export type ChannelsSummary = {

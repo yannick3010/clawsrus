@@ -7,7 +7,7 @@ const steps = [
     icon: CreditCard,
     title: "Pick your plan",
     description:
-      "Choose Free or Pro. Both include your AI assistant with all core skills — nothing extra to configure.",
+      "Choose Standard or Concierge setup. Every signup includes a 7-day Pro membership trial.",
   },
   {
     number: "02",

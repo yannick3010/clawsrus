@@ -46,7 +46,7 @@ const jsonLd = {
           name: "How much does ClawsRUs cost?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "ClawsRUs offers a Free tier ($0 forever) and a Pro tier ($79/month). Every signup starts with a 7-day Pro trial so you can try all features before deciding.",
+            text: "ClawsRUs has one-time setup packages (Standard $199 or Concierge $599). Every signup also includes a 7-day Pro membership trial. After trial, continue on Free ($0) or Pro ($79/month).",
           },
         },
         {
@@ -54,7 +54,7 @@ const jsonLd = {
           name: "Is ClawsRUs free?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes — ClawsRUs has a free tier that includes your AI assistant with all free skills. You can upgrade to Pro ($79/month) anytime to unlock paid skills and priority support.",
+            text: "Yes. After setup, you can stay on Free with all free skills, and purchase paid skills individually as needed.",
           },
         },
         {
@@ -158,7 +158,7 @@ const jsonLd = {
           name: "How does ClawsRUs compare to hiring a virtual assistant?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "A human VA costs $500–2,000/month and works limited hours. ClawsRUs Pro costs $79/month, is available 24/7, responds instantly, and never forgets what you told it. It handles research, scheduling, reminders, and email drafting — the same tasks you'd delegate to a VA for routine admin.",
+            text: "A human VA costs $500–2,000/month and works limited hours. ClawsRUs combines one-time setup and optional membership, runs 24/7, responds instantly, and never forgets context.",
           },
         },
       ],
@@ -174,19 +174,25 @@ const jsonLd = {
       offers: [
         {
           "@type": "Offer",
-          name: "Free",
-          price: "0",
+          name: "Standard Setup",
+          price: "199",
           priceCurrency: "USD",
-          description: "Free forever with core AI assistant and free skills.",
+          description: "One-time setup package with guided self-serve onboarding.",
         },
         {
           "@type": "Offer",
-          name: "Pro",
+          name: "Concierge Setup",
+          price: "599",
+          priceCurrency: "USD",
+          description: "One-time white-glove setup with onboarding call and tuning.",
+        },
+        {
+          "@type": "Offer",
+          name: "Pro Membership",
           price: "79",
           priceCurrency: "USD",
           billingIncrement: "P1M",
-          description:
-            "All-inclusive skills, priority support, and future Pro features.",
+          description: "Optional monthly membership with all paid skills included.",
         },
       ],
     },
@@ -198,15 +204,15 @@ const jsonLd = {
     },
     {
       "@type": "Product",
-      name: "ClawsRUs Pro",
-      description: "All-inclusive managed AI assistant with premium skills, priority support, and long-term memory.",
+      name: "ClawsRUs Pro Membership",
+      description: "Optional all-inclusive membership with premium skills and priority support.",
       brand: { "@type": "Organization", name: "ClawsRUs" },
       offers: {
         "@type": "Offer",
         price: "79",
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
-        url: "https://www.clawsrus.com/signup?tier=pro&persona=personal-assistant",
+        url: "https://www.clawsrus.com/signup?setup_package=standard&persona=personal-assistant",
       },
     },
     {

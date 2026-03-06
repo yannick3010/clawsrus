@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { TIERS, PERSONAS } from "@/lib/constants";
-import type { TierId, PersonaId } from "@/lib/constants";
+import { SETUP_PACKAGES, PERSONAS } from "@/lib/constants";
+import type { SetupPackageId, PersonaId } from "@/lib/constants";
 import { nanoid } from "nanoid";
 import { supabase } from "@/lib/supabase";
 
 interface CheckoutBody {
-  tier: string;
+  setup_package?: string;
+  tier?: string;
   persona: string;
   name?: string;
   email?: string;
@@ -19,13 +20,30 @@ function buildSetupToken() {
   return nanoid(40);
 }
 
+function isMissingSetupPackageColumn(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const code = "code" in error ? String((error as { code?: unknown }).code || "") : "";
+  const message =
+    "message" in error ? String((error as { message?: unknown }).message || "") : "";
+  return code === "42703" || code === "PGRST204" || message.toLowerCase().includes("setup_package");
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as CheckoutBody;
-    const { tier, persona, name, email, role, helpTopics, communicationStyle, topPriority } = body;
+    const { setup_package, tier, persona, name, email, role, helpTopics, communicationStyle, topPriority } =
+      body;
+    const setupPackageInput = (setup_package || tier || "").trim().toLowerCase();
+    const selectedSetupPackage =
+      setupPackageInput === "free" || setupPackageInput === "pro"
+        ? "standard"
+        : setupPackageInput;
 
-    if (!TIERS[tier as TierId]) {
-      return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
+    if (!SETUP_PACKAGES[selectedSetupPackage as SetupPackageId]) {
+      return NextResponse.json({ error: "Invalid setup package" }, { status: 400 });
     }
     if (!PERSONAS[persona as PersonaId]) {
       return NextResponse.json({ error: "Invalid persona" }, { status: 400 });
@@ -39,14 +57,15 @@ export async function POST(req: NextRequest) {
     const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
     const setupToken = buildSetupToken();
     const userId = `user-${nanoid(12)}`;
-    const normalizedTier = tier as TierId;
+    const normalizedSetupPackage = selectedSetupPackage as SetupPackageId;
     const normalizedHelpTopics = Array.isArray(helpTopics) ? helpTopics : [];
     const normalizedTopPriorities = topPriority ? [topPriority] : [];
 
-    const { error: userCreateError } = await supabase.from("users").insert({
+    const userRecord = {
       id: userId,
       email: email.trim().toLowerCase(),
       persona,
+      setup_package: normalizedSetupPackage,
       tier: "pro",
       status: "awaiting_setup",
       preferred_name: name.trim(),
@@ -59,7 +78,14 @@ export async function POST(req: NextRequest) {
       setup_token_expires_at: null,
       created_at: now,
       updated_at: now,
-    });
+    };
+
+    let { error: userCreateError } = await supabase.from("users").insert(userRecord);
+    if (userCreateError && isMissingSetupPackageColumn(userCreateError)) {
+      // Backward-compatible fallback for environments where the migration has not run yet.
+      const { setup_package: _setupPackage, ...legacyUserRecord } = userRecord;
+      ({ error: userCreateError } = await supabase.from("users").insert(legacyUserRecord));
+    }
 
     if (userCreateError) {
       return NextResponse.json({ error: userCreateError.message }, { status: 500 });
@@ -89,7 +115,8 @@ export async function POST(req: NextRequest) {
       setup_url: setupUrl,
       requires_payment: false,
       trial_ends_at: trialEndsAt,
-      selected_tier: normalizedTier,
+      setup_package: normalizedSetupPackage,
+      membership_plan: "pro",
     });
   } catch (err) {
     console.error("Checkout error:", err);

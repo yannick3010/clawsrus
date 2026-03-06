@@ -4,13 +4,44 @@ import { supabase } from "@/lib/supabase";
 import { isAllInclusivePaidPlan } from "@/lib/plans";
 import { getUserSubscriptionSnapshot } from "@/lib/skills-marketplace";
 
+function isMissingSetupPackageColumn(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+  const code = "code" in error ? String((error as { code?: unknown }).code || "") : "";
+  const message =
+    "message" in error ? String((error as { message?: unknown }).message || "") : "";
+  return code === "42703" || code === "PGRST204" || message.toLowerCase().includes("setup_package");
+}
+
+async function getSetupPackage(userId: string) {
+  const { data, error } = await supabase
+    .from("users")
+    .select("setup_package")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    if (isMissingSetupPackageColumn(error)) {
+      return "standard";
+    }
+    throw error;
+  }
+
+  const raw = typeof data?.setup_package === "string" ? data.setup_package.toLowerCase() : "";
+  return raw === "concierge" ? "concierge" : "standard";
+}
+
 export async function GET() {
   const auth = await getAuthenticatedAppUser();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const subscription = await getUserSubscriptionSnapshot(auth.appUser.id);
+  const [subscription, setupPackage] = await Promise.all([
+    getUserSubscriptionSnapshot(auth.appUser.id),
+    getSetupPackage(auth.appUser.id),
+  ]);
   const subscriptionStatus = subscription?.status ?? null;
   const planCode = isAllInclusivePaidPlan({
     planCode: "pro",
@@ -25,6 +56,8 @@ export async function GET() {
     timezone: auth.appUser.timezone || "UTC",
     persona: auth.appUser.persona,
     tier: auth.appUser.tier,
+    setup_package: setupPackage,
+    membership_plan: planCode,
     plan_code: planCode,
     subscription_status: subscriptionStatus,
     trial_ends_at: subscription?.current_period_end ?? null,
@@ -48,7 +81,7 @@ export async function PATCH(req: NextRequest) {
     const preferred_name = body.preferred_name?.trim() || null;
     const timezone = body.timezone?.trim() || "UTC";
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("users")
       .update({
         preferred_name,
@@ -56,8 +89,24 @@ export async function PATCH(req: NextRequest) {
         updated_at: new Date().toISOString(),
       })
       .eq("id", auth.appUser.id)
-      .select("email,preferred_name,timezone,persona,tier,status")
+      .select("email,preferred_name,timezone,persona,tier,status,setup_package")
       .single();
+
+    if (error && isMissingSetupPackageColumn(error)) {
+      ({ data, error } = await supabase
+        .from("users")
+        .update({
+          preferred_name,
+          timezone,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", auth.appUser.id)
+        .select("email,preferred_name,timezone,persona,tier,status")
+        .single());
+      if (!error && data) {
+        data = { ...data, setup_package: "standard" };
+      }
+    }
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

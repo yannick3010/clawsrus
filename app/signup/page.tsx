@@ -27,6 +27,7 @@ const TOP_PRIORITIES = [
 ] as const;
 
 const TOTAL_STEPS = 4;
+const VALID_SETUP_PACKAGES = new Set(["standard", "concierge"]);
 
 interface SignupData {
   name: string;
@@ -58,7 +59,13 @@ function SignupLoading() {
 function SignupForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const tier = searchParams.get("tier") || "free";
+  const setupPackageParam =
+    (searchParams.get("setup_package") || searchParams.get("tier") || "standard")
+      .trim()
+      .toLowerCase();
+  const setupPackage = VALID_SETUP_PACKAGES.has(setupPackageParam)
+    ? setupPackageParam
+    : "standard";
   const persona = searchParams.get("persona") || "personal-assistant";
 
   const [step, setStep] = useState(1);
@@ -105,7 +112,7 @@ function SignupForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tier,
+          setup_package: setupPackage,
           persona,
           name: data.name.trim(),
           email: data.email.trim(),

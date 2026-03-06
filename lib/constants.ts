@@ -33,22 +33,52 @@ export const PERSONAS = {
 
 export type PersonaId = keyof typeof PERSONAS;
 
-export const TIERS = {
+export const SETUP_PACKAGES = {
+  standard: {
+    id: "standard",
+    name: "Standard",
+    price: 199,
+    priceLabel: "$199",
+    priceSuffix: "one-time setup",
+    description: "Self-serve setup with all core skills",
+    features: [
+      "Personal Assistant persona",
+      "All free skills available",
+      "Buy paid skills individually",
+      "Guided self-serve setup",
+      "Email support",
+    ],
+    limits: { cpu: "1", memory: "1G" },
+  },
+  concierge: {
+    id: "concierge",
+    name: "Concierge",
+    price: 599,
+    priceLabel: "$599",
+    priceSuffix: "one-time setup",
+    description: "White-glove onboarding and done-with-you setup",
+    features: [
+      "Personal Assistant persona",
+      "Everything in Standard",
+      "1-on-1 onboarding call",
+      "Custom persona tuning",
+      "Priority support",
+    ],
+    limits: { cpu: "2", memory: "2G" },
+    popular: true,
+  },
+} as const;
+
+export type SetupPackageId = keyof typeof SETUP_PACKAGES;
+
+export const MEMBERSHIP_PLANS = {
   free: {
     id: "free",
     name: "Free",
     price: 0,
     priceLabel: "$0",
     priceSuffix: "forever",
-    description: "All free OpenClaw skills, installed on demand",
-    features: [
-      "Personal Assistant persona",
-      "Telegram messaging",
-      "Install any free skill",
-      "Buy paid skills individually",
-      "Guided self-serve setup",
-    ],
-    limits: { cpu: "1", memory: "1G" },
+    description: "Includes all free skills. Paid skills can be purchased individually.",
   },
   pro: {
     id: "pro",
@@ -56,22 +86,18 @@ export const TIERS = {
     price: 79,
     priceLabel: "$79",
     priceSuffix: "per month",
-    description: "All-inclusive access to free and paid skills",
-    features: [
-      "Personal Assistant persona",
-      "Telegram messaging",
-      "All paid skills included",
-      "Priority support",
-      "Faster provisioning queue",
-    ],
-    limits: { cpu: "2", memory: "2G" },
-    popular: true,
+    description: "All-inclusive access to all free and paid skills.",
   },
 } as const;
 
-export type TierId = keyof typeof TIERS;
+export type MembershipPlanCode = keyof typeof MEMBERSHIP_PLANS;
 
-export const STRIPE_PRICE_IDS: Record<TierId, string> = {
+export const STRIPE_SETUP_PACKAGE_PRICE_IDS: Record<SetupPackageId, string> = {
+  standard: process.env.STRIPE_PRICE_STANDARD || "",
+  concierge: process.env.STRIPE_PRICE_CONCIERGE || "",
+};
+
+export const STRIPE_MEMBERSHIP_PRICE_IDS: Record<MembershipPlanCode, string> = {
   free: "",
   pro: process.env.STRIPE_PRICE_PRO || "",
 };

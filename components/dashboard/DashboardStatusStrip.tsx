@@ -56,7 +56,7 @@ export default function DashboardStatusStrip({
         <span className={`${baseChipClass} animate-stagger-1 border-surface-200 bg-surface-100 text-ink-700`}>
           <UserCircle2 className="h-3.5 w-3.5" />
           {accountSummary
-            ? `${accountSummary.persona.replaceAll("-", " ")} - ${accountSummary.tier}`
+            ? `${accountSummary.persona.replaceAll("-", " ")} - ${accountSummary.membershipPlan} (${accountSummary.setupPackage})`
             : "Profile loading"}
         </span>
 
