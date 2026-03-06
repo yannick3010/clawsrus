@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, DM_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -36,7 +37,10 @@ export default function RootLayout({
       lang="en"
       className={`scroll-smooth ${instrumentSerif.variable} ${dmSans.variable}`}
     >
-      <body className="font-body text-ink-800 antialiased">{children}</body>
+      <body className="font-body text-ink-800 antialiased">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
