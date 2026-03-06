@@ -66,33 +66,41 @@ export default function Pricing() {
 
         <div className="mt-12 grid gap-8 md:grid-cols-2">
           {setupPackages.map((setupPackage, i) => {
-            const isPopular = "popular" in setupPackage && setupPackage.popular;
+            const isConcierge = setupPackage.id === "concierge";
+            const isRecommended = setupPackage.id === "standard";
 
             return (
               <FadeIn key={setupPackage.id} delay={200 + i * 150}>
                 <div
                   className={`relative rounded-2xl border p-8 transition-all ${
-                    isPopular
-                      ? "border-brand-300 bg-white shadow-xl shadow-brand-100/50"
-                      : "border-ink-200 bg-white hover:shadow-lg"
+                    isConcierge
+                      ? "border-ink-100 bg-ink-50"
+                      : isRecommended
+                        ? "border-brand-300 bg-white shadow-xl shadow-brand-100/50 hover:shadow-2xl"
+                        : "border-ink-200 bg-white hover:shadow-lg"
                   }`}
                 >
-                  {isPopular && (
+                  {isRecommended && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-4 py-1 text-xs font-semibold text-white">
-                      Most Popular
+                      Recommended
                     </div>
                   )}
-                  <h3 className="text-lg font-semibold text-ink-800">
+                  {isConcierge && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-100 px-4 py-1 text-xs font-semibold text-amber-700">
+                      All spots booked for March
+                    </div>
+                  )}
+                  <h3 className={`text-lg font-semibold ${isConcierge ? "text-ink-300" : "text-ink-800"}`}>
                     {setupPackage.name}
                   </h3>
-                  <p className="mt-1 text-sm text-ink-400">
+                  <p className={`mt-1 text-sm ${isConcierge ? "text-ink-300" : "text-ink-400"}`}>
                     {setupPackage.description}
                   </p>
                   <div className="mt-6">
-                    <span className="text-4xl font-bold text-ink-800">
+                    <span className={`text-4xl font-bold ${isConcierge ? "text-ink-300" : "text-ink-800"}`}>
                       ${setupPackage.price}
                     </span>
-                    <span className="ml-2 text-sm text-ink-300">
+                    <span className={`ml-2 text-sm ${isConcierge ? "text-ink-200" : "text-ink-300"}`}>
                       {setupPackage.priceSuffix}
                     </span>
                   </div>
@@ -100,24 +108,32 @@ export default function Pricing() {
                     {setupPackage.features.map((feature) => (
                       <li
                         key={feature}
-                        className="flex items-start gap-3 text-sm text-ink-500"
+                        className={`flex items-start gap-3 text-sm ${isConcierge ? "text-ink-300" : "text-ink-500"}`}
                       >
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" />
+                        <Check className={`mt-0.5 h-4 w-4 shrink-0 ${isConcierge ? "text-ink-200" : "text-brand-500"}`} />
                         {feature}
                       </li>
                     ))}
                   </ul>
-                  <a
-                    href={`/signup?setup_package=${setupPackage.id}&persona=${selectedPersona}`}
-                    className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
-                      isPopular
-                        ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400 hover:shadow-xl"
-                        : "bg-ink-800 text-white hover:bg-ink-700"
-                    }`}
-                  >
-                    Start Setup
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
+                  {isConcierge ? (
+                    <span
+                      className="mt-8 inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-ink-200 py-3 text-sm font-semibold text-ink-400"
+                    >
+                      Sold Out
+                    </span>
+                  ) : (
+                    <a
+                      href={`/signup?setup_package=${setupPackage.id}&persona=${selectedPersona}`}
+                      className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
+                        isRecommended
+                          ? "bg-brand-500 text-white shadow-lg shadow-brand-500/25 hover:bg-brand-400 hover:shadow-xl"
+                          : "bg-ink-800 text-white hover:bg-ink-700"
+                      }`}
+                    >
+                      Start Setup
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                  )}
                 </div>
               </FadeIn>
             );
