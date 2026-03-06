@@ -46,7 +46,7 @@ export default function Problem() {
               <span className="relative z-10">stolen</span>
               <span className="absolute -inset-x-1 bottom-0 top-1/2 -skew-x-2 bg-red-500/20" />
             </span>{" "}
-            from your business.
+            from the things that matter.
           </h2>
         </FadeIn>
 
@@ -54,8 +54,9 @@ export default function Problem() {
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-300">
             You&rsquo;re juggling 47 tabs, three to-do apps, and a notes file
             called &ldquo;ACTUALLY IMPORTANT.&rdquo; Meanwhile, the things that
-            move the needle &mdash; closing deals, building relationships,
-            thinking strategically &mdash; keep getting pushed to tomorrow.
+            actually matter &mdash; growing your work, spending time with
+            people you care about, or just having your evening back &mdash;
+            keep getting pushed to tomorrow.
           </p>
         </FadeIn>
 
