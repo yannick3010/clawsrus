@@ -87,8 +87,9 @@ export default function Features() {
             </h4>
             <p className="mt-3 leading-relaxed text-ink-500">
               Unlike one-off AI chats, your assistant remembers past
-              conversations and learns your preferences — so you never have to
-              repeat yourself.
+              conversations, learns your preferences, and builds context over
+              time — so every interaction is faster and more useful than the
+              last.
             </p>
           </div>
         </FadeIn>

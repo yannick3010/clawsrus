@@ -22,9 +22,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "ClawsRUs — Managed AI Assistant on Telegram | Standard or Concierge Setup",
+  title: "ClawsRUs — Managed AI Assistant with Web & Mobile Dashboard | Standard or Concierge Setup",
   description:
-    "ClawsRUs is a done-for-you AI assistant that runs on Telegram. Choose Standard or Concierge setup, start with a 7-day Pro trial, then continue on Free or Pro membership. Built on OpenClaw.",
+    "ClawsRUs is a done-for-you AI assistant with its own web and mobile dashboard — ready the moment you sign up. Choose Standard or Concierge setup, start with a 7-day Pro trial, then continue on Free or Pro membership. Built on OpenClaw.",
 };
 
 export default function RootLayout({
