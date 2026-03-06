@@ -177,6 +177,8 @@ async function fillVisibleWizardFields(page, email) {
 
 async function clickPrimaryNext(page) {
   const selectors = [
+    'button:has-text("Start 7-Day Pro Trial")',
+    '[role="button"]:has-text("Start 7-Day Pro Trial")',
     'button:has-text("Continue to Payment")',
     'a:has-text("Continue to Payment")',
     '[role="button"]:has-text("Continue to Payment")',
@@ -231,6 +233,10 @@ async function selectFallbackOption(page) {
           '[role="button"]:has-text("Productivity")',
           'button:has-text("Email management")',
           '[role="button"]:has-text("Email management")',
+          'button:has-text("All of the above")',
+          '[role="button"]:has-text("All of the above")',
+          'button:has-text("Research")',
+          '[role="button"]:has-text("Research")',
         ];
         for (const prioritySelector of prioritySelectors) {
           const priority = page.locator(prioritySelector).first();
@@ -289,6 +295,22 @@ async function selectFallbackOption(page) {
   return null;
 }
 
+async function clickFirstVisible(page, selectors, timeout = 20000) {
+  for (const selector of selectors) {
+    const target = page.locator(selector).first();
+    if (!(await target.count().catch(() => 0))) continue;
+    if (!(await target.isVisible().catch(() => false))) continue;
+    if (!(await target.isEnabled().catch(() => false))) continue;
+    try {
+      await target.click({ timeout });
+      return selector;
+    } catch {
+      // try the next matching selector
+    }
+  }
+  return null;
+}
+
 async function fillInAnyFrame(page, selector, value) {
   for (let i = 0; i < 80; i += 1) {
     for (const frame of page.frames()) {
@@ -308,10 +330,57 @@ async function fillInAnyFrame(page, selector, value) {
   return false;
 }
 
+async function fetchSetupStatus(page) {
+  return page.evaluate(async () => {
+    const url = new URL(window.location.href);
+    const query = url.search;
+    const res = await fetch(`/api/setup/status${query}`, { cache: 'no-store' });
+    const text = await res.text();
+    let json = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      json = null;
+    }
+    return { status: res.status, text, json };
+  });
+}
+
+async function waitForDashboardOrSetupFailure(page, timeoutMs = 10 * 60 * 1000) {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const url = page.url();
+    if (/app\.clawsrus\.com\/dashboard/.test(url)) {
+      return;
+    }
+
+    if (setupUrlPattern.test(url)) {
+      const setup = await fetchSetupStatus(page).catch(() => null);
+      const setupStatus = typeof setup?.json?.status === 'string' ? setup.json.status : null;
+      if (setupStatus === 'provision_failed') {
+        throw new Error('Setup provisioning failed');
+      }
+    }
+
+    const visibleError = page
+      .locator('text=/Provisioning failed|Setup failed|Could not sign you in|Status check failed/i')
+      .first();
+    if (await visibleError.isVisible().catch(() => false)) {
+      throw new Error(`Setup page error visible: ${(await visibleError.textContent()) || 'unknown error'}`);
+    }
+
+    await page.waitForTimeout(2000);
+  }
+
+  throw new Error(`Timed out waiting for dashboard redirect. Last URL=${page.url()}`);
+}
+
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 2200 } });
 const page = await context.newPage();
 const e2eSkillsId = (process.env.E2E_SKILLS_ID || '').trim();
+const setupUrlPattern = /app\.clawsrus\.com\/setup\?(session_id|setup_token)=/;
 
 let wsSeen = false;
 let wsUrl = '';
@@ -331,8 +400,19 @@ try {
   await page.goto('https://www.clawsrus.com', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForTimeout(1000);
 
-  log('Click Get Started CTA');
-  await page.getByRole('link', { name: /get started/i }).first().click({ timeout: 20000 });
+  log('Click homepage CTA');
+  const homepageCta = await clickFirstVisible(page, [
+    'a:has-text("Start Setup")',
+    'a:has-text("Get Your AI Assistant")',
+    'a:has-text("Get Started")',
+    '[role="link"]:has-text("Start Setup")',
+    '[role="link"]:has-text("Get Your AI Assistant")',
+    '[role="link"]:has-text("Get Started")',
+  ]);
+  if (!homepageCta) {
+    throw new Error('Unable to find a homepage signup CTA');
+  }
+  log(`Clicked homepage CTA: ${homepageCta}`);
   await page.waitForTimeout(1000);
 
   for (let step = 1; step <= 12; step += 1) {
@@ -343,7 +423,7 @@ try {
       break;
     }
 
-    if (/app\.clawsrus\.com\/setup\?session_id=/.test(url)) {
+    if (setupUrlPattern.test(url)) {
       break;
     }
 
@@ -366,7 +446,7 @@ try {
   }
 
   if (!/checkout\.stripe\.com|billing\.stripe\.com/.test(page.url())) {
-    await page.waitForURL(/checkout\.stripe\.com|billing\.stripe\.com|app\.clawsrus\.com\/setup\?session_id=/, { timeout: 120000 });
+    await page.waitForURL(/checkout\.stripe\.com|billing\.stripe\.com|app\.clawsrus\.com\/setup\?(session_id|setup_token)=/, { timeout: 120000 });
   }
 
   if (/checkout\.stripe\.com|billing\.stripe\.com/.test(page.url())) {
@@ -443,13 +523,12 @@ try {
   }
 
   log('Wait for setup page redirect');
-  await page.waitForURL(/app\.clawsrus\.com\/setup\?session_id=/, { timeout: 180000 });
+  await page.waitForURL(setupUrlPattern, { timeout: 180000 });
 
   log('Wait for dashboard redirect');
-  await page.waitForURL(/app\.clawsrus\.com\/dashboard/, { timeout: 10 * 60 * 1000 });
+  await waitForDashboardOrSetupFailure(page, 10 * 60 * 1000);
 
   log('Validate dashboard chat');
-  await page.getByRole('heading', { name: /Agent Chat/i }).waitFor({ timeout: 90000 });
   await page.locator('[data-testid="native-chat-panel"]').waitFor({ state: 'visible', timeout: 90000 });
 
   await waitForProxyTokenReady(page, { timeoutMs: 8 * 60 * 1000, pollMs: 5000 });
