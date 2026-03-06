@@ -5,6 +5,7 @@ import Solution from "@/components/Solution";
 import Personas from "@/components/Personas";
 import HowItWorks from "@/components/HowItWorks";
 import Features from "@/components/Features";
+import DashboardShowcase from "@/components/DashboardShowcase";
 import Pricing from "@/components/Pricing";
 import SkillPacks from "@/components/SkillPacks";
 import FAQ from "@/components/FAQ";
@@ -214,6 +215,7 @@ export default function Home() {
       <Personas />
       <HowItWorks />
       <Features />
+      <DashboardShowcase />
       <Pricing />
       <SkillPacks />
       <FAQ />
