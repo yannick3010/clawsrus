@@ -48,49 +48,19 @@ export default function DashboardShowcase() {
           </div>
         </FadeIn>
 
-        {/* Browser mockup */}
+        {/* Dashboard mockup */}
         <FadeIn delay={200}>
           <div className="relative mx-auto mt-16 max-w-5xl">
-            {/* Glow behind frame */}
+            {/* Glow behind image */}
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-b from-brand-100/60 via-brand-50/30 to-transparent blur-2xl" />
 
-            <div className="relative overflow-hidden rounded-2xl border border-ink-100 shadow-2xl">
-              {/* Browser chrome bar */}
-              <div className="flex items-center gap-3 border-b border-ink-100 bg-ink-50 px-4 py-3">
-                {/* Traffic lights */}
-                <div className="flex gap-1.5">
-                  <span className="h-3 w-3 rounded-full bg-[#FF5F57]" />
-                  <span className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
-                  <span className="h-3 w-3 rounded-full bg-[#28C840]" />
-                </div>
-
-                {/* URL bar */}
-                <div className="mx-auto flex max-w-xs items-center justify-center rounded-md bg-white/80 px-4 py-1 text-xs text-ink-400 ring-1 ring-ink-200/60 sm:max-w-sm">
-                  <svg
-                    className="mr-1.5 h-3 w-3 shrink-0 text-brand-500"
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 1a4.5 4.5 0 0 0-4.5 4.5V7H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-.5V5.5A4.5 4.5 0 0 0 8 1Zm2.5 6V5.5a2.5 2.5 0 0 0-5 0V7h5Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span className="truncate">app.clawsrus.com/dashboard</span>
-                </div>
-
-                {/* Spacer to balance the dots */}
-                <div className="w-[54px]" />
-              </div>
-
-              {/* Screenshot */}
+            <div className="relative">
               <Image
                 src="/images/dashboard-preview.png"
-                alt="ClawsRUs Dashboard — chat interface with sidebar navigation, status bar, and skill management"
-                width={1440}
-                height={2200}
-                className="block w-full"
+                alt="ClawsRUs Dashboard on mobile and desktop — chat interface with sidebar navigation, skill management, and channel connections"
+                width={1536}
+                height={1024}
+                className="block w-full rounded-2xl"
                 priority={false}
               />
             </div>
