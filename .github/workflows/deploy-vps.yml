@@ -16,7 +16,9 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /opt/clawsrus/app
-            git pull origin main
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
             npm install
             rm -rf .next
             npx next build
