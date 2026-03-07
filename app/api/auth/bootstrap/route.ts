@@ -81,10 +81,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const resolvedToken = await resolveSetupToken({ setup_token, session_id });
-    if (!resolvedToken) {
+    const resolved = await resolveSetupToken({ setup_token, session_id });
+    if (!resolved) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+    const { setup_token: resolvedToken } = resolved;
 
     const result = await supabase
       .from("users")

@@ -30,10 +30,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const resolvedToken = await resolveSetupToken({ setup_token, session_id });
-    if (!resolvedToken) {
+    const resolved = await resolveSetupToken({ setup_token, session_id });
+    if (!resolved) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+    const { setup_token: resolvedToken, payment_confirmed } = resolved;
 
     const result = await supabase
       .from("users")
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    if ((user.tier || "free") === "pro") {
+    if ((user.tier || "free") === "pro" && !payment_confirmed) {
       const { data: subscription } = await supabase
         .from("subscriptions")
         .select("status")

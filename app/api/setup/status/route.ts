@@ -19,13 +19,14 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const resolvedToken = await resolveSetupToken({
+    const resolved = await resolveSetupToken({
       setup_token: setupToken || undefined,
       session_id: sessionId || undefined,
     });
-    if (!resolvedToken) {
+    if (!resolved) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+    const { setup_token: resolvedToken } = resolved;
 
     const result = await supabase
       .from("users")
