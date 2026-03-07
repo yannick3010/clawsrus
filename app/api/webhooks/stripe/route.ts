@@ -173,6 +173,7 @@ export async function POST(req: NextRequest) {
       }
 
       const userId = `user-${nanoid(12)}`;
+      const now = new Date().toISOString();
       const { error } = await supabase.from("users").insert({
         id: userId,
         email,
@@ -181,20 +182,41 @@ export async function POST(req: NextRequest) {
         status: "awaiting_setup",
         stripe_customer_id: customerId,
         stripe_payment_intent_id: paymentIntentId,
-        setup_token: (session.metadata || {}).setup_token || null,
-        preferred_name: (session.metadata || {}).name || null,
+        setup_token: metadata.setup_token || null,
+        setup_package: metadata.setup_package || null,
+        preferred_name: metadata.name || null,
         timezone: "UTC",
-        role: (session.metadata || {}).role || null,
+        role: metadata.role || null,
         help_topics: helpTopics,
-        communication_style: (session.metadata || {}).communication_style || null,
-        top_priorities: (session.metadata || {}).top_priority
-          ? [(session.metadata || {}).top_priority]
+        communication_style: metadata.communication_style || null,
+        top_priorities: metadata.top_priority
+          ? [metadata.top_priority]
           : [],
+        created_at: now,
+        updated_at: now,
       });
 
       if (error) {
         console.error("Failed to create user:", error);
       } else {
+        const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+        const { error: trialError } = await supabase.from("subscriptions").insert({
+          user_id: userId,
+          plan_code: "pro",
+          status: "trialing",
+          stripe_customer_id: customerId,
+          stripe_subscription_id: null,
+          stripe_price_id: null,
+          current_period_start: now,
+          current_period_end: trialEndsAt,
+          cancel_at_period_end: true,
+          created_at: now,
+          updated_at: now,
+        });
+        if (trialError && trialError.code !== "42P01") {
+          console.error("Failed creating trial subscription:", trialError);
+        }
+
         try {
           await ensureDefaultChannels(userId);
         } catch (channelError) {

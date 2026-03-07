@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
 import { supabase } from "@/lib/supabase";
 import { ensureDefaultChannels } from "@/lib/channel-utils";
 import { sendDashboardMagicLinkEmail } from "@/lib/email";
 import { isDashboardOnboardingEnabled } from "@/lib/feature-flags";
 import { isMissingCheckoutSession } from "@/lib/stripe-errors";
+import { resolveSetupToken } from "@/lib/resolve-setup-token";
 
 async function findAuthUserIdByEmail(email: string): Promise<string | null> {
   const perPage = 200;
@@ -81,50 +81,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let user:
-      | {
-          id: string;
-          email: string;
-          status: string;
-          auth_user_id?: string | null;
-        }
-      | null = null;
-    let userError: { message: string } | null = null;
-
-    if (setup_token) {
-      const result = await supabase
-        .from("users")
-        .select("id,email,status,auth_user_id")
-        .eq("setup_token", setup_token)
-        .maybeSingle();
-      user = result.data as {
-        id: string;
-        email: string;
-        status: string;
-        auth_user_id?: string | null;
-      } | null;
-      userError = result.error ? { message: result.error.message } : null;
-    } else if (session_id) {
-      const session = await stripe.checkout.sessions.retrieve(session_id);
-      const paymentIntentId =
-        typeof session.payment_intent === "string" ? session.payment_intent : null;
-      if (!paymentIntentId) {
-        return NextResponse.json({ error: "Invalid session" }, { status: 400 });
-      }
-
-      const result = await supabase
-        .from("users")
-        .select("id,email,status,auth_user_id")
-        .eq("stripe_payment_intent_id", paymentIntentId)
-        .maybeSingle();
-      user = result.data as {
-        id: string;
-        email: string;
-        status: string;
-        auth_user_id?: string | null;
-      } | null;
-      userError = result.error ? { message: result.error.message } : null;
+    const resolvedToken = await resolveSetupToken({ setup_token, session_id });
+    if (!resolvedToken) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    const result = await supabase
+      .from("users")
+      .select("id,email,status,auth_user_id")
+      .eq("setup_token", resolvedToken)
+      .maybeSingle();
+    const user = result.data as {
+      id: string;
+      email: string;
+      status: string;
+      auth_user_id?: string | null;
+    } | null;
+    const userError = result.error ? { message: result.error.message } : null;
 
     if (userError || !user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
