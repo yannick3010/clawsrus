@@ -186,7 +186,7 @@ const jsonLd = {
       brand: { "@type": "Organization", name: "ClawsRUs" },
       offers: {
         "@type": "Offer",
-        price: "79",
+        price: "29",
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
         url: "https://www.clawsrus.com/signup?setup_package=standard&persona=personal-assistant",
